@@ -21,5 +21,5 @@ CREATE TABLE public."t_species"
     PRIMARY KEY (id)
 );
 
-ALTER TABLE IF EXISTS public."T_SPECIES"
+ALTER TABLE IF EXISTS public."t_species"
     OWNER to postgres;
