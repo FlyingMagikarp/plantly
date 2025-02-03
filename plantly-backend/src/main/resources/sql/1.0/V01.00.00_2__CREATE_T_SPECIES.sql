@@ -1,4 +1,4 @@
-CREATE TABLE public."t_species"
+CREATE TABLE public.t_species
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     latin_name character varying,
@@ -21,5 +21,5 @@ CREATE TABLE public."t_species"
     PRIMARY KEY (id)
 );
 
-ALTER TABLE IF EXISTS public."t_species"
+ALTER TABLE IF EXISTS public.t_species
     OWNER to postgres;
