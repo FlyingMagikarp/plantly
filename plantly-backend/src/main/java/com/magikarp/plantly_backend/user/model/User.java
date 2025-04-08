@@ -15,6 +15,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,8 +27,9 @@ import lombok.Setter;
 @Table(name="t_user", schema = "public")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @GeneratedValue
+    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
+    private UUID id;
     private String username;
     private String password;
     @Enumerated(EnumType.STRING)

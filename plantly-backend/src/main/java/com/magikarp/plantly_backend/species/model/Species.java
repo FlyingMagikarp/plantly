@@ -21,22 +21,7 @@ import lombok.Setter;
 public class Species {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private int id;
+
     private String latin_name;
-    private String common_en;
-    private String common_de;
-    private String placement;
-    private String type;
-    private Integer winter_temp;
-    private Boolean winter_hardy;
-    private String watering;
-    private String season0;
-    private String season1;
-    private String season2;
-    private String season3;
-    private String fertilizing;
-    private String pruning;
-    private String wiring;
-    private String propagation;
-    private String notes;
 }
