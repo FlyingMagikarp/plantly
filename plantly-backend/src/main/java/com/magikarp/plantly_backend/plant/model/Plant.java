@@ -50,4 +50,5 @@ public class Plant {
     private boolean died;
     private String inactiveReason;
     private LocalDateTime inactiveDate;
+    private Integer checkFreq;
 }
