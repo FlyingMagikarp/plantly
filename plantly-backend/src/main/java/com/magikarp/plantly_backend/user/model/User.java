@@ -34,5 +34,7 @@ public class User {
     private String password;
     @Enumerated(EnumType.STRING)
     private UserRole userrole;
+    private String email;
+    private boolean active;
 
 }

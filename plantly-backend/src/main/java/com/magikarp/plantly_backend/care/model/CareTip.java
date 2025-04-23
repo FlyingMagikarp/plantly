@@ -2,12 +2,10 @@ package com.magikarp.plantly_backend.care.model;
 
 import com.magikarp.plantly_backend.care.enums.PlacementType;
 import com.magikarp.plantly_backend.species.model.Species;
-import com.magikarp.plantly_backend.util.IntegerArrayConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -44,21 +42,18 @@ public class CareTip {
     private int dormantSeasonEnd;
     private String pruningNotes;
 
-    @Convert(converter = IntegerArrayConverter.class)
-    @Column(name = "pruning_months")
-    private List<Integer> pruningMonths;
+    @Column(name = "pruning_months", columnDefinition = "integer[]")
+    private Integer[] pruningMonths;
 
     private String wiringNotes;
 
-    @Convert(converter = IntegerArrayConverter.class)
-    @Column(name = "wiring_months")
-    private List<Integer> wiringMonths;
+    @Column(name = "wiring_months", columnDefinition = "integer[]")
+    private Integer[] wiringMonths;
 
     private String propagationNotes;
 
-    @Convert(converter = IntegerArrayConverter.class)
-    @Column(name = "propagation_months")
-    private List<Integer> propagationMonths;
+    @Column(name = "propagation_months", columnDefinition = "integer[]")
+    private Integer[] propagationMonths;
 
     private String pests;
     private String notes;

@@ -1,4 +1,5 @@
-import type { Route } from "./+types/ShellIndexRoute";
+import type { Route } from "../.react-router/types/app/routes/+types";
+import { Welcome } from "~/features/welcome/welcome";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,5 +9,5 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  return <div>Hello World</div>
+  return <Welcome />;
 }

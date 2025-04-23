@@ -18,15 +18,21 @@ public class AuthService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public User register(String username, String password) {
+    public User register(String username, String password, String email) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("Username already exists");
+        }
+
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new RuntimeException("Email already in use");
         }
 
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setUserrole(UserRole.USER);
+        user.setEmail(email);
+        user.setActive(true);
         return userRepository.save(user);
     }
 

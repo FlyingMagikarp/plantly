@@ -21,6 +21,10 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("User not found: %s", username)));
 
+        if (!user.isActive()) {
+            throw new UsernameNotFoundException("User is not active");
+        }
+
         List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getUserrole().name()));
 
         return new org.springframework.security.core.userdetails.User(
