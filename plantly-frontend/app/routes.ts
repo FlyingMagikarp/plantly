@@ -1,4 +1,4 @@
-import { type RouteConfig, index, route, layout } from "@react-router/dev/routes";
+import { type RouteConfig, index, route, layout, prefix } from "@react-router/dev/routes";
 
 export default [
   index('index.tsx'),
@@ -11,6 +11,16 @@ export default [
   layout('./common/layouts/ProtectedLayout.tsx', [
     route('overview', './features/overview/routes/OverviewIndexRoute.tsx'),
     route('myplants', './features/myplants/routes/MyplantsIndexRoute.tsx')
+  ]),
+
+  layout('./common/layouts/AdminProtectedLayout.tsx', [
+    ...prefix('admin', [
+      index('./features/admin/AdminIndexRoute.tsx'),
+      ...prefix('species', [
+        index('./features/admin/adminSpecies/routes/AdminSpeciesIndexRoute.tsx'),
+        route(':speciesId', './features/admin/adminSpecies/routes/AdminSpeciesDetailRoute.tsx'),
+      ])
+    ])
   ]),
 
 ] satisfies RouteConfig;
