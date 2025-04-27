@@ -19,8 +19,14 @@ export default function OverviewIndexRoute() {
   }
 
   return (
-    <div>
-      OVERVIEW, {currentUser?.username}
+    <div className='p-4 md:p-8 bg-background text-foreground'>
+      <h1 className='text-2xl font-bold mb-4'>Overview</h1>
+      <div>
+        Current user: {currentUser?.username}
+      </div>
+      <div>
+        Current role: {currentUser?.role}
+      </div>
       <div>
         <button onClick={handleLogout}>Log out</button>
       </div>

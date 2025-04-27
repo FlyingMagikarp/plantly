@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type { User, AuthContextType, LoginCredentials, RegisterData } from '~/common/types/auth';
-import { API_URL } from "~/common/constants/constants";
+import { API_URL, USER_ROLE_ADMIN } from "~/common/constants/constants";
 
 const AuthContext = createContext<AuthContextType>({
   currentUser: null,
@@ -14,7 +14,8 @@ const AuthContext = createContext<AuthContextType>({
   },
   logout: () => {
   },
-  isAuthenticated: false
+  isAuthenticated: false,
+  isAdmin: false,
 });
 
 export const useAuth = () => {
@@ -29,6 +30,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
 
   const fetchUserData = useCallback(async (): Promise<User | null> => {
@@ -47,12 +49,14 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
       const user = await response.json() as User;
       setCurrentUser(user);
       setIsAuthenticated(true);
+      setIsAdmin(user.role === USER_ROLE_ADMIN);
 
       return user;
     } catch (error) {
       console.error("Error fetching user data:", error);
       setCurrentUser(null);
       setIsAuthenticated(false);
+      setIsAdmin(false);
       return null;
     } finally {
       setLoading(false);
@@ -79,6 +83,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 
       const data = await response.json() as User;
       setCurrentUser(data);
+      setIsAdmin(data.role === USER_ROLE_ADMIN);
       setIsAuthenticated(true);
 
       return data;
@@ -133,6 +138,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 
     setCurrentUser(null);
     setIsAuthenticated(false);
+    setIsAdmin(false);
   }, []);
 
   const contextValue: AuthContextType = {
@@ -141,7 +147,8 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     login,
     register,
     logout,
-    isAuthenticated
+    isAuthenticated,
+    isAdmin
   };
 
   return (

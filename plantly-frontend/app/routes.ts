@@ -9,7 +9,8 @@ export default [
   ]),
 
   layout('./common/layouts/ProtectedLayout.tsx', [
-    route('overview', './features/overview/routes/OverviewIndexRoute.tsx')
+    route('overview', './features/overview/routes/OverviewIndexRoute.tsx'),
+    route('myplants', './features/myplants/routes/MyplantsIndexRoute.tsx')
   ]),
 
 ] satisfies RouteConfig;

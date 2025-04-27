@@ -2,7 +2,7 @@ export interface User {
   id: string;
   username: string;
   email: string;
-  role: 'user' | 'admin';
+  role: 'USER' | 'ADMIN';
 }
 
 export interface LoginCredentials {
@@ -23,4 +23,5 @@ export interface AuthContextType {
   login: (credentials: LoginCredentials) => Promise<User>;
   register: (userData: RegisterData) => Promise<User>;
   logout: () => void;
+  isAdmin: boolean;
 }
