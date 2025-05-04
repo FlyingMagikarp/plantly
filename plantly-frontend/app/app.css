@@ -58,3 +58,98 @@
         @apply px-3 py-2 border border-gray-400 rounded bg-white dark:bg-gray-600 text-[var(--color-fg)] dark:text-white;
     }
 }
+
+/* Map colors to classes */
+@layer utilities {
+    /* Background colors */
+    .bg-theme-base {
+        background-color: var(--color-base);
+    }
+    .bg-theme-bg {
+        background-color: var(--color-bg);
+    }
+    .bg-theme-fg {
+        background-color: var(--color-fg);
+    }
+    .bg-theme-accent {
+        background-color: var(--color-accent);
+    }
+    .bg-theme-accent-hover {
+        background-color: var(--color-accent-hover);
+    }
+    .bg-theme-accent-secondary {
+        background-color: var(--color-accent-secondary);
+    }
+    .bg-theme-accent-dark {
+        background-color: var(--color-accent-dark);
+    }
+
+    /* Background hover colors */
+    .hover\:bg-theme-base:hover {
+        background-color: var(--color-base);
+    }
+    .hover\:bg-theme-bg:hover {
+        background-color: var(--color-bg);
+    }
+    .hover\:bg-theme-fg:hover {
+        background-color: var(--color-fg);
+    }
+    .hover\:bg-theme-accent:hover {
+        background-color: var(--color-accent);
+    }
+    .hover\:bg-theme-accent-hover:hover {
+        background-color: var(--color-accent-hover);
+    }
+    .hover\:bg-theme-accent-secondary:hover {
+        background-color: var(--color-accent-secondary);
+    }
+    .hover\:bg-theme-accent-dark:hover {
+        background-color: var(--color-accent-dark);
+    }
+
+    /* Text colors */
+    .text-theme-base {
+        color: var(--color-base);
+    }
+    .text-theme-bg {
+        color: var(--color-bg);
+    }
+    .text-theme-fg {
+        color: var(--color-fg);
+    }
+    .text-theme-accent {
+        color: var(--color-accent);
+    }
+    .text-theme-accent-hover {
+        color: var(--color-accent-hover);
+    }
+    .text-theme-accent-secondary {
+        color: var(--color-accent-secondary);
+    }
+    .text-theme-accent-dark {
+        color: var(--color-accent-dark);
+    }
+
+    /* Border colors */
+    .border-theme-base {
+        border-color: var(--color-base);
+    }
+    .border-theme-bg {
+        border-color: var(--color-bg);
+    }
+    .border-theme-fg {
+        border-color: var(--color-fg);
+    }
+    .border-theme-accent {
+        border-color: var(--color-accent);
+    }
+    .border-theme-accent-hover {
+        border-color: var(--color-accent-hover);
+    }
+    .border-theme-accent-secondary {
+        border-color: var(--color-accent-secondary);
+    }
+    .border-theme-accent-dark {
+        border-color: var(--color-accent-dark);
+    }
+}

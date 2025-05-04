@@ -9,7 +9,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-white shadow-md p-4 flex items-center justify-between md:hidden">
+      <nav className="bg-accent-secondary shadow-md p-4 flex items-center justify-between md:hidden">
         {/* Hamburger Icon */}
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -33,7 +33,7 @@ export default function Navbar() {
           onClick={() => setIsOpen(false)}
         >
           <div
-            className="fixed top-0 left-0 h-full w-64 bg-white shadow-md p-6 z-50 transform transition-transform duration-300"
+            className="fixed top-0 left-0 h-full w-64 bg-accent-secondary shadow-md p-6 z-50 transform transition-transform duration-300"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -49,7 +49,7 @@ export default function Navbar() {
       )}
 
       <aside
-        className={`hidden md:flex flex-col items-center bg-white shadow-md h-screen fixed top-0 left-0 z-30 transition-all duration-300 ${
+        className={`hidden md:flex flex-col items-center bg-accent-secondary shadow-md h-screen fixed top-0 left-0 z-30 transition-all duration-300 ${
           isHovered ? "w-64" : "w-20"
         }`}
         onMouseEnter={() => setIsHovered(true)}
@@ -76,7 +76,7 @@ export default function Navbar() {
 }
 
 function NavLinks({ onLinkClick, isExpanded, isAdmin }: { onLinkClick?: () => void; isExpanded?: boolean; isAdmin?: boolean }) {
-  const linkClasses = "flex items-center gap-4 p-2 my-2 text-gray-700 hover:bg-green-100 rounded-md transition-colors duration-200";
+  const linkClasses = "flex items-center gap-4 p-2 my-2 text-gray-700 hover:bg-theme-accent-hover rounded-md transition-colors duration-200";
 
   // Replace "🌱" with real icons later
   const links = [
