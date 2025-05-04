@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useCallback } from 'react';
+import { createContext, useState, useContext, useCallback, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { User, AuthContextType, LoginCredentials, RegisterData } from '~/common/types/auth';
 import { API_URL, USER_ROLE_ADMIN } from "~/common/constants/constants";
@@ -34,7 +34,7 @@ export const AuthProvider = ({children, initialUser}: AuthProviderProps) => {
   const [currentUser, setCurrentUser] = useState<User | null>(initialUser ?? null);
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(initialUser?.role === USER_ROLE_ADMIN);
 
 
   const fetchUserData = useCallback(async (): Promise<User | null> => {
@@ -67,7 +67,6 @@ export const AuthProvider = ({children, initialUser}: AuthProviderProps) => {
       setLoading(false);
     }
   }, []);
-
 
   const login = async ({username, password}: LoginCredentials): Promise<User> => {
     setLoading(true);
