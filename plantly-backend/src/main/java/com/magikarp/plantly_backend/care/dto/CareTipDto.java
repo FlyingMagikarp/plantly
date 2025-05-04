@@ -1,7 +1,7 @@
 package com.magikarp.plantly_backend.care.dto;
 
 import com.magikarp.plantly_backend.care.enums.PlacementType;
-import com.magikarp.plantly_backend.species.model.Species;
+import com.magikarp.plantly_backend.species.dto.SpeciesDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Setter
 public class CareTipDto {
     private int id;
-    private Species species;
+    private SpeciesDto species;
     private PlacementType placement;
     private boolean winterHardy;
     private BigDecimal optimalTempMinC;

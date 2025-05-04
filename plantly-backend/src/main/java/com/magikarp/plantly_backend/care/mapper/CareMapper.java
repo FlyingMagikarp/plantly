@@ -2,12 +2,13 @@ package com.magikarp.plantly_backend.care.mapper;
 
 import com.magikarp.plantly_backend.care.dto.CareTipDto;
 import com.magikarp.plantly_backend.care.model.CareTip;
+import com.magikarp.plantly_backend.species.mapper.SpeciesMapper;
 
 public class CareMapper {
     public static CareTipDto mapCareTipToDto(CareTip careTip){
         CareTipDto dto = new CareTipDto();
         dto.setId(careTip.getId());
-        dto.setSpecies(careTip.getSpecies());
+        dto.setSpecies(SpeciesMapper.mapSpeciesToDto(careTip.getSpecies()));
         dto.setPlacement(careTip.getPlacement());
         dto.setWinterHardy(careTip.isWinterHardy());
         dto.setOptimalTempMinC(careTip.getOptimalTempMinC());

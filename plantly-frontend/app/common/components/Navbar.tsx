@@ -5,7 +5,7 @@ import { useAuth } from "~/auth/AuthContext";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const { currentUser, isAdmin } = useAuth();
+  const { isAdmin } = useAuth();
 
   return (
     <>

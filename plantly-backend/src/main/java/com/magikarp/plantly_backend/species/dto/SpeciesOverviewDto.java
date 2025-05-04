@@ -9,5 +9,5 @@ public class SpeciesOverviewDto {
     private Integer speciesId;
     private String commonName;
     private String latinName;
-
+    private String lc;
 }

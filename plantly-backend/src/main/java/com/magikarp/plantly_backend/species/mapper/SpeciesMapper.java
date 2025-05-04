@@ -11,6 +11,7 @@ public class SpeciesMapper {
         dto.setSpeciesId(species.getSpecies().getId());
         dto.setCommonName(species.getCommonName());
         dto.setLatinName(species.getSpecies().getLatin_name());
+        dto.setLc(species.getLanguageCode());
 
         return dto;
     }
@@ -18,7 +19,7 @@ public class SpeciesMapper {
     public static SpeciesDto mapSpeciesToDto(Species species) {
         SpeciesDto dto = new SpeciesDto();
         dto.setSpeciesId(species.getId());
-        dto.setLatin_name(species.getLatin_name());
+        dto.setLatinName(species.getLatin_name());
 
         return dto;
     }

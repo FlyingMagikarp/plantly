@@ -1,13 +1,16 @@
 import type { SpeciesOverviewDtoData } from "~/common/types/apiTypes";
 import { Table } from "@radix-ui/themes";
+import { useNavigate } from "react-router";
 
 interface IAdminSpeciesListItemProps {
   species: SpeciesOverviewDtoData
 }
 
 export default function AdminSpeciesListItem({species}: IAdminSpeciesListItemProps){
+  const navigate = useNavigate();
+
   const handleClick = (speciesId: number) => {
-    console.log(speciesId)
+    navigate(`/admin/species/${speciesId}`);
   }
 
   return (

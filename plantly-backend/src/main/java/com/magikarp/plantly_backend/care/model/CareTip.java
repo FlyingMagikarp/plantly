@@ -28,7 +28,9 @@ public class CareTip {
     private PlacementType placement;
 
     private boolean winterHardy;
+    @Column(name = "optimal_temp_min_c")
     private BigDecimal optimalTempMinC;
+    @Column(name = "optimal_temp_max_c")
     private BigDecimal optimalTempMaxC;
     private int wateringFrequencyDays;
     private String wateringNotes;

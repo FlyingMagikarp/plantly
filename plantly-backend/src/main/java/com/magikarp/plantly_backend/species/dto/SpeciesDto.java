@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class SpeciesDto {
     private int speciesId;
-    private String latin_name;
+    private String latinName;
 }
