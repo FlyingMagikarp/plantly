@@ -96,7 +96,6 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
   };
 
   const register = async (userData: RegisterData): Promise<User> => {
-    console.log(userData)
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/auth/register`, {
@@ -128,7 +127,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     try {
       await fetch(`${API_URL}/auth/logout`, {
         method: 'POST',
-        credentials: 'include' // Important! Send the cookie
+        credentials: 'include'
       });
     } catch (e) {
       console.warn("Logout request failed (maybe already logged out)", e);

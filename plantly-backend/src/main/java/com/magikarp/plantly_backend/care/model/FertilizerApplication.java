@@ -1,6 +1,5 @@
 package com.magikarp.plantly_backend.care.model;
 
-import com.magikarp.plantly_backend.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 
