@@ -3,11 +3,19 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "react-router";
 
 import "./app.css";
 import {AuthProvider} from "~/auth/AuthContext";
 import type { Route } from "../.react-router/types/app/+types/root";
+import { fetchUserData, getTokenFromRequest } from "~/auth/utils";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const token = getTokenFromRequest(request);
+  const user = token ? await fetchUserData(token) : null;
+  return {user: user};
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -18,9 +26,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <title>Plantly</title>
       </head>
       <body>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        {children}
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -29,7 +35,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const { user } = useLoaderData<typeof loader>();
+
+  return (
+    <AuthProvider initialUser={user}>
+      <Outlet />
+    </AuthProvider>
+);
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

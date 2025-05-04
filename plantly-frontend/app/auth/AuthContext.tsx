@@ -16,6 +16,9 @@ const AuthContext = createContext<AuthContextType>({
   },
   isAuthenticated: false,
   isAdmin: false,
+  fetchUserData: async () => {
+    throw new Error('AuthContext not initialized');
+  },
 });
 
 export const useAuth = () => {
@@ -24,10 +27,11 @@ export const useAuth = () => {
 
 interface AuthProviderProps {
   children: ReactNode;
+  initialUser?: User | null;
 }
 
-export const AuthProvider = ({children}: AuthProviderProps) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+export const AuthProvider = ({children, initialUser}: AuthProviderProps) => {
+  const [currentUser, setCurrentUser] = useState<User | null>(initialUser ?? null);
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -43,6 +47,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
       if (!response.ok) {
         setCurrentUser(null);
         setIsAuthenticated(false);
+        console.log('response')
         throw new Error('Failed to fetch user data');
       }
 
@@ -147,7 +152,8 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     register,
     logout,
     isAuthenticated,
-    isAdmin
+    isAdmin,
+    fetchUserData,
   };
 
   return (

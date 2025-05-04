@@ -24,4 +24,5 @@ export interface AuthContextType {
   register: (userData: RegisterData) => Promise<User>;
   logout: () => void;
   isAdmin: boolean;
+  fetchUserData: () => Promise<User | null>;
 }
