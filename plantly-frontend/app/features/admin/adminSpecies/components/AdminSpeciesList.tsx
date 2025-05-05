@@ -1,9 +1,9 @@
-import type { SpeciesOverviewDtoData } from "~/common/types/apiTypes";
+import type { ISpeciesOverviewDtoData } from "~/common/types/apiTypes";
 import AdminSpeciesListItem from "~/features/admin/adminSpecies/components/AdminSpeciesListItem";
 import { Table } from "@radix-ui/themes";
 
 interface IAdminSpeciesListProps {
-  species: SpeciesOverviewDtoData[]
+  species: ISpeciesOverviewDtoData[]
 }
 
 export default function AdminSpeciesList({species}: IAdminSpeciesListProps){

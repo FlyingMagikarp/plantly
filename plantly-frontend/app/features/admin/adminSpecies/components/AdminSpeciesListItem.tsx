@@ -1,9 +1,9 @@
-import type { SpeciesOverviewDtoData } from "~/common/types/apiTypes";
+import type { ISpeciesOverviewDtoData } from "~/common/types/apiTypes";
 import { Table } from "@radix-ui/themes";
 import { useNavigate } from "react-router";
 
 interface IAdminSpeciesListItemProps {
-  species: SpeciesOverviewDtoData
+  species: ISpeciesOverviewDtoData
 }
 
 export default function AdminSpeciesListItem({species}: IAdminSpeciesListItemProps){

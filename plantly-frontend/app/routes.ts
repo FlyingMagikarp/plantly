@@ -18,7 +18,12 @@ export default [
       index('./features/admin/AdminIndexRoute.tsx'),
       ...prefix('species', [
         index('./features/admin/adminSpecies/routes/AdminSpeciesIndexRoute.tsx'),
-        route(':speciesId', './features/admin/adminSpecies/routes/AdminSpeciesDetailRoute.tsx'),
+        ...prefix(':speciesId', [
+          index('./features/admin/adminSpecies/routes/AdminSpeciesDetailRoute.tsx'),
+          route('updateNames', './features/admin/adminSpecies/routes/resources/UpdateSpeciesNamesRoute.tsx'),
+          route('updateCareTips', './features/admin/adminSpecies/routes/resources/UpdateSpeciesCareTipsRoute.tsx'),
+        ]),
+
       ])
     ])
   ]),

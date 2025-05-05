@@ -59,4 +59,5 @@ public class CareTip {
 
     private String pests;
     private String notes;
+    private String soil;
 }

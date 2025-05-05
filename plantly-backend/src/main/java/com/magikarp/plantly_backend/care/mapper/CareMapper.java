@@ -31,7 +31,7 @@ public class CareMapper {
         dto.setPropagationMonths(careTip.getPropagationMonths());
         dto.setPests(careTip.getPests());
         dto.setNotes(careTip.getNotes());
-
+        dto.setSoil(careTip.getSoil());
 
         return dto;
     }

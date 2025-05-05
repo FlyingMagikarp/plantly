@@ -34,4 +34,5 @@ public class CareTipDto {
     private Integer[] propagationMonths;
     private String pests;
     private String notes;
+    private String soil;
 }

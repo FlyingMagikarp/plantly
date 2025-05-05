@@ -11,4 +11,7 @@ public interface SpeciesTranslationRepository extends JpaRepository<SpeciesTrans
 
     @Query("select st from SpeciesTranslation st where st.species.id = ?1")
     List<SpeciesTranslation> findSpeciesTranslationBySpeciesId(Integer speciesId);
+
+    @Query("select st from SpeciesTranslation st where st.species.id = ?1 and st.languageCode = ?2")
+    SpeciesTranslation findSpeciesTranslationBySpeciesIdAndLanguageCode(Integer speciesId, String languageCode);
 }

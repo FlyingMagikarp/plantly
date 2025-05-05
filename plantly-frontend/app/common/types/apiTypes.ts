@@ -1,19 +1,19 @@
-export interface SpeciesOverviewDtoData {
+export interface ISpeciesOverviewDtoData {
   speciesId: number;
   commonName: string;
   latinName: string;
   lc: string;
 }
 
-export interface SpeciesDtoData {
+export interface ISpeciesDtoData {
   speciesId: number;
   latinName: string;
 }
 
-export interface CareTipDtoData {
+export interface ICareTipDtoData {
   id: number;
-  species: SpeciesDtoData;
-  placement: 'SUNNY' | 'SEMI_SHADE' | 'SHADE';
+  species: ISpeciesDtoData;
+  placement: 'sunny' | 'semi_shade' | 'shade';
   winterHardy: boolean;
   optimalTempMinC: number;
   optimalTempMaxC: number;
@@ -35,4 +35,15 @@ export interface CareTipDtoData {
   propagationMonths: number[];
   pests: string;
   notes: string;
+  soil: string;
+}
+
+export interface INameLcPair {
+  commonName: string;
+  lc: string;
+}
+
+export interface ISpeciesUpdateNamesRequestDtoData {
+  latinName: string;
+  commonNames: INameLcPair[];
 }

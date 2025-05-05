@@ -1,8 +1,8 @@
 import { API_URL } from "~/common/constants/constants";
-import type { CareTipDtoData, SpeciesDtoData, SpeciesOverviewDtoData } from "~/common/types/apiTypes";
+import type {ICareTipDtoData, INameLcPair, ISpeciesDtoData, ISpeciesOverviewDtoData} from "~/common/types/apiTypes";
 
 
-export async function getAllSpecies(token?: string):Promise<SpeciesOverviewDtoData[]> {
+export async function getAllSpecies(token?: string):Promise<ISpeciesOverviewDtoData[]> {
     const response = await fetch(API_URL + '/sec/species', {
       method: 'GET',
       headers: {
@@ -11,10 +11,10 @@ export async function getAllSpecies(token?: string):Promise<SpeciesOverviewDtoDa
       },
     }) ;
 
-    return await response.json() as SpeciesOverviewDtoData[];
+    return await response.json() as ISpeciesOverviewDtoData[];
 }
 
-export async function getSpecies(speciesId: number, token?: string):Promise<SpeciesDtoData> {
+export async function getSpecies(speciesId: number, token?: string):Promise<ISpeciesDtoData> {
   const response = await fetch(API_URL + `/sec/species/${speciesId}`, {
     method: 'GET',
     headers: {
@@ -23,10 +23,10 @@ export async function getSpecies(speciesId: number, token?: string):Promise<Spec
     },
   }) ;
 
-  return await response.json() as SpeciesDtoData;
+  return await response.json() as ISpeciesDtoData;
 }
 
-export async function getSpeciesTranslations(speciesId: number, token?: string):Promise<SpeciesOverviewDtoData[]> {
+export async function getSpeciesTranslations(speciesId: number, token?: string):Promise<ISpeciesOverviewDtoData[]> {
   const response = await fetch(API_URL + `/sec/speciesTranslation/${speciesId}`, {
     method: 'GET',
     headers: {
@@ -35,10 +35,10 @@ export async function getSpeciesTranslations(speciesId: number, token?: string):
     },
   }) ;
 
-  return await response.json() as SpeciesOverviewDtoData[];
+  return await response.json() as ISpeciesOverviewDtoData[];
 }
 
-export async function getSpeciesCareTip(speciesId: number, token?: string):Promise<CareTipDtoData> {
+export async function getSpeciesCareTip(speciesId: number, token?: string):Promise<ICareTipDtoData> {
   const response = await fetch(API_URL + `/sec/caretip/${speciesId}`, {
     method: 'GET',
     headers: {
@@ -47,5 +47,28 @@ export async function getSpeciesCareTip(speciesId: number, token?: string):Promi
     },
   }) ;
 
-  return await response.json() as CareTipDtoData;
+  return await response.json() as ICareTipDtoData;
+}
+
+export async function updateSpeciesNames(speciesId: string, latinName: string, commonNames: INameLcPair[], token?: string):Promise<Response> {
+  return await fetch(API_URL + `/admin/species/updateNames/${speciesId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({latinName: latinName, commonNames: commonNames})
+  })
+}
+
+export async function updateSpeciesCareTip(speciesId: string, careTip: ICareTipDtoData, token?: string):Promise<Response> {
+  console.log('SERVER CALL')
+  return await fetch(API_URL + `/admin/species/updateCareTips/${speciesId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({careTipDto: careTip})
+  })
 }

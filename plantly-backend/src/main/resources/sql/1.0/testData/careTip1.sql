@@ -25,7 +25,7 @@ INSERT INTO public.t_care_tip(
     soil)
 VALUES (
            1,
-           'SUNNY',
+           'sunny',
            true,
            -50,
            30,
