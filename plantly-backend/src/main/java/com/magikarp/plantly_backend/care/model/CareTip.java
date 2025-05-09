@@ -4,6 +4,8 @@ import com.magikarp.plantly_backend.care.enums.PlacementType;
 import com.magikarp.plantly_backend.species.model.Species;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.math.BigDecimal;
 
@@ -24,6 +26,7 @@ public class CareTip {
     private Species species;
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     @Column(name = "placement", columnDefinition = "placement_type", nullable = false)
     private PlacementType placement;
 

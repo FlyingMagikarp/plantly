@@ -74,10 +74,13 @@ export default function AdminSpeciesCareTipForm({species, careTip}:{species: ISp
               <span className={'font-semibold pt-1'}>
                 Winter Hardy
               </span>
-              <Checkbox.Root
-                  checked={fields.winterHardy.value === 'on'}
-                  className="h-5 w-5 border rounded ml-3"
+              <input
+                type={'checkbox'}
+                name={fields.winterHardy.name}
+                defaultChecked={fields.winterHardy.value === 'on'}
+                className="h-5 w-5 border rounded ml-3"
               />
+
             </div>
             <FormInput
                 label={'Optimal Temp Min C°'}
