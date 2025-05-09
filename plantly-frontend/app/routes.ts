@@ -23,7 +23,7 @@ export default [
           route('updateNames', './features/admin/adminSpecies/routes/resources/UpdateSpeciesNamesRoute.tsx'),
           route('updateCareTips', './features/admin/adminSpecies/routes/resources/UpdateSpeciesCareTipsRoute.tsx'),
         ]),
-
+        route('create', './features/admin/adminSpecies/routes/resources/CreateSpeciesRoute.tsx'),
       ])
     ])
   ]),

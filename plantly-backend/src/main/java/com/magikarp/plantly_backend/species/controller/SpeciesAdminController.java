@@ -22,7 +22,11 @@ public class SpeciesAdminController {
             @PathVariable("speciesId") Integer speciesId,
             @RequestBody SpeciesUpdateNamesRequestDto namesRequest
     ) throws SpeciesNotFoundException {
-        speciesAdminService.updateSpeciesNames(speciesId, namesRequest.getLatinName(), namesRequest.getCommonNames());
+        if (speciesId == -1){
+            speciesAdminService.addSpecies(namesRequest.getLatinName(), namesRequest.getCommonNames());
+        } else {
+            speciesAdminService.updateSpeciesNames(speciesId, namesRequest.getLatinName(), namesRequest.getCommonNames());
+        }
         return ResponseEntity.ok().build();
     }
 

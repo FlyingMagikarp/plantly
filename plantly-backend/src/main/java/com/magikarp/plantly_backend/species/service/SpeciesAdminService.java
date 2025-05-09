@@ -47,10 +47,26 @@ public class SpeciesAdminService {
         });
     }
 
+    public void addSpecies(String latinName, List<NameLcPair> commonNames){
+        Species species = new Species();
+        species.setLatin_name(latinName);
+
+        Species s = speciesRepository.save(species);
+        commonNames.forEach(np -> {
+            SpeciesTranslation st = new SpeciesTranslation();
+            st.setSpecies(s);
+            st.setLanguageCode(np.getLc());
+            st.setCommonName(np.getCommonName());
+            speciesTranslationRepository.save(st);
+        });
+    }
+
     public void updateSpeciesCareTips(Integer speciesId, CareTipDto dto) throws SpeciesNotFoundException {
         CareTip careTip = careTipRepository.findCareTipForSpecies(speciesId);
         if (careTip == null) {
-            throw new SpeciesNotFoundException("Species not found: " + speciesId);
+            careTip = new CareTip();
+            Species species = speciesRepository.findById(speciesId).get();
+            careTip.setSpecies(species);
         }
 
         careTip.setPlacement(dto.getPlacement());
