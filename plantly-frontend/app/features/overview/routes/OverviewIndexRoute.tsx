@@ -27,9 +27,6 @@ export default function OverviewIndexRoute() {
       <div>
         Current role: {currentUser?.role}
       </div>
-      <div>
-        <button onClick={handleLogout}>Log out</button>
-      </div>
     </div>
   );
 }

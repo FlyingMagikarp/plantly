@@ -33,7 +33,7 @@ interface AuthProviderProps {
 export const AuthProvider = ({children, initialUser}: AuthProviderProps) => {
   const [currentUser, setCurrentUser] = useState<User | null>(initialUser ?? null);
   const [loading, setLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!initialUser);
   const [isAdmin, setIsAdmin] = useState(initialUser?.role === USER_ROLE_ADMIN);
 
 
