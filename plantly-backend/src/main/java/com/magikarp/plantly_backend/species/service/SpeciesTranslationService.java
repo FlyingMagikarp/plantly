@@ -15,4 +15,5 @@ public class SpeciesTranslationService {
     public List<SpeciesTranslation> getSpeciesTranslation(Integer speciesId) {
         return speciesTranslationRepository.findSpeciesTranslationBySpeciesId(speciesId);
     }
+
 }

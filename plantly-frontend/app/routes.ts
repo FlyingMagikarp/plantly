@@ -22,6 +22,7 @@ export default [
           index('./features/admin/adminSpecies/routes/AdminSpeciesDetailRoute.tsx'),
           route('updateNames', './features/admin/adminSpecies/routes/resources/UpdateSpeciesNamesRoute.tsx'),
           route('updateCareTips', './features/admin/adminSpecies/routes/resources/UpdateSpeciesCareTipsRoute.tsx'),
+          route('delete', './features/admin/adminSpecies/routes/resources/DeleteSpeciesRoute.tsx'),
         ]),
         route('create', './features/admin/adminSpecies/routes/resources/CreateSpeciesRoute.tsx'),
       ])

@@ -62,7 +62,6 @@ export async function updateSpeciesNames(speciesId: string, latinName: string, c
 }
 
 export async function updateSpeciesCareTip(speciesId: string, careTip: ICareTipDtoData, token?: string):Promise<Response> {
-  console.log('SERVER CALL')
   return await fetch(API_URL + `/admin/species/updateCareTips/${speciesId}`, {
     method: 'POST',
     headers: {
@@ -70,5 +69,15 @@ export async function updateSpeciesCareTip(speciesId: string, careTip: ICareTipD
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({careTipDto: careTip})
+  })
+}
+
+export async function deleteSpecies(specieId: number, token?: string):Promise<Response> {
+  return await fetch(API_URL + `/admin/species/${specieId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    }
   })
 }

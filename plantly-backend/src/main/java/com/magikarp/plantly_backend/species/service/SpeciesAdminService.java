@@ -3,11 +3,14 @@ package com.magikarp.plantly_backend.species.service;
 import com.magikarp.plantly_backend.care.dto.CareTipDto;
 import com.magikarp.plantly_backend.care.model.CareTip;
 import com.magikarp.plantly_backend.care.repository.CareTipRepository;
+import com.magikarp.plantly_backend.plant.model.Plant;
+import com.magikarp.plantly_backend.plant.repository.PlantRepository;
 import com.magikarp.plantly_backend.species.dto.NameLcPair;
 import com.magikarp.plantly_backend.species.model.Species;
 import com.magikarp.plantly_backend.species.model.SpeciesTranslation;
 import com.magikarp.plantly_backend.species.repository.SpeciesRepository;
 import com.magikarp.plantly_backend.species.repository.SpeciesTranslationRepository;
+import com.magikarp.plantly_backend.util.exceptions.SpeciesInUseException;
 import com.magikarp.plantly_backend.util.exceptions.SpeciesNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,8 @@ public class SpeciesAdminService {
     private SpeciesTranslationRepository speciesTranslationRepository;
     @Autowired
     private CareTipRepository careTipRepository;
+    @Autowired
+    private PlantRepository plantRepository;
 
     public void updateSpeciesNames(Integer speciesId, String latinName, List<NameLcPair> commonNames) throws SpeciesNotFoundException {
         Optional<Species> species = speciesRepository.findById(speciesId);
@@ -94,6 +99,42 @@ public class SpeciesAdminService {
         careTip.setSoil(dto.getSoil());
 
         careTipRepository.save(careTip);
+    }
+
+    public void removeSpecies(Integer speciesId) throws SpeciesNotFoundException, SpeciesInUseException {
+        Optional<Species> species = speciesRepository.findById(speciesId);
+        if (species.isEmpty()) {
+            throw new SpeciesNotFoundException("Species not found: " + speciesId);
+        }
+
+        if (checkIfSpeciesIsInUse(speciesId)) {
+            throw new SpeciesInUseException("Species is still in use!");
+        }
+
+        removeSpeciesTranslations(speciesId);
+        removeCareTip(speciesId);
+
+        speciesRepository.delete(species.get());
+    }
+
+    public boolean checkIfSpeciesIsInUse(Integer speciesId){
+        List<Plant> plants = plantRepository.findPlantsBySpecies(speciesId);
+        return !plants.isEmpty();
+    }
+
+    public void removeSpeciesTranslations(Integer speciesId) {
+        List<SpeciesTranslation> st = speciesTranslationRepository.findSpeciesTranslationBySpeciesId(speciesId);
+
+        if (!st.isEmpty()){
+            speciesTranslationRepository.deleteAll(st);
+        }
+    }
+
+    public void removeCareTip(Integer speciesId){
+        CareTip careTip = careTipRepository.findCareTipForSpecies(speciesId);
+        if (careTip != null) {
+            careTipRepository.delete(careTip);
+        }
     }
 
 }

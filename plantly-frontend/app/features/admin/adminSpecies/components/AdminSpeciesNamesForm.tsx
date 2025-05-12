@@ -14,7 +14,7 @@ export default function AdminSpeciesNamesForm({species, speciesTranslations}:{sp
   const [commonNames, setCommonNames] = useState(
       speciesTranslations.length > 0
           ? speciesTranslations.map((c) => ({ name: c.commonName, lang: c.lc }))
-          : [{ name: "", lang: "" }]
+          : [{ name: "", lang: "EN" }]
   );
 
   const defaultValue = {

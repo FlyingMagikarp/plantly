@@ -6,7 +6,7 @@ import {updateSpeciesNamesSchema} from "~/features/admin/adminSpecies/schemas/up
 import type {INameLcPair} from "~/common/types/apiTypes";
 import {updateSpeciesNames} from "~/features/admin/adminSpecies/adminSpecies.server";
 import {getTokenFromRequest} from "~/auth/utils";
-import {dataWithError, dataWithSuccess} from "remix-toast";
+import {dataWithError, dataWithSuccess, redirectWithSuccess} from "remix-toast";
 
 export async function action({ params, request }: Route.ActionArgs) {
   const token = getTokenFromRequest(request);
@@ -35,7 +35,7 @@ export async function action({ params, request }: Route.ActionArgs) {
 
   try {
     await updateSpeciesNames(params.speciesId, latinName, names, token)
-    return dataWithSuccess({ok:true}, 'Data saved!');
+    return redirectWithSuccess('/admin/species', 'Data saved!');
   } catch (error) {
     console.log(error);
     return dataWithError({ok:false}, 'Error occurred during saving!');

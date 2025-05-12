@@ -1,4 +1,5 @@
 import {
+  data,
   isRouteErrorResponse,
   Outlet,
   Scripts,
@@ -10,11 +11,17 @@ import "./app.css";
 import {AuthProvider} from "~/auth/AuthContext";
 import type { Route } from "../.react-router/types/app/+types/root";
 import { fetchUserData, getTokenFromRequest } from "~/auth/utils";
+import {getToast} from "remix-toast";
+import {useEffect} from "react";
+import {Toaster, toast as notify} from "sonner";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const token = getTokenFromRequest(request);
   const user = token ? await fetchUserData(token) : null;
-  return {user: user};
+
+  const { toast, headers } = await getToast(request);
+
+  return data({user: user, toast: toast}, {headers});
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -36,10 +43,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const { user } = useLoaderData<typeof loader>();
+  const { toast } = useLoaderData<typeof loader>();
+
+  useEffect(() => {
+    if (toast) {
+      if (toast?.type === "error") {
+        notify.error(toast.message);
+      }
+      if (toast?.type === "success") {
+        notify.success(toast.message);
+      }
+    }
+  }, [toast]);
 
   return (
     <AuthProvider initialUser={user}>
       <Outlet />
+      <Toaster position="bottom-right" richColors={true} />
     </AuthProvider>
 );
 }
