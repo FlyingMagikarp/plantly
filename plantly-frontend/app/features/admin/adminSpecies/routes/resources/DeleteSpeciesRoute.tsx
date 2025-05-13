@@ -3,7 +3,7 @@ import type {
 } from "../../../../../../.react-router/types/app/features/admin/adminSpecies/routes/resources/+types/DeleteSpeciesRoute";
 import {getTokenFromRequest} from "~/auth/utils";
 import {deleteSpecies} from "~/features/admin/adminSpecies/adminSpecies.server";
-import {dataWithError, dataWithSuccess, redirectWithSuccess} from "remix-toast";
+import {dataWithError, redirectWithSuccess} from "remix-toast";
 
 export async function action({ request, params }: Route.ActionArgs) {
   const token = getTokenFromRequest(request);

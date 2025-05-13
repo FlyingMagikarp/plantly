@@ -4,7 +4,6 @@ import {useFetcher} from "react-router";
 import {useForm} from "@conform-to/react";
 import {parseWithZod} from "@conform-to/zod";
 import {updateSpeciesCareTipSchema} from "~/features/admin/adminSpecies/schemas/updateSpeciesCareTipSchema";
-import {Checkbox} from "radix-ui";
 
 
 export default function AdminSpeciesCareTipForm({species, careTip}:{species: ISpeciesDtoData, careTip: ICareTipDtoData}) {

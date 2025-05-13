@@ -8,4 +8,6 @@ import org.springframework.stereotype.Service;
 public class PlantService {
     @Autowired
     private PlantRepository plantRepository;
+
+
 }

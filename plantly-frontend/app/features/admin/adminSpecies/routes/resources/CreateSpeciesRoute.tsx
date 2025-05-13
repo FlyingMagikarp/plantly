@@ -1,18 +1,8 @@
-import type {
-  Route
-} from "../../../../../../.react-router/types/app/features/admin/adminSpecies/routes/resources/+types/CreateSpeciesRoute";
 import AdminSpeciesNamesForm from "~/features/admin/adminSpecies/components/AdminSpeciesNamesForm";
-import type { ISpeciesDtoData, ISpeciesOverviewDtoData } from "~/common/types/apiTypes";
-
-export async function loader({ request }: Route.LoaderArgs) {
-  //const token = getTokenFromRequest(request)
-}
-
-export async function action({ request }: Route.ActionArgs) {
-}
+import type { ISpeciesDtoData } from "~/common/types/apiTypes";
 
 
-export default function CreateSpeciesRoute({loaderData}: Route.ComponentProps) {
+export default function CreateSpeciesRoute() {
   const species = initEmptySpeciesObjects();
 
   return (

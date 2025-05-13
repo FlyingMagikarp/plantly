@@ -1,6 +1,5 @@
 import type {ISpeciesDtoData, ISpeciesOverviewDtoData} from "~/common/types/apiTypes";
 import {cn} from "~/common/utils/styleUtil";
-import {Separator} from "@radix-ui/themes";
 import {useFetcher} from "react-router";
 import {useForm} from "@conform-to/react";
 import {parseWithZod} from "@conform-to/zod";
