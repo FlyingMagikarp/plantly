@@ -56,6 +56,16 @@ export default function LocationsForm({locs}:{locs: ILocationDtoData[]}) {
                             defaultValue={loc.description}
                             errors={field?.description.errors}
                         />
+
+                        <button
+                            type={'button'}
+                            className={'btn-negative h-10 px-2 text-sm'}
+                            onClick={() => {
+                              setLocations((prev) => prev.filter((_, i) => i !== index));
+                            }}
+                        >
+                          X
+                        </button>
                       </div>
                   );
                 })}

@@ -9,8 +9,11 @@ import com.magikarp.plantly_backend.util.exceptions.LocationInUseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class LocationService {
@@ -30,7 +33,7 @@ public class LocationService {
     }
 
     public void deleteLocation(UUID userId, Integer locationId) throws LocationInUseException {
-        if (isLocationInUse(locationId)){
+        if (!isLocationInUse(locationId)){
             Location location = getLocation(userId, locationId);
             locationRepository.delete(location);
         } else {
@@ -38,7 +41,28 @@ public class LocationService {
         }
     }
 
-    public void updateLocation(UUID userId, LocationDto dto){
+    public void updateLocations(UUID userId, List<LocationDto> dto) throws LocationInUseException {
+        Set<Integer> existingLocIds = getAllLocations(userId).stream().map(Location::getId).collect(Collectors.toSet());
+
+        Set<Integer> newLocIds = dto.stream().map(LocationDto::getId).filter(id -> id > 0).collect(Collectors.toSet());
+
+        Set<Integer> deletedIds = new HashSet<>(existingLocIds);
+        deletedIds.removeAll(newLocIds);
+
+        for (Integer id : deletedIds) {
+            deleteLocation(userId, id);
+        }
+
+        for (LocationDto locationDto : dto){
+            updateLocation(userId, locationDto);
+        }
+    }
+
+    private boolean isLocationInUse(Integer locationId) {
+        return plantRepository.findByLocationId(locationId) != null;
+    }
+
+    private void updateLocation(UUID userId, LocationDto dto) {
         Location loc = getLocation(userId, dto.getId());
         if (loc == null){
             loc = new Location();
@@ -49,9 +73,5 @@ public class LocationService {
         loc.setDescription(dto.getDescription());
 
         locationRepository.save(loc);
-    }
-
-    private boolean isLocationInUse(Integer locationId) {
-        return plantRepository.findByLocationId(locationId) != null;
     }
 }

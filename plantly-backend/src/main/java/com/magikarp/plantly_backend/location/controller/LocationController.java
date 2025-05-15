@@ -2,6 +2,7 @@ package com.magikarp.plantly_backend.location.controller;
 
 import com.magikarp.plantly_backend.auth.AuthService;
 import com.magikarp.plantly_backend.location.dto.LocationDto;
+import com.magikarp.plantly_backend.location.dto.UpdateLocationsRequestDto;
 import com.magikarp.plantly_backend.location.mapper.LocationMapper;
 import com.magikarp.plantly_backend.location.service.LocationService;
 import com.magikarp.plantly_backend.util.exceptions.LocationInUseException;
@@ -41,9 +42,9 @@ public class LocationController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> updateLocation(@RequestBody LocationDto locationDto) {
+    public ResponseEntity<Object> updateLocation(@RequestBody UpdateLocationsRequestDto requestDto) throws LocationInUseException {
         UUID uuid = authService.getUUIDFromUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-        locationService.updateLocation(uuid, locationDto);
+        locationService.updateLocations(uuid, requestDto.getLocations());
         return ResponseEntity.ok().build();
     }
 
