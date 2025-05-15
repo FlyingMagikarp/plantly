@@ -1,9 +1,10 @@
-package com.magikarp.plantly_backend.plant.controller;
+package com.magikarp.plantly_backend.location.controller;
 
 import com.magikarp.plantly_backend.auth.AuthService;
-import com.magikarp.plantly_backend.plant.dto.PlantDto;
-import com.magikarp.plantly_backend.plant.mapper.PlantMapper;
-import com.magikarp.plantly_backend.plant.service.PlantService;
+import com.magikarp.plantly_backend.location.dto.LocationDto;
+import com.magikarp.plantly_backend.location.mapper.LocationMapper;
+import com.magikarp.plantly_backend.location.service.LocationService;
+import com.magikarp.plantly_backend.util.exceptions.LocationInUseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,36 +21,36 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/sec/plant")
-public class PlantController {
+@RequestMapping("/api/sec/location")
+public class LocationController {
     @Autowired
-    private PlantService plantService;
+    private LocationService locationService;
     @Autowired
     private AuthService authService;
 
     @GetMapping
-    public List<PlantDto> getAllPlants(){
+    public List<LocationDto> getAllLocations() {
         UUID uuid = authService.getUUIDFromUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-        return plantService.getAllPlants(uuid).stream().map(PlantMapper::mapPlantToDto).collect(Collectors.toList());
+        return locationService.getAllLocations(uuid).stream().map(LocationMapper::mapLocationToDto).collect(Collectors.toList());
     }
 
-    @GetMapping("{plantId}")
-    public PlantDto getPlant(@PathVariable Integer plantId){
+    @GetMapping("{locId}")
+    public LocationDto getLocation(@PathVariable Integer locId) {
         UUID uuid = authService.getUUIDFromUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-        return PlantMapper.mapPlantToDto(plantService.getPlantById(uuid, plantId));
+        return LocationMapper.mapLocationToDto(locationService.getLocation(uuid, locId));
     }
 
     @PostMapping
-    public ResponseEntity<Object> updatePlant(@RequestBody PlantDto dto){
+    public ResponseEntity<Object> updateLocation(@RequestBody LocationDto locationDto) {
         UUID uuid = authService.getUUIDFromUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-        plantService.updatePlantFromDto(uuid, dto);
+        locationService.updateLocation(uuid, locationDto);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("{plantId}")
-    public ResponseEntity<Object> deletePlant(@PathVariable Integer plantId){
+    @DeleteMapping("{locId}")
+    public ResponseEntity<Object> deleteLocation(@PathVariable Integer locId) throws LocationInUseException {
         UUID uuid = authService.getUUIDFromUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-        plantService.deletePlantById(uuid, plantId);
+        locationService.deleteLocation(uuid, locId);
         return ResponseEntity.ok().build();
     }
 

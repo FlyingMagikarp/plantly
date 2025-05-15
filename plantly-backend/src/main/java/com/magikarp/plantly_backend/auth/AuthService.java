@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -68,5 +69,11 @@ public class AuthService {
         userDto.setRole(user.getUserrole().name());
 
         return userDto;
+    }
+
+    public UUID getUUIDFromUsername(String username){
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+
+        return user.getId();
     }
 }
