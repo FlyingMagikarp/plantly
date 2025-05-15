@@ -43,7 +43,22 @@ export interface INameLcPair {
   lc: string;
 }
 
-export interface ISpeciesUpdateNamesRequestDtoData {
-  latinName: string;
-  commonNames: INameLcPair[];
+export interface IPlantDtoData {
+  id: number;
+  speciesId: number;
+  speciesLatinName: string;
+  nickname: string;
+  acquiredAt: Date;
+  notes: string;
+  removed: boolean;
+  died: boolean;
+  inactiveReason: string;
+  inactiveDate: Date;
+  checkFreq: number;
+}
+
+export interface ILocationDtoData {
+  id: number;
+  name: string;
+  description: string;
 }

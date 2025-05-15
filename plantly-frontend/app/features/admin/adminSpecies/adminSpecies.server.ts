@@ -72,8 +72,8 @@ export async function updateSpeciesCareTip(speciesId: string, careTip: ICareTipD
   })
 }
 
-export async function deleteSpecies(specieId: number, token?: string):Promise<Response> {
-  return await fetch(API_URL + `/admin/species/${specieId}`, {
+export async function deleteSpecies(speciesId: number, token?: string):Promise<Response> {
+  return await fetch(API_URL + `/admin/species/${speciesId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

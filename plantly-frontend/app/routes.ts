@@ -10,7 +10,11 @@ export default [
 
   layout('./common/layouts/ProtectedLayout.tsx', [
     route('overview', './features/overview/routes/OverviewIndexRoute.tsx'),
-    route('myplants', './features/myplants/routes/MyplantsIndexRoute.tsx')
+    route('myplants', './features/myplants/routes/MyplantsIndexRoute.tsx'),
+      ...prefix('locations', [
+        index('./features/location/routes/LocationIndexRoute.tsx'),
+        route('updateLocations', './features/location/routes/resources/UpdateLocationsRoute.tsx')
+      ]),
   ]),
 
   layout('./common/layouts/AdminProtectedLayout.tsx', [

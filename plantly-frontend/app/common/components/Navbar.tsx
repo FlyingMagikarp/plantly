@@ -107,6 +107,7 @@ function NavLinks({onLinkClick, isExpanded, isAdmin}: {
   if (!isAdmin) {
     links.push(
       { to: "/myplants", label: "My Plants", icon: "🪴" },
+      { to: "/locations", label: "Locations", icon: "🏠" },
     )
   }
 
