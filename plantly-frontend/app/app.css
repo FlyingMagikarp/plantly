@@ -61,8 +61,16 @@
 
     /* Inputs */
     .input-field {
-        @apply w-full px-3 py-2 border rounded-md bg-white dark:bg-[var(--color-secondary-bg)] border-[var(--color-border)] text-[var(--color-fg)] dark:text-white placeholder-[var(--color-muted)] transition;
+        @apply w-full px-3 py-2 rounded-md border outline-none transition-colors;
+        @apply bg-[var(--color-base)] text-[var(--color-fg)] border-gray-400;
+
+        /* Dark mode override */
+        @apply dark:bg-[var(--color-accent-dark)] dark:text-[var(--color-fg)] dark:border-gray-600;
+
+        /* Optional focus style */
+        @apply focus:ring-2 focus:ring-[var(--color-accent)] focus:border-[var(--color-accent)];
     }
+
 
     /* Cards */
     .card {
