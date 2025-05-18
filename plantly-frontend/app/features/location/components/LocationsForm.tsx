@@ -116,8 +116,6 @@ function FormInput({
           name={name}
           defaultValue={defaultValue ?? ''}
       />
-      <input className={'input-field'} />
-      <input className={'input-field2'} />
       <div className={'mt-1 min-h-6 text-sm text-primary'}>{errors}</div>
     </div>
   );

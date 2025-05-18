@@ -1,12 +1,15 @@
 import { useState } from "react";
 import {Link, NavLink, useNavigate} from "react-router";
 import { useAuth } from "~/auth/AuthContext";
+import { useDarkMode } from "~/common/hooks/useDarkMode";
+import { Moon, Sun } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { isAdmin, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const {isDark, toggle} = useDarkMode();
 
   const handleLogout = () => {
     logout();
@@ -15,7 +18,7 @@ export default function Navbar() {
 
   return (
       <>
-        <nav className="bg-accent-secondary shadow-md p-4 flex items-center justify-between md:hidden">
+        <nav className="bg-accent shadow-md p-4 flex items-center justify-between md:hidden">
           <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-2xl"
@@ -37,7 +40,7 @@ export default function Navbar() {
                 onClick={() => setIsOpen(false)}
             >
               <div
-                  className="fixed top-0 left-0 h-full w-64 bg-accent-secondary shadow-md p-6 z-50 transform transition-transform duration-300"
+                  className="fixed top-0 left-0 h-full w-64 bg-accent shadow-md p-6 z-50 transform transition-transform duration-300"
                   onClick={(e) => e.stopPropagation()}
               >
                 <button
@@ -53,7 +56,7 @@ export default function Navbar() {
         )}
 
         <aside
-            className={`hidden md:flex flex-col items-center bg-accent-secondary shadow-md h-screen fixed top-0 left-0 z-30 transition-all duration-300 ${
+            className={`hidden md:flex flex-col items-center bg-accent shadow-md h-screen fixed top-0 left-0 z-30 transition-all duration-300 ${
                 isHovered ? "w-64" : "w-20"
             }`}
             onMouseEnter={() => setIsHovered(true)}
@@ -72,6 +75,16 @@ export default function Navbar() {
           <nav className="flex-1 mt-4">
             <NavLinks isExpanded={isHovered} isAdmin={isAdmin}/>
           </nav>
+
+          <div>
+            <button
+              onClick={toggle}
+              className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+              aria-label="Toggle theme"
+            >
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+          </div>
 
           <div className="w-full p-4">
             {isAuthenticated && isHovered &&
@@ -98,7 +111,10 @@ export default function Navbar() {
 
 function NavLinks({onLinkClick, isExpanded, isAdmin}: {
   onLinkClick?: () => void; isExpanded?: boolean; isAdmin?: boolean }) {
-  const linkClasses = "flex items-center gap-4 p-2 my-2 text-gray-700 hover:bg-theme-accent-hover rounded-md transition-colors duration-200";
+  //const linkClasses = "flex items-center gap-4 p-2 my-2 text-gray-700 hover:bg-theme-accent-hover rounded-md transition-colors duration-200";
+  let linkClasses =
+    "flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-theme hover:bg-[var(--color-secondary-bg)] hover:text-[var(--color-accent)]";
+
 
   const links = [
     { to: "/overview", label: "Overview", icon: "🏠" },

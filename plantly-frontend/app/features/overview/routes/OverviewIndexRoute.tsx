@@ -1,6 +1,7 @@
 import type { Route } from "../../../../.react-router/types/app/features/overview/routes/+types/OverviewIndexRoute";
 import { useAuth } from "~/auth/AuthContext";
 import { useNavigate } from "react-router";
+import { StyleDisplay } from "~/styles";
 
 export async function loader({ params }: Route.LoaderArgs) {
   return null;
@@ -27,6 +28,7 @@ export default function OverviewIndexRoute() {
       <div>
         Current role: {currentUser?.role}
       </div>
+      <StyleDisplay />
     </div>
   );
 }
