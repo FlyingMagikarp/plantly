@@ -49,6 +49,8 @@ export interface IPlantDtoData {
   speciesLatinName: string;
   nickname: string;
   acquiredAt: Date;
+  locationId: number;
+  locationName: string;
   notes: string;
   removed: boolean;
   died: boolean;

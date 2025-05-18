@@ -104,9 +104,9 @@ function FormInput({
                    }: IFormInput) {
   return (
     <div className={'flex flex-row gap-1'}>
-            <span className={'font-semibold pt-1'}>
-              {label}
-            </span>
+      <span className={'font-semibold pt-1'}>
+        {label}
+      </span>
       <input
           type="text"
           className={cn(
@@ -116,6 +116,8 @@ function FormInput({
           name={name}
           defaultValue={defaultValue ?? ''}
       />
+      <input className={'input-field'} />
+      <input className={'input-field2'} />
       <div className={'mt-1 min-h-6 text-sm text-primary'}>{errors}</div>
     </div>
   );

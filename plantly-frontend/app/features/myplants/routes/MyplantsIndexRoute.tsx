@@ -1,8 +1,13 @@
 import type { Route } from "../../../../.react-router/types/app/features/myplants/routes/+types/MyplantsIndexRoute";
 import {Link} from "react-router";
+import { getPlants } from "~/features/myplants/myPlants.server";
+import { getTokenFromRequest } from "~/auth/utils";
 
-export async function loader({ params }: Route.LoaderArgs) {
-  return null;
+export async function loader({ request }: Route.LoaderArgs) {
+  const token = getTokenFromRequest(request);
+  const plants = await getPlants(token);
+
+  return {plants: plants};
 }
 export async function action({ request }: Route.ActionArgs) {
 }

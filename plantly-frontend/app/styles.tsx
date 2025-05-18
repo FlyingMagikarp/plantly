@@ -27,6 +27,15 @@ export function Welcome() {
           </div>
         </div>
       </div>
+      <div>
+        <button className="btn-primary">Save</button>
+        <button className="btn-secondary">Cancel</button>
+        <button className="btn-negative">Delete</button>
+        <a href="/plants" className="btn-primary inline-block text-center">Go to Plants</a>
+
+        <label className="block text-sm font-medium mb-1">Plant Name</label>
+        <input type="text" className="input-field w-full" placeholder="E.g., Ficus Elastica"/>
+      </div>
     </main>
   );
 }
