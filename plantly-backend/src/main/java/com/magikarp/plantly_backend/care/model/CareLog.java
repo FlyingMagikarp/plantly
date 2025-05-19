@@ -4,6 +4,8 @@ import com.magikarp.plantly_backend.care.enums.CareEventType;
 import com.magikarp.plantly_backend.plant.model.Plant;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +26,7 @@ public class CareLog {
     private Plant plant;
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     @Column(name = "event_type", columnDefinition = "care_event_type", nullable = false)
     private CareEventType eventType;
 
