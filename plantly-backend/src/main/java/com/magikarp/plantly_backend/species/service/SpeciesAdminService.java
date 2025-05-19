@@ -1,8 +1,8 @@
 package com.magikarp.plantly_backend.species.service;
 
-import com.magikarp.plantly_backend.care.dto.CareTipDto;
-import com.magikarp.plantly_backend.care.model.CareTip;
-import com.magikarp.plantly_backend.care.repository.CareTipRepository;
+import com.magikarp.plantly_backend.careTip.dto.CareTipDto;
+import com.magikarp.plantly_backend.careTip.model.CareTip;
+import com.magikarp.plantly_backend.careTip.repository.CareTipRepository;
 import com.magikarp.plantly_backend.plant.model.Plant;
 import com.magikarp.plantly_backend.plant.repository.PlantRepository;
 import com.magikarp.plantly_backend.species.dto.NameLcPair;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service

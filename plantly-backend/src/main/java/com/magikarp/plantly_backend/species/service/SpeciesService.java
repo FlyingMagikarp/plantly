@@ -1,6 +1,6 @@
 package com.magikarp.plantly_backend.species.service;
 
-import com.magikarp.plantly_backend.care.repository.CareTipRepository;
+import com.magikarp.plantly_backend.careTip.repository.CareTipRepository;
 import com.magikarp.plantly_backend.species.model.Species;
 import com.magikarp.plantly_backend.species.model.SpeciesTranslation;
 import com.magikarp.plantly_backend.species.repository.SpeciesRepository;
