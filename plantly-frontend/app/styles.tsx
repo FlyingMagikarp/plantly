@@ -95,6 +95,16 @@ export function StyleDisplay() {
             <span className="nav-item">Settings</span>
           </nav>
         </section>
+
+        <div>
+          <h1 className="heading-xl">My Plants</h1>
+          <h2 className="heading-lg">Today's Tasks</h2>
+          <h3 className="subheading">Watering</h3>
+          <p className="body-text">You need to water 3 plants today. Keep soil moist but not soggy.</p>
+          <p className="info-text">Last updated: 3 hours ago</p>
+          <p className="caption">* Remember to adjust based on weather</p>
+          <a className="link-text" href="/care-guide">View full care guide</a>
+        </div>
       </div>
     </main>
   );

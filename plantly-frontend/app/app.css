@@ -81,6 +81,34 @@
     .nav-item {
         @apply px-3 py-2 rounded-md text-[var(--color-fg)] hover:bg-[var(--color-border)] dark:hover:bg-[var(--color-button-secondary)] transition;
     }
+
+    .heading-xl {
+        @apply text-4xl font-bold text-[var(--color-fg)] mb-4;
+    }
+
+    .heading-lg {
+        @apply text-2xl font-semibold text-[var(--color-fg)] mb-2;
+    }
+
+    .subheading {
+        @apply text-lg font-medium text-[var(--color-accent-secondary)] mb-2;
+    }
+
+    .body-text {
+        @apply text-base text-[var(--color-fg)] leading-relaxed;
+    }
+
+    .info-text {
+        @apply text-sm text-[var(--color-accent-dark)];
+    }
+
+    .caption {
+        @apply text-xs text-[var(--color-accent-dark)] italic;
+    }
+
+    .link-text {
+        @apply text-base text-[var(--color-accent)] hover:underline hover:text-[var(--color-accent-hover)] transition-colors;
+    }
 }
 
 @layer utilities {

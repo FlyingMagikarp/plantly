@@ -10,11 +10,14 @@ export default [
 
   layout('./common/layouts/ProtectedLayout.tsx', [
     route('overview', './features/overview/routes/OverviewIndexRoute.tsx'),
-    route('myplants', './features/myplants/routes/MyplantsIndexRoute.tsx'),
-      ...prefix('locations', [
-        index('./features/location/routes/LocationIndexRoute.tsx'),
-        route('updateLocations', './features/location/routes/resources/UpdateLocationsRoute.tsx')
-      ]),
+    ...prefix('plants', [
+        index('./features/plants/routes/PlantsIndexRoute.tsx'),
+        route('create', './features/plants/routes/CreatePlantRoute.tsx'),
+    ]),
+    ...prefix('locations', [
+      index('./features/location/routes/LocationIndexRoute.tsx'),
+      route('updateLocations', './features/location/routes/resources/UpdateLocationsRoute.tsx')
+    ]),
   ]),
 
   layout('./common/layouts/AdminProtectedLayout.tsx', [
@@ -28,7 +31,7 @@ export default [
           route('updateCareTips', './features/admin/adminSpecies/routes/resources/UpdateSpeciesCareTipsRoute.tsx'),
           route('delete', './features/admin/adminSpecies/routes/resources/DeleteSpeciesRoute.tsx'),
         ]),
-        route('create', './features/admin/adminSpecies/routes/resources/CreateSpeciesRoute.tsx'),
+        route('create', './features/admin/adminSpecies/routes/CreateSpeciesRoute.tsx'),
       ])
     ])
   ]),

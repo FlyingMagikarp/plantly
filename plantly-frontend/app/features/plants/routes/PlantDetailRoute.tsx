@@ -1,4 +1,4 @@
-import type { Route } from "../../../../.react-router/types/app/features/myplants/routes/+types/MyplantsIndexRoute";
+import type { Route } from "../../../../.react-router/types/app/features/plants/routes/+types/PlantsIndexRoute";
 
 export async function loader({ params }: Route.LoaderArgs) {
   return null;
