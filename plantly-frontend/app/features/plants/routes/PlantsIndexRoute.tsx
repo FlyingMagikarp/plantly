@@ -19,7 +19,7 @@ export default function PlantsIndexRoute({loaderData} : Route.ComponentProps) {
   return (
     <div className='p-4 md:p-8 bg-background text-foreground'>
       <h1 className='text-2xl font-bold mb-4'>My Plants</h1>
-      <Link to='/myplants/create' className={'btn-primary'}>Add new</Link>
+      <Link to='/plants/create' className={'btn-primary'}>Add new</Link>
       <PlantIndexList plants={loaderData.plants} />
     </div>
   );
