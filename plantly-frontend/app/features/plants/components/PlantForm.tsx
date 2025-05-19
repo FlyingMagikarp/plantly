@@ -52,7 +52,7 @@ export default function PlantForm({plant, species, locations}:{plant: IPlantDtoD
 
   return (
     <div>
-      <fetcher.Form method={'POST'} action={`/plants/${plant.id}/updatePlant`}>
+      <fetcher.Form method={'POST'} action={`/plants/${plant.id}/update`}>
         <input hidden name={fields.id.name} defaultValue={fields.id.value} />
 
         <div>
@@ -71,10 +71,10 @@ export default function PlantForm({plant, species, locations}:{plant: IPlantDtoD
                 defaultValue={fields.speciesId.value}
                 className="border rounded p-2 ml-3"
             >
-              <option value={-1}>Select species</option>
+              <option value={-1} key={-1}>Select species</option>
               {species.map((s) => {
                   return (
-                      <option value={s.speciesId}>{s.latinName} - {s.commonName}</option>
+                      <option value={s.speciesId} key={s.speciesId}>{s.latinName} - {s.commonName}</option>
                   );
               }
               )}
@@ -93,10 +93,10 @@ export default function PlantForm({plant, species, locations}:{plant: IPlantDtoD
                 defaultValue={fields.locationId.value}
                 className="border rounded p-2 ml-3"
             >
-              <option value={-1}>Select location</option>
+              <option value={-1} key={-1}>Select location</option>
               {locations.map((l) => {
                     return (
-                        <option value={l.id}>{l.name}</option>
+                        <option value={l.id} key={l.id}>{l.name}</option>
                     );
                   }
               )}
