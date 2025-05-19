@@ -49,7 +49,7 @@ public class PlantService {
         plant.setSpecies(speciesRepository.findById(dto.getSpeciesId()).get());
         plant.setNickname(dto.getNickname());
         plant.setAcquired_at(dto.getAcquiredAt());
-        plant.setLocation(locationRepository.findByUserAndId(userId, dto.getLocationId())); //TODO
+        plant.setLocation(locationRepository.findByUserAndId(userId, dto.getLocationId()));
         plant.setNotes(dto.getNotes());
         plant.setRemoved(dto.isRemoved());
         plant.setDied(dto.isDied());

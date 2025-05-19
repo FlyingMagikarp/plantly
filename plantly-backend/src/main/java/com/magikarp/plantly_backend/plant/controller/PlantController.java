@@ -2,6 +2,7 @@ package com.magikarp.plantly_backend.plant.controller;
 
 import com.magikarp.plantly_backend.auth.AuthService;
 import com.magikarp.plantly_backend.plant.dto.PlantDto;
+import com.magikarp.plantly_backend.plant.dto.UpdatePlantRequestDto;
 import com.magikarp.plantly_backend.plant.mapper.PlantMapper;
 import com.magikarp.plantly_backend.plant.service.PlantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,9 @@ public class PlantController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> updatePlant(@RequestBody PlantDto dto){
+    public ResponseEntity<Object> updatePlant(@RequestBody UpdatePlantRequestDto updateRequest){
         UUID uuid = authService.getUUIDFromUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-        plantService.updatePlantFromDto(uuid, dto);
+        plantService.updatePlantFromDto(uuid, updateRequest.getPlantDto());
         return ResponseEntity.ok().build();
     }
 
