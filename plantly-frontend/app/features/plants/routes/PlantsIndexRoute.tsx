@@ -10,15 +10,13 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   return {plants: plants};
 }
-export async function action({ request }: Route.ActionArgs) {
-}
 
 
 export default function PlantsIndexRoute({loaderData} : Route.ComponentProps) {
 
   return (
     <div className='p-4 md:p-8 bg-background text-foreground'>
-      <h1 className='text-2xl font-bold mb-4'>My Plants</h1>
+      <h1 className='heading-xl mb-4'>My Plants</h1>
       <Link to='/plants/create' className={'btn-primary'}>Add new</Link>
       <div>
         <PlantIndexList plants={loaderData.plants} />

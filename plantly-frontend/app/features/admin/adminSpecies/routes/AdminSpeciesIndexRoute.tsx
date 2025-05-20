@@ -11,17 +11,16 @@ export async function loader({ request }: Route.LoaderArgs) {
   return {species: species};
 }
 
-export async function action({ request }: Route.ActionArgs) {
-}
-
 
 export default function AdminSpeciesIndexRoute({loaderData}: Route.ComponentProps) {
 
   return (
     <div className='p-4 md:p-8 bg-background text-foreground'>
-      <h1 className='text-2xl font-bold mb-4'>Admin Species</h1>
-      <Link to='/admin/species/create'>Add new</Link>
-      <AdminSpeciesList species={loaderData.species} />
+      <h1 className='heading-xl mb-4'>Admin Species</h1>
+      <Link to='/admin/species/create' className={'btn-primary'}>Add new</Link>
+      <div className={'mt-2'}>
+        <AdminSpeciesList species={loaderData.species} />
+      </div>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import {updateSpeciesNamesSchema} from "~/features/admin/adminSpecies/schemas/up
 import type {INameLcPair} from "~/common/types/apiTypes";
 import {updateSpeciesNames} from "~/features/admin/adminSpecies/adminSpecies.server";
 import {getTokenFromRequest} from "~/auth/utils";
-import {dataWithError, dataWithSuccess, redirectWithSuccess} from "remix-toast";
+import {dataWithError, redirectWithSuccess} from "remix-toast";
 
 export async function action({ params, request }: Route.ActionArgs) {
   const token = getTokenFromRequest(request);

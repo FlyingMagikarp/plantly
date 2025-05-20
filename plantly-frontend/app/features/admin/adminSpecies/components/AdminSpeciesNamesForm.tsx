@@ -35,17 +35,20 @@ export default function AdminSpeciesNamesForm({species, speciesTranslations}:{sp
   return (
       <div className={'flex flex-col gap-2'}>
         <fetcher.Form method={'POST'} action={`/admin/species/${species.speciesId}/updateNames`}>
-          <FormInput
+          <div>
+            <FormInput
               label={'Latin Name'}
               name={fields.latinName.name}
               defaultValue={fields.latinName.value}
               key={fields.latinName.key}
               errors={fields.latinName.errors}
-          />
+            />
+          </div>
+
           <div>
             <fieldset>
-              <span className={'font-semibold pt-2'}>Common Names</span>
-              <div>
+              <p className={'subheading'}>Common Names</p>
+              <div className={'w-1/2'}>
                 {commonNames.map((name, index) => {
                   const field = fields.commonNames.getFieldList()[index]?.getFieldset();
 
@@ -68,16 +71,21 @@ export default function AdminSpeciesNamesForm({species, speciesTranslations}:{sp
                   );
                 })}
               </div>
-              <button
+              <div className={'mt-2'}>
+                <button
                   type={'button'}
                   className={'btn-secondary'}
                   onClick={() => setCommonNames((prev) => [...prev, {name: '', lang: ''}])}
-              >
-                Add common name
-              </button>
+                >
+                  Add common name
+                </button>
+              </div>
+
             </fieldset>
           </div>
-          <button type={'submit'} className={'btn-primary'}>Save</button>
+          <div className={'mt-4'}>
+            <button type={'submit'} className={'btn-primary'}>Save</button>
+          </div>
         </fetcher.Form>
       </div>
   );
@@ -101,14 +109,14 @@ function FormInput({
                      errors,
                    }: IFormInput) {
   return (
-    <div className={'flex flex-row gap-1'}>
-            <span className={'font-semibold pt-1'}>
-              {label}
-            </span>
+    <div className={'flex flex-row gap-1 w-1/2'}>
+      <span className={'font-semibold pt-1 w-1/4'}>
+        {label}
+      </span>
       <input
           type="text"
           className={cn(
-              `p-2 px-2 input-field ${className}`,
+              `p-2 px-2 input-field w-3/4 ${className}`,
               errors ? 'border-red-400' : ''
           )}
           name={name}

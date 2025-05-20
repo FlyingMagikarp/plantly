@@ -8,8 +8,6 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 
   return {plant: plant};
 }
-export async function action({ request }: Route.ActionArgs) {
-}
 
 
 export default function PlantDetailRoute({loaderData}: Route.ComponentProps) {
@@ -17,7 +15,7 @@ export default function PlantDetailRoute({loaderData}: Route.ComponentProps) {
 
   return (
     <div className='p-4 md:p-8 bg-background text-foreground'>
-      <h1 className='text-2xl font-bold mb-4'>My Plants</h1>
+      <h1 className='heading-xl mb-4'>My Plants</h1>
       {loaderData.plant.id}
       {loaderData.plant.speciesLatinName}
     </div>

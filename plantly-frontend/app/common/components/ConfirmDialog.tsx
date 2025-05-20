@@ -31,14 +31,14 @@ export default function ConfirmDialog({children, title, description, action, okL
             {description}
           </AlertDialogContent>
         </div>
-        <div className={'flex justify-end'}>
+        <div className={'flex justify-end gap-1'}>
           <AlertDialogCancel className={'btn-secondary'}>
             {cancelLabel ?? 'Cancel'}
           </AlertDialogCancel>
           <AlertDialogAction
             className={'btn-primary'}
-            onClick={event => {
-              event.stopPropagation();
+            onClick={(e) => {
+              e.stopPropagation();
               action();
             }}
           >

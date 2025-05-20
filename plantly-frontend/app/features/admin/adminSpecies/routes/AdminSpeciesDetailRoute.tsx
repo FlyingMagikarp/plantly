@@ -22,14 +22,12 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     careTip: careTip,
   };
 }
-export async function action({ request }: Route.ActionArgs) {
-}
 
 
 export default function AdminSpeciesDetailRoute({loaderData}: Route.ComponentProps) {
   return (
     <div className='p-4 md:p-8 bg-background text-foreground'>
-      <h1 className='text-2xl font-bold mb-4'>{loaderData.speciesOverview.latinName}</h1>
+      <h1 className='heading-xl mb-4'>{loaderData.speciesOverview.latinName}</h1>
       <AdminSpeciesDetailView species={loaderData.speciesOverview} speciesTranslations={loaderData.speciesTranslations} careTip={loaderData.careTip} />
     </div>
   );
@@ -46,10 +44,10 @@ function AdminSpeciesDetailView({
 }) {
 
   return (
-      <div>
-        <AdminSpeciesNamesForm species={species} speciesTranslations={speciesTranslations} />
-        <Separator className={'mt-5 mb-5'} />
-        <AdminSpeciesCareTipForm species={species} careTip={careTip} />
-      </div>
+    <div>
+      <AdminSpeciesNamesForm species={species} speciesTranslations={speciesTranslations} />
+      <Separator className={'mt-5 mb-5'} />
+      <AdminSpeciesCareTipForm species={species} careTip={careTip} />
+    </div>
   );
 }

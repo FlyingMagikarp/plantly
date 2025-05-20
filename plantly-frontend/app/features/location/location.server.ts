@@ -36,13 +36,3 @@ export async function updateLocations(loc: ILocationDtoData[], token?: string):P
     body: JSON.stringify({locations: loc})
   })
 }
-
-export async function deleteLocation(locId: number, token?: string):Promise<Response>{
-  return await fetch(API_URL + `/sec/location/${locId}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    }
-  })
-}

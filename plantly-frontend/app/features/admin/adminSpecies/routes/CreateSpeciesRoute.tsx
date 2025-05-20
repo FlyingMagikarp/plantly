@@ -7,7 +7,7 @@ export default function CreateSpeciesRoute() {
 
   return (
     <div className='p-4 md:p-8 bg-background text-foreground'>
-      <h1 className='text-2xl font-bold mb-4'>Add new</h1>
+      <h1 className='heading-xl mb-4'>Add new</h1>
       <AdminSpeciesNamesForm species={species} speciesTranslations={[]} />
     </div>
   );

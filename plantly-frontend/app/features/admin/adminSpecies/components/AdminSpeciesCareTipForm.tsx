@@ -53,24 +53,8 @@ export default function AdminSpeciesCareTipForm({species, careTip}:{species: ISp
         <fetcher.Form method={'POST'} action={`/admin/species/${species.speciesId}/updateCareTips`}>
           <input hidden name={fields.id.name} defaultValue={fields.id.value} />
           <div>
-            <div>
-              <span className={'font-semibold pt-1'}>
-                Placement
-              </span>
-              <select
-                  name={fields.placement.name}
-                  defaultValue={fields.placement.value}
-                  className="border rounded p-2 ml-3"
-              >
-                <option value="">Select location</option>
-                <option value="sunny">Sunny</option>
-                <option value="semi_shade">Semi-shade</option>
-                <option value="shade">Shade</option>
-              </select>
-            </div>
-
-            <div>
-              <span className={'font-semibold pt-1'}>
+            <div className={'w-1/2'}>
+              <span className={'font-semibold pt-1 w-1/4'}>
                 Winter Hardy
               </span>
               <input
@@ -79,8 +63,24 @@ export default function AdminSpeciesCareTipForm({species, careTip}:{species: ISp
                 defaultChecked={fields.winterHardy.value === 'on'}
                 className="h-5 w-5 border rounded ml-3"
               />
-
             </div>
+
+            <div className={'flex flex-row w-1/2'}>
+              <span className={'font-semibold pt-1 w-1/4'}>
+                Placement
+              </span>
+              <select
+                  name={fields.placement.name}
+                  defaultValue={fields.placement.value}
+                  className="border rounded p-2 w-3/4"
+              >
+                <option value="">Select location</option>
+                <option value="sunny">Sunny</option>
+                <option value="semi_shade">Semi-shade</option>
+                <option value="shade">Shade</option>
+              </select>
+            </div>
+
             <FormInput
                 label={'Optimal Temp Min C°'}
                 name={fields.optimalTempMinC.name}

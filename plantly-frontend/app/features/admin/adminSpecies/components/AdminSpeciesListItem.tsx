@@ -1,6 +1,8 @@
 import type { ISpeciesOverviewDtoData } from "~/common/types/apiTypes";
 import { Table } from "@radix-ui/themes";
 import { useNavigate } from "react-router";
+import ConfirmDialog from "~/common/components/ConfirmDialog";
+import { Trash } from "lucide-react";
 
 interface IAdminSpeciesListItemProps {
   species: ISpeciesOverviewDtoData
@@ -18,20 +20,24 @@ export default function AdminSpeciesListItem({species}: IAdminSpeciesListItemPro
   }
 
   return (
-    <Table.Row onClick={() => handleClick(species.speciesId)} key={species.speciesId}>
+    <Table.Row onClick={() => handleClick(species.speciesId)} key={species.speciesId} className={'hover:bg-[var(--color-muted)]'}>
       <Table.Cell>{species.speciesId}</Table.Cell>
       <Table.Cell>{species.latinName}</Table.Cell>
       <Table.Cell>{species.commonName}</Table.Cell>
       <Table.Cell>
-        <button
-          className="btn-primary mb-1"
-          onClick={(e) => {
-            e.stopPropagation();
+        <ConfirmDialog
+          title={'Remove Species?'}
+          description={'Are you sure?'}
+          okLabel={'Delete'}
+          cancelLabel={'Cancel'}
+          action={() => {
             handleDelete(species.speciesId);
           }}
         >
-          X
-        </button>
+          <button onClick={(e) => e.stopPropagation()}>
+            <Trash className={'text-[var(--color-fg-muted)] hover:text-red-600 transition-colors'}/>
+          </button>
+        </ConfirmDialog>
       </Table.Cell>
     </Table.Row>
   );
