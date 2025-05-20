@@ -48,11 +48,4 @@ public class LocationController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("{locId}")
-    public ResponseEntity<Object> deleteLocation(@PathVariable Integer locId) throws LocationInUseException {
-        UUID uuid = authService.getUUIDFromUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-        locationService.deleteLocation(uuid, locId);
-        return ResponseEntity.ok().build();
-    }
-
 }
