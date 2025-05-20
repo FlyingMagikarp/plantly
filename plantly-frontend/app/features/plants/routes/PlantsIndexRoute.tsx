@@ -1,6 +1,6 @@
 import type { Route } from "../../../../.react-router/types/app/features/plants/routes/+types/PlantsIndexRoute";
 import {Link} from "react-router";
-import { getPlants } from "~/features/plants/myPlants.server";
+import { getPlants } from "~/features/plants/plants.server";
 import { getTokenFromRequest } from "~/auth/utils";
 import PlantIndexList from "~/features/plants/components/PlantIndexList";
 

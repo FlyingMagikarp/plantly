@@ -4,7 +4,7 @@ import {parseWithZod} from "@conform-to/zod";
 import {dataWithError, dataWithSuccess} from "remix-toast";
 import {updatePlantSchema} from "~/features/plants/schemas/updatePlantSchema";
 import type { IPlantDtoData } from "~/common/types/apiTypes";
-import { updatePlant } from "~/features/plants/myPlants.server";
+import { updatePlant } from "~/features/plants/plants.server";
 
 export async function action({params, request}: Route.ActionArgs) {
   const token = getTokenFromRequest(request);

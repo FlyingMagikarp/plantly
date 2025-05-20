@@ -1,5 +1,5 @@
 import type { Route } from "../../../../.react-router/types/app/features/plants/routes/+types/PlantDetailRoute";
-import { getPlant } from "~/features/plants/myPlants.server";
+import { getPlant } from "~/features/plants/plants.server";
 import { getTokenFromRequest } from "~/auth/utils";
 
 export async function loader({ params, request }: Route.LoaderArgs) {

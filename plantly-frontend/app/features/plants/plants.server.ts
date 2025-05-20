@@ -22,7 +22,7 @@ export async function getPlant(plantId: number, token?: string):Promise<IPlantDt
       Authorization: `Bearer ${token}`,
     },
   }) ;
-console.log(response);
+
   return await response.json() as IPlantDtoData;
 }
 

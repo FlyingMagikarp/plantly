@@ -5,6 +5,8 @@ import {useForm} from "@conform-to/react";
 import {parseWithZod} from "@conform-to/zod";
 import {useState} from "react";
 import {updateLocationSchema} from "~/features/location/schemas/updateLocationSchema";
+import { Trash } from "lucide-react";
+import ConfirmDialog from "~/common/components/ConfirmDialog";
 
 
 export default function LocationsForm({locs}:{locs: ILocationDtoData[]}) {
@@ -41,7 +43,7 @@ export default function LocationsForm({locs}:{locs: ILocationDtoData[]}) {
                   const field = fields.locations.getFieldList()[index]?.getFieldset();
 
                   return (
-                      <div key={index} className={'flex gap-2'}>
+                      <div key={index} className={'flex gap-4 space-y-4'}>
                         <input name={`locations[${index}].id`} defaultValue={loc.id} hidden/>
                         <FormInput
                             label={'Name'}
@@ -64,22 +66,35 @@ export default function LocationsForm({locs}:{locs: ILocationDtoData[]}) {
                               setLocations((prev) => prev.filter((_, i) => i !== index));
                             }}
                         >
-                          X
+
                         </button>
+                        <ConfirmDialog
+                          title={'Remove Location'}
+                          description={'Are you sure?'}
+                          okLabel={'Confirm'}
+                          cancelLabel={'Cancel'}
+                          action={() => {
+                            setLocations((prev) => prev.filter((_, i) => i !== index));
+                          }}
+                        >
+                          <Trash className={'text-[var(--color-fg-muted)] hover:text-red-600 transition-colors'}/>
+                        </ConfirmDialog>
                       </div>
                   );
                 })}
               </div>
               <button
-                  type={'button'}
-                  className={'btn-secondary'}
-                  onClick={() => setLocations((prev) => [...prev, {id: -1, name: '', description: ''}])}
+                type={'button'}
+                className={'btn-secondary'}
+                onClick={() => setLocations((prev) => [...prev, {id: -1, name: '', description: ''}])}
               >
                 Add Location
               </button>
             </fieldset>
           </div>
-          <button type={'submit'} className={'btn-primary'}>Save</button>
+          <div className={'mt-4'}>
+            <button type={'submit'} className={'btn-primary'}>Save</button>
+          </div>
         </fetcher.Form>
       </div>
   );
