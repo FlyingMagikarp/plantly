@@ -15,7 +15,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,7 +39,7 @@ public class Plant {
     private Species species;
 
     private String nickname;
-    private LocalDateTime acquired_at;
+    private LocalDate acquired_at;
 
     @ManyToOne
     @JoinColumn(name="location_id", referencedColumnName = "id")
@@ -49,6 +50,6 @@ public class Plant {
     private boolean removed;
     private boolean died;
     private String inactiveReason;
-    private LocalDateTime inactiveDate;
+    private LocalDate inactiveDate;
     private Integer checkFreq;
 }

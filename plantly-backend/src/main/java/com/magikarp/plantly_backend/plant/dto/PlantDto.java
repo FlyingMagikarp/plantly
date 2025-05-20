@@ -3,7 +3,7 @@ package com.magikarp.plantly_backend.plant.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -12,13 +12,13 @@ public class PlantDto {
     private int speciesId;
     private String speciesLatinName;
     private String nickname;
-    private LocalDateTime acquiredAt;
+    private LocalDate acquiredAt;
     private Integer locationId;
     private String locationName;
     private String notes;
     private boolean removed;
     private boolean died;
     private String inactiveReason;
-    private LocalDateTime inactiveDate;
+    private LocalDate inactiveDate;
     private Integer checkFreq;
 }
