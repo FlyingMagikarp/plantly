@@ -1,17 +1,17 @@
-// components/DatePicker.tsx
 import * as Popover from "@radix-ui/react-popover";
 import { DayPicker} from "react-day-picker";
 import { format } from "date-fns";
 import "react-day-picker/dist/style.css";
 import { useState } from "react";
+import { formatDateToISO, parseDateFromISO } from "~/common/utils/dateUtil";
 
-export function DatePicker({initDate, onChange}: { initDate: Date, onChange: (date: Date) => void}) {
-  const [date, setDate] = useState<Date>(initDate);
+export function DatePicker({initDate, onChange}: { initDate: string, onChange: (date: string) => void}) {
+  const [date, setDate] = useState<Date>(parseDateFromISO(initDate));
   const [open, setOpen] = useState(false);
 
   const handleDateChange = (date: Date) => {
     setDate(date);
-    onChange(date);
+    onChange(formatDateToISO(date));
     setOpen(false);
   }
 
@@ -35,6 +35,7 @@ export function DatePicker({initDate, onChange}: { initDate: Date, onChange: (da
                 required={true}
                 selected={date}
                 onSelect={handleDateChange}
+
                 styles={{
                   head_cell: { color: "var(--color-accent-dark)" },
                   day_selected: {

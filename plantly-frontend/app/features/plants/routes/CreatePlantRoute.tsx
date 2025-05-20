@@ -4,6 +4,7 @@ import type {IPlantDtoData} from "~/common/types/apiTypes";
 import {getTokenFromRequest} from "~/auth/utils";
 import {getAllSpecies} from "~/features/admin/adminSpecies/adminSpecies.server";
 import {getLocations} from "~/features/location/location.server";
+import { formatDateToISO } from "~/common/utils/dateUtil";
 
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -20,8 +21,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function CreatePlantRoute({loaderData}: Route.ComponentProps) {
   const plant = initEmptyPlantObject();
   return (
-    <div>
-      NEW
+    <div className='p-4 md:p-8 bg-background text-foreground'>
+      <h1 className='heading-xl mb-4'>Add New Plant</h1>
       <PlantForm plant={plant} species={loaderData.species} locations={loaderData.locations}/>
     </div>
   );
@@ -33,14 +34,14 @@ function initEmptyPlantObject() {
     speciesId: -1,
     speciesLatinName: '',
     nickname: '',
-    acquiredAt: new Date(),
+    acquiredAt: formatDateToISO(new Date()),
     locationId: -1,
     locationName: '',
     notes: '',
     removed: false,
     died: false,
     inactiveReason: '',
-    inactiveDate: new Date(),
+    inactiveDate: formatDateToISO(new Date()),
     checkFreq: 7,
   }
 

@@ -1,4 +1,4 @@
-import type {IPlantDtoData} from "~/common/types/apiTypes";
+import type { IPlantDtoData } from "~/common/types/apiTypes";
 import {API_URL} from "~/common/constants/constants";
 
 

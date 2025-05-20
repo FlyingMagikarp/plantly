@@ -7,7 +7,6 @@ export default function PlantItem({plant}:{plant: IPlantDtoData}){
       <Link className={'card w-full max-w-sm'} to={`/plants/${plant.id}`}>
         <h2 className={'heading-lg'}>{plant.nickname}</h2>
         <p className={'subheading italic'}>{plant.speciesLatinName}</p>
-        <p className={'body-text mb-2'}>{plant.speciesLatinName}</p>
         <p className={'caption'}>{plant.locationName}</p>
       </Link>
   );

@@ -13,11 +13,11 @@ export default function PlantForm({plant, species, locations}:{plant: IPlantDtoD
   const [inactiveDate, setInactiveDate] = useState(plant.inactiveDate);
   const [isRemoved, setIsRemoved] = useState(plant.removed);
 
-  const updateAcquiredDate = (date: Date) => {
+  const updateAcquiredDate = (date: string) => {
     setAcquiredDate(date);
   }
 
-  const updateInactiveDate = (date: Date) => {
+  const updateInactiveDate = (date: string) => {
     setInactiveDate(date);
   }
 
@@ -55,7 +55,7 @@ export default function PlantForm({plant, species, locations}:{plant: IPlantDtoD
       <fetcher.Form method={'POST'} action={`/plants/${plant.id}/update`}>
         <input hidden name={fields.id.name} defaultValue={fields.id.value} />
 
-        <div>
+        <div className={'flex flex-col gap-2'}>
           <FormInput
             label={'Nickname'}
             name={fields.nickname.name}
@@ -64,12 +64,12 @@ export default function PlantForm({plant, species, locations}:{plant: IPlantDtoD
             errors={fields.nickname.errors}
           />
 
-          <div>
-            <span>Species</span>
+          <div className={'flex flex-row gap-1 w-1/2'}>
+            <span className={'font-semibold pt-1 w-1/4'}>Species</span>
             <select
                 name={fields.speciesId.name}
                 defaultValue={fields.speciesId.value}
-                className="border rounded p-2 ml-3"
+                className="border rounded p-2"
             >
               <option value={-1} key={-1}>Select species</option>
               {species.map((s) => {
@@ -81,17 +81,18 @@ export default function PlantForm({plant, species, locations}:{plant: IPlantDtoD
             </select>
           </div>
 
-          <div>
-            <input hidden name={fields.acquiredAt.name} defaultValue={acquiredDate.toISOString().slice(0,19)} />
+          <div className={'flex flex-row gap-1 w-1/2'}>
+            <input hidden readOnly={true} name={fields.acquiredAt.name} value={acquiredDate} />
+            <span className={'font-semibold pt-1 w-1/4'}>Acquired Date</span>
             <DatePicker initDate={acquiredDate} onChange={updateAcquiredDate} />
           </div>
 
-          <div>
-            <span>Location</span>
+          <div className={'flex flex-row gap-1 w-1/2'}>
+            <span className={'font-semibold pt-1 w-1/4'}>Location</span>
             <select
                 name={fields.locationId.name}
                 defaultValue={fields.locationId.value}
-                className="border rounded p-2 ml-3"
+                className="border rounded p-2 w-1/4"
             >
               <option value={-1} key={-1}>Select location</option>
               {locations.map((l) => {
@@ -122,7 +123,7 @@ export default function PlantForm({plant, species, locations}:{plant: IPlantDtoD
 
 
           <div>
-            <span>Removed</span>
+            <span className={'font-semibold pt-1 w-1/4'}>Removed</span>
             <input
               type={'checkbox'}
               name={fields.removed.name}
@@ -134,12 +135,13 @@ export default function PlantForm({plant, species, locations}:{plant: IPlantDtoD
 
           {isRemoved && (
               <div>
-                <div>
-                  <input hidden name={fields.inactiveDate.name} defaultValue={inactiveDate.toISOString().slice(0,19)} />
+                <div className={'flex flex-row gap-1 w-1/2'}>
+                  <span className={'font-semibold pt-1 w-1/4'}>Removed Date</span>
+                  <input hidden readOnly={true} name={fields.inactiveDate.name} value={inactiveDate} />
                   <DatePicker initDate={inactiveDate} onChange={updateInactiveDate} />
                 </div>
                 <div>
-                  <span>Died</span>
+                  <span className={'font-semibold pt-1 w-1/4'}>Died</span>
                   <input
                       type={'checkbox'}
                       name={fields.died.name}

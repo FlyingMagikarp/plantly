@@ -5,6 +5,7 @@ import {dataWithError, dataWithSuccess} from "remix-toast";
 import {updatePlantSchema} from "~/features/plants/schemas/updatePlantSchema";
 import type { IPlantDtoData } from "~/common/types/apiTypes";
 import { updatePlant } from "~/features/plants/plants.server";
+import { formatDateToISO } from "~/common/utils/dateUtil";
 
 export async function action({params, request}: Route.ActionArgs) {
   const token = getTokenFromRequest(request);
@@ -25,18 +26,17 @@ export async function action({params, request}: Route.ActionArgs) {
     speciesId: data.speciesId,
     speciesLatinName: '',
     nickname: data.nickname ?? '',
-    acquiredAt: data.acquiredAt ?? new Date(),
+    acquiredAt: data.acquiredAt ? formatDateToISO(data.acquiredAt) : formatDateToISO(new Date()),
     locationId: data.locationId,
     locationName: '',
     notes: data.notes ?? '',
     removed: !!data.removed,
     died: !!data.died,
     inactiveReason: data.inactiveReason ?? '',
-    inactiveDate: data.inactiveDate ?? new Date(),
+    inactiveDate: data.inactiveDate ? formatDateToISO(data.inactiveDate) : formatDateToISO(new Date()),
     checkFreq: data.checkFreq
   }
-
-  console.log(plant.acquiredAt);
+  console.log(plant);
 
   try {
     await updatePlant(plant, token);
