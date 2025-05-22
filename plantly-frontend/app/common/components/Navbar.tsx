@@ -111,7 +111,6 @@ export default function Navbar() {
 
 function NavLinks({onLinkClick, isExpanded, isAdmin}: {
   onLinkClick?: () => void; isExpanded?: boolean; isAdmin?: boolean }) {
-  //const linkClasses = "flex items-center gap-4 p-2 my-2 text-gray-700 hover:bg-theme-accent-hover rounded-md transition-colors duration-200";
   let linkClasses =
     "flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-theme hover:bg-[var(--color-secondary-bg)] hover:text-[var(--color-accent)]";
 
@@ -123,6 +122,7 @@ function NavLinks({onLinkClick, isExpanded, isAdmin}: {
   if (!isAdmin) {
     links.push(
       { to: "/plants", label: "My Plants", icon: "🪴" },
+      { to: "/catalog", label: "Catalog", icon: "🏠" },
       { to: "/locations", label: "Locations", icon: "🏠" },
     )
   }

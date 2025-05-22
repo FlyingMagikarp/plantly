@@ -22,6 +22,13 @@ export default [
       index('./features/location/routes/LocationIndexRoute.tsx'),
       route('updateLocations', './features/location/routes/resources/UpdateLocationsRoute.tsx')
     ]),
+
+    ...prefix('catalog', [
+      index('./features/catalog/routes/CatalogIndexRoute.tsx'),
+      ...prefix(':speciesId', [
+        index('./features/catalog/routes/CatalogDetailRoute.tsx'),
+      ])
+    ])
   ]),
 
   layout('./common/layouts/AdminProtectedLayout.tsx', [

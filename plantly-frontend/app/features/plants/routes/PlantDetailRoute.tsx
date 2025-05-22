@@ -25,8 +25,6 @@ export default function PlantDetailRoute({loaderData}: Route.ComponentProps) {
   return (
     <div className='p-4 md:p-8 bg-background text-foreground'>
       <h1 className='heading-xl mb-4'>{loaderData.plant.nickname}</h1>
-      {loaderData.plant.id}
-      {loaderData.plant.speciesLatinName}
       <PlantForm plant={loaderData.plant} species={loaderData.species} locations={loaderData.locations} />
     </div>
   );
