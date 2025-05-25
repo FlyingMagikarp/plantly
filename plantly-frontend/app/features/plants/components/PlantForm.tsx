@@ -1,5 +1,5 @@
 import type {ILocationDtoData, IPlantDtoData, ISpeciesOverviewDtoData} from "~/common/types/apiTypes";
-import {useFetcher} from "react-router";
+import { Link, useFetcher } from "react-router";
 import {useForm} from "@conform-to/react";
 import {parseWithZod} from "@conform-to/zod";
 import {updatePlantSchema} from "~/features/plants/schemas/updatePlantSchema";
@@ -161,8 +161,12 @@ export default function PlantForm({plant, species, locations}:{plant: IPlantDtoD
           )}
 
         </div>
-
-        <button type={'submit'} className={'btn-primary'}>Save</button>
+        <div className={'flex flex-row gap-2'}>
+          <button type={'submit'} className={'btn-primary'}>Save</button>
+          <Link to={`delete`} className={'btn-delete'}>
+            Remove
+          </Link>
+        </div>
       </fetcher.Form>
     </div>
   );

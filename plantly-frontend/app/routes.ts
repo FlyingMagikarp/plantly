@@ -15,6 +15,7 @@ export default [
         route('create', './features/plants/routes/CreatePlantRoute.tsx'),
         ...prefix(':plantId', [
           index('./features/plants/routes/PlantDetailRoute.tsx'),
+          route('edit', './features/plants/routes/EditPlantRoute.tsx'),
           route('update', './features/plants/routes/resources/UpdatePlantRoute.tsx'),
         ])
     ]),

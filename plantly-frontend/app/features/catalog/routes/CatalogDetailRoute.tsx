@@ -27,18 +27,14 @@ export default function CatalogDetailRoute({loaderData}: Route.ComponentProps) {
   return (
     <div className='p-4 md:p-8 bg-background text-foreground'>
       <h1 className='heading-xl mb-4'>{loaderData.speciesOverview.latinName}</h1>
-      <CatalogDetailView species={loaderData.speciesOverview} speciesTranslations={loaderData.speciesTranslations} careTip={loaderData.careTip}/>
+      <CatalogDetailView careTip={loaderData.careTip}/>
     </div>
   );
 }
 
-function CatalogDetailView({
-  species,
-  speciesTranslations,
+export function CatalogDetailView({
   careTip
 } : {
-  species: ISpeciesDtoData,
-  speciesTranslations: ISpeciesOverviewDtoData[],
   careTip: ICareTipDtoData
 }) {
   return (
