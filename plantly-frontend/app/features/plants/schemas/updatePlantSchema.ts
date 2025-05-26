@@ -17,7 +17,7 @@ export const updatePlantSchema = z.object({
     },
     z.date().optional()
   ),
-  locationId: z.number({message: DEFAULT_VALIDATION_REQUIRED}),
+  locationId: z.number({message: DEFAULT_VALIDATION_REQUIRED}).min(0),
   notes: z.string().trim().optional(),
   removed: z.boolean().optional(),
   died: z.boolean().optional(),

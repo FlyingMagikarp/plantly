@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useCallback, useEffect } from 'react';
+import { createContext, useState, useContext, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type { User, AuthContextType, LoginCredentials, RegisterData } from '~/common/types/auth';
 import { API_URL, USER_ROLE_ADMIN } from "~/common/constants/constants";

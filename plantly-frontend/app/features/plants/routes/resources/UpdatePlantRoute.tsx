@@ -1,13 +1,13 @@
 import type { Route } from "../resources/+types/UpdatePlantRoute";
 import {getTokenFromRequest} from "~/auth/utils";
 import {parseWithZod} from "@conform-to/zod";
-import {dataWithError, dataWithSuccess} from "remix-toast";
+import { dataWithError, dataWithSuccess, redirectWithSuccess } from "remix-toast";
 import {updatePlantSchema} from "~/features/plants/schemas/updatePlantSchema";
 import type { IPlantDtoData } from "~/common/types/apiTypes";
 import { updatePlant } from "~/features/plants/plants.server";
 import { formatDateToISO } from "~/common/utils/dateUtil";
 
-export async function action({params, request}: Route.ActionArgs) {
+export async function action({request}: Route.ActionArgs) {
   const token = getTokenFromRequest(request);
   const formData = await request.formData();
 
@@ -16,7 +16,6 @@ export async function action({params, request}: Route.ActionArgs) {
   });
 
   if (submission.status !== 'success') {
-    console.log(submission.reply());
     return submission.reply();
   }
 
@@ -36,10 +35,12 @@ export async function action({params, request}: Route.ActionArgs) {
     inactiveDate: data.inactiveDate ? formatDateToISO(data.inactiveDate) : formatDateToISO(new Date()),
     checkFreq: data.checkFreq
   }
-  console.log(plant);
 
   try {
     await updatePlant(plant, token);
+    if (parseInt(data.id) === -1){
+      return redirectWithSuccess('/plants', 'Data saved!')
+    }
     return dataWithSuccess({ok:true}, 'Data saved!');
   } catch (error) {
     console.log(error);

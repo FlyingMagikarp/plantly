@@ -6,6 +6,7 @@ import {updatePlantSchema} from "~/features/plants/schemas/updatePlantSchema";
 import {cn} from "~/common/utils/styleUtil";
 import {DatePicker} from "~/common/components/DatePicker";
 import {useState} from "react";
+import ConfirmDialog from "~/common/components/ConfirmDialog";
 
 export default function PlantForm({plant, species, locations}:{plant: IPlantDtoData, species: ISpeciesOverviewDtoData[], locations: ILocationDtoData[]}){
   const fetcher = useFetcher();
@@ -163,9 +164,21 @@ export default function PlantForm({plant, species, locations}:{plant: IPlantDtoD
         </div>
         <div className={'flex flex-row gap-2'}>
           <button type={'submit'} className={'btn-primary'}>Save</button>
-          <Link to={`delete`} className={'btn-delete'}>
-            Remove
-          </Link>
+          {plant.id >= 0 &&
+            <ConfirmDialog
+              title={'Delete plant?'}
+              description={'Are you sure?'}
+              okLabel={'Delete'}
+              cancelLabel={'Cancel'}
+              action={() => {
+                fetch(`/plants/${plant.id}/delete`, {method: 'POST'});
+              }}
+            >
+              <button className={'btn-delete'}>
+                Delete
+              </button>
+            </ConfirmDialog>
+          }
         </div>
       </fetcher.Form>
     </div>
