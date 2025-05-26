@@ -20,6 +20,21 @@ export default [
           route('delete', './features/plants/routes/resources/DeletePlantRoute.tsx'),
         ])
     ]),
+
+    ...prefix('care', [
+      ...prefix(':plantId', [
+        index('./features/careLog/routes/CareLogIndexRoute.tsx'),
+        route('add', './features/careLog/routes/AddCareLogRoute.tsx'),
+        ...prefix(':careLogId',[
+          index('./features/careLog/routes/CareLogDetailRoute.tsx'),
+            route('update', './features/careLog/routes/resources/UpdateCareLogRoute.tsx'),
+            route('delete', './features/careLog/routes/resources/DeleteCareLogRoute.tsx'),
+        ])
+      ])
+
+
+    ]),
+
     ...prefix('locations', [
       index('./features/location/routes/LocationIndexRoute.tsx'),
       route('updateLocations', './features/location/routes/resources/UpdateLocationsRoute.tsx')

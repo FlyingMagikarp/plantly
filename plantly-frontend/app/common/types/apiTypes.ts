@@ -1,3 +1,5 @@
+import type {PlacementType, EventType} from '~/common/types/enums'
+
 export interface ISpeciesOverviewDtoData {
   speciesId: number;
   commonName: string;
@@ -13,7 +15,7 @@ export interface ISpeciesDtoData {
 export interface ICareTipDtoData {
   id: number;
   species: ISpeciesDtoData;
-  placement: 'sunny' | 'semi_shade' | 'shade';
+  placement: PlacementType;
   winterHardy: boolean;
   optimalTempMinC: number;
   optimalTempMaxC: number;
@@ -63,4 +65,15 @@ export interface ILocationDtoData {
   id: number;
   name: string;
   description: string;
+}
+
+export interface ICareLogDtoData {
+  id: number;
+  plantId: number;
+  plantNickname: string;
+  plantSpecies: string;
+  plantLocation: string;
+  eventType: EventType;
+  eventDate: string;
+  notes: string;
 }

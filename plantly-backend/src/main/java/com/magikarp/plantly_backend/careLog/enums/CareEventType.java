@@ -6,5 +6,8 @@ public enum CareEventType {
     pruning,
     repotting,
     wiring,
-    checking
+    checking,
+    acquired,
+    removed,
+    other
 }

@@ -1,5 +1,8 @@
 package com.magikarp.plantly_backend.plant.service;
 
+import com.magikarp.plantly_backend.careLog.enums.CareEventType;
+import com.magikarp.plantly_backend.careLog.model.CareLog;
+import com.magikarp.plantly_backend.careLog.repository.CareLogRepository;
 import com.magikarp.plantly_backend.location.repository.LocationRepository;
 import com.magikarp.plantly_backend.plant.dto.PlantDto;
 import com.magikarp.plantly_backend.plant.model.Plant;
@@ -10,6 +13,7 @@ import com.magikarp.plantly_backend.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,7 +26,10 @@ public class PlantService {
     private UserRepository userRepository;
     @Autowired
     private SpeciesRepository speciesRepository;
-    @Autowired private LocationRepository locationRepository;
+    @Autowired
+    private LocationRepository locationRepository;
+    @Autowired
+    private CareLogRepository careLogRepository;
 
     public List<Plant> getAllPlants(UUID userId) {
         return plantRepository.findPlantsByUserId(userId);
@@ -51,6 +58,17 @@ public class PlantService {
         plant.setAcquired_at(dto.getAcquiredAt());
         plant.setLocation(locationRepository.findByUserAndId(userId, dto.getLocationId()));
         plant.setNotes(dto.getNotes());
+
+        if (dto.isRemoved() && !plant.isRemoved()){
+            CareLog cl = new CareLog();
+            cl.setEventDate(LocalDate.now());
+            cl.setPlant(plant);
+            cl.setEventType(CareEventType.removed);
+            cl.setNotes("Plant removed");
+
+            careLogRepository.save(cl);
+        }
+
         plant.setRemoved(dto.isRemoved());
         plant.setDied(dto.isDied());
         plant.setInactiveReason(dto.getInactiveReason());
@@ -58,5 +76,16 @@ public class PlantService {
         plant.setCheckFreq(dto.getCheckFreq());
 
         plantRepository.save(plant);
+
+        if (dto.getId() < 1){
+            CareLog cl = new CareLog();
+            cl.setEventDate(dto.getAcquiredAt());
+            cl.setPlant(plant);
+            cl.setEventType(CareEventType.acquired);
+            cl.setNotes("Plant acquired");
+
+            careLogRepository.save(cl);
+        }
+
     }
 }

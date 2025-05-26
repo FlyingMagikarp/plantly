@@ -7,7 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,6 +30,6 @@ public class CareLog {
     @Column(name = "event_type", columnDefinition = "care_event_type", nullable = false)
     private CareEventType eventType;
 
-    private LocalDateTime eventDate;
+    private LocalDate eventDate;
     private String notes;
 }

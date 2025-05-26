@@ -6,15 +6,21 @@ import { Link } from "react-router";
 import { CatalogDetailView } from "~/features/catalog/routes/CatalogDetailRoute";
 import type { IPlantDtoData } from "~/common/types/apiTypes";
 import { Fragment } from "react";
+import {getCareLogs, getDaysSinceLastCare} from "~/features/careLog/careLog.server";
+import CareLogTable from "~/features/careLog/components/CareLogTable";
 
 export async function loader({ params, request }: Route.LoaderArgs) {
   const token = getTokenFromRequest(request);
   const plant = await getPlant(parseInt(params.plantId), token);
   const careTip = await getSpeciesCareTip(plant.speciesId, token)
+  const careLogs = await getCareLogs(parseInt(params.plantId), token, 0, 5);
+  const daysSinceCare = await getDaysSinceLastCare(parseInt(params.plantId), token);
 
   return {
     plant: plant,
     careTip: careTip,
+    careLogs: careLogs,
+    daysSinceCare: daysSinceCare,
   };
 }
 
@@ -28,14 +34,21 @@ export default function PlantDetailRoute({loaderData}: Route.ComponentProps) {
         <Link to={`edit`} className={'btn-primary'}>
           Edit Plant
         </Link>
+        <Link to={`/care/${loaderData.plant.id}/add`} className={'btn-primary'}>
+          Add Care Log
+        </Link>
       </div>
 
       <div className={'pt-4'}>
         <div>
           <h2 className={'heading-lg'}>Plant Details</h2>
-          <PlantDetailView plant={loaderData.plant} />
+          <PlantDetailView plant={loaderData.plant} daysSinceCare={loaderData.daysSinceCare}/>
         </div>
-        <div>
+        <div className={'pt-4'}>
+          <h2 className={'heading-lg'}>Care Log</h2>
+          <CareLogTable careLogs={loaderData.careLogs} />
+        </div>
+        <div className={'pt-4'}>
           <h2 className={'heading-lg'}>Care Tips</h2>
           <CatalogDetailView careTip={loaderData.careTip} />
         </div>
@@ -44,10 +57,11 @@ export default function PlantDetailRoute({loaderData}: Route.ComponentProps) {
   );
 }
 
-function PlantDetailView({plant}: {plant: IPlantDtoData}){
+function PlantDetailView({plant, daysSinceCare}: {plant: IPlantDtoData, daysSinceCare: number}){
   const items = [
     { label: 'Nickname', data: plant.nickname},
     { label: 'Species', data: plant.speciesLatinName},
+    { label: 'Days since last Care', data: daysSinceCare},
     { label: 'Acquired', data: plant.acquiredAt},
     { label: 'Location', data: plant.locationName},
     { label: 'Check Frequency', data: plant.checkFreq},
