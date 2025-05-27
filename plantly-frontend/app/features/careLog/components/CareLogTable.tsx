@@ -18,6 +18,7 @@ export default function CareLogTable({careLogs}: {careLogs: ICareLogDtoData[]}) 
               <Table.ColumnHeaderCell>Date</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Type</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Notes</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>&nbsp;</Table.ColumnHeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>

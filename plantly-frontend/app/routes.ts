@@ -1,4 +1,4 @@
-import { type RouteConfig, index, route, layout, prefix } from "@react-router/dev/routes";
+import {index, layout, prefix, route, type RouteConfig} from "@react-router/dev/routes";
 
 export default [
   index('index.tsx'),
@@ -11,24 +11,23 @@ export default [
   layout('./common/layouts/ProtectedLayout.tsx', [
     route('overview', './features/overview/routes/OverviewIndexRoute.tsx'),
     ...prefix('plants', [
-        index('./features/plants/routes/PlantsIndexRoute.tsx'),
-        route('create', './features/plants/routes/CreatePlantRoute.tsx'),
-        ...prefix(':plantId', [
-          index('./features/plants/routes/PlantDetailRoute.tsx'),
-          route('edit', './features/plants/routes/EditPlantRoute.tsx'),
-          route('update', './features/plants/routes/resources/UpdatePlantRoute.tsx'),
-          route('delete', './features/plants/routes/resources/DeletePlantRoute.tsx'),
-        ])
+      index('./features/plants/routes/PlantsIndexRoute.tsx'),
+      route('create', './features/plants/routes/CreatePlantRoute.tsx'),
+      ...prefix(':plantId', [
+        index('./features/plants/routes/PlantDetailRoute.tsx'),
+        route('edit', './features/plants/routes/EditPlantRoute.tsx'),
+        route('update', './features/plants/routes/resources/UpdatePlantRoute.tsx'),
+        route('delete', './features/plants/routes/resources/DeletePlantRoute.tsx'),
+      ])
     ]),
 
     ...prefix('care', [
       ...prefix(':plantId', [
         index('./features/careLog/routes/CareLogIndexRoute.tsx'),
         route('add', './features/careLog/routes/AddCareLogRoute.tsx'),
-        ...prefix(':careLogId',[
+        ...prefix(':careLogId', [
           index('./features/careLog/routes/CareLogDetailRoute.tsx'),
-            route('update', './features/careLog/routes/resources/UpdateCareLogRoute.tsx'),
-            route('delete', './features/careLog/routes/resources/DeleteCareLogRoute.tsx'),
+          route('delete', './features/careLog/routes/resources/DeleteCareLogRoute.tsx'),
         ])
       ])
 

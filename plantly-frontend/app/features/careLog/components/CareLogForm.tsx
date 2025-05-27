@@ -2,13 +2,14 @@ import type {ICareLogDtoData} from "~/common/types/apiTypes";
 import {DatePicker} from "~/common/components/DatePicker";
 import {useForm} from "@conform-to/react";
 import {parseWithZod} from "@conform-to/zod";
-import { updateCareLogSchema } from "../schmas/updateCareLogSchema";
-import { useFetcher } from "react-router";
+import {updateCareLogSchema} from "../schmas/updateCareLogSchema";
+import {useFetcher} from "react-router";
 import {useState} from "react";
 import {cn} from "~/common/utils/styleUtil";
+import type {EventType} from "~/common/types/enums";
 
 
-export default function CareLogForm({careLog, plantId}: {careLog: ICareLogDtoData, plantId: number}){
+export default function CareLogForm({careLog, plantId}: { careLog: ICareLogDtoData, plantId: number }) {
   const fetcher = useFetcher();
   const [eventDate, setEventDate] = useState(careLog.eventDate);
 
@@ -30,6 +31,7 @@ export default function CareLogForm({careLog, plantId}: {careLog: ICareLogDtoDat
 
   const defaultValue = {
     id: careLog.id,
+    plantId: plantId,
     eventType: careLog.eventType,
     eventDate: careLog.eventDate,
     notes: careLog.notes,
@@ -49,11 +51,12 @@ export default function CareLogForm({careLog, plantId}: {careLog: ICareLogDtoDat
   return (
       <div>
         <fetcher.Form method={'POST'} action={`/care/${plantId}/add`}>
+          <input hidden name={fields.plantId.name} defaultValue={fields.plantId.value}/>
           <div className={'flex flex-col gap-2'}>
             <div className={'flex flex-row gap-1 w-1/2'}>
-              <input hidden readOnly={true} name={fields.eventDate.name} value={eventDate} />
+              <input hidden readOnly={true} name={fields.eventDate.name} value={eventDate}/>
               <span className={'font-semibold pt-1 w-1/4'}>Event Date</span>
-              <DatePicker initDate={eventDate} onChange={updateEventdate} />
+              <DatePicker initDate={eventDate} onChange={updateEventdate}/>
             </div>
 
             <div className={'flex flex-row gap-1 w-1/2'}>
@@ -88,6 +91,16 @@ export default function CareLogForm({careLog, plantId}: {careLog: ICareLogDtoDat
         </fetcher.Form>
       </div>
   );
+}
+
+interface IFormInput {
+  label: string,
+  name: string,
+  defaultValue: string | undefined,
+  className?: string;
+  errors?: string[];
+  key?: string;
+  isArea?: boolean;
 }
 
 function FormInput({

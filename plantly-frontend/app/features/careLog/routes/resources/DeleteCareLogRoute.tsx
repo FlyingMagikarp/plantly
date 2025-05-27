@@ -2,8 +2,17 @@ import type {
   Route
 } from "../../../../../.react-router/types/app/features/careLog/routes/resources/+types/DeleteCareLogRoute";
 import {getTokenFromRequest} from "~/auth/utils";
+import {dataWithError, redirectWithSuccess} from "remix-toast";
+import {deleteCareLog} from "~/features/careLog/careLog.server";
 
-export async function action({ request }: Route.ActionArgs) {
+export async function action({params, request}: Route.ActionArgs) {
   const token = getTokenFromRequest(request);
-  const formData = await request.formData();
+
+  try {
+    await deleteCareLog(parseInt(params.careLogId), token);
+    return redirectWithSuccess(`/plants/${params.plantId}`, 'Care Log removed!');
+  } catch (error) {
+    console.log(error);
+    return dataWithError({ok: false}, 'Error occurred during deleting!');
+  }
 }

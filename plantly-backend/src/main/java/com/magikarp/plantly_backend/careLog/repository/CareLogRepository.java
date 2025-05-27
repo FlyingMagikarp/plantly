@@ -13,10 +13,10 @@ public interface CareLogRepository extends JpaRepository<CareLog, Integer> {
     @Query("select cl from CareLog cl where cl.id = ?1 and cl.plant.user.id = ?2")
     public CareLog getCareLogById(Integer careLogId, UUID userId);
 
-    @Query("select cl from CareLog cl where cl.plant.id = ?1 and cl.plant.user.id = ?2 order by cl.eventType desc")
+    @Query("select cl from CareLog cl where cl.plant.id = ?1 and cl.plant.user.id = ?2 order by cl.eventDate desc")
     public List<CareLog> getCareLogByPlant(Integer plantId, UUID userId);
 
-    @Query("select cl from CareLog cl where cl.plant.id = ?1 and cl.plant.user.id = ?2 order by cl.eventType desc")
+    @Query("select cl from CareLog cl where cl.plant.id = ?1 and cl.plant.user.id = ?2 order by cl.eventDate desc")
     public Page<CareLog> getCareLogPageByPlant(Integer plantId, UUID userId, Pageable pageable);
 
     @Query("select cl from CareLog cl where cl.plant.user.id = ?1")
