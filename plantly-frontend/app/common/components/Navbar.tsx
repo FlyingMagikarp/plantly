@@ -1,13 +1,13 @@
-import { useState } from "react";
+import {useState} from "react";
 import {Link, NavLink, useNavigate} from "react-router";
-import { useAuth } from "~/auth/AuthContext";
-import { useDarkMode } from "~/common/hooks/useDarkMode";
-import { Moon, Sun } from "lucide-react";
+import {useAuth} from "~/auth/AuthContext";
+import {useDarkMode} from "~/common/hooks/useDarkMode";
+import {Moon, Sun} from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const { isAdmin, isAuthenticated, logout } = useAuth();
+  const {isAdmin, isAuthenticated, logout} = useAuth();
   const navigate = useNavigate();
   const {isDark, toggle} = useDarkMode();
 
@@ -64,7 +64,7 @@ export default function Navbar() {
         >
           <div className="flex items-center justify-center h-16">
             <Link
-                to="/"
+                to="/overview"
                 className={`text-3xl font-bold text-green-700 transform ${
                     isHovered ? "rotate-0" : "-rotate-20"
                 } transition-transform duration-300`}
@@ -78,26 +78,26 @@ export default function Navbar() {
 
           <div>
             <button
-              onClick={toggle}
-              className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition"
-              aria-label="Toggle theme"
+                onClick={toggle}
+                className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                aria-label="Toggle theme"
             >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {isDark ? <Sun className="w-5 h-5"/> : <Moon className="w-5 h-5"/>}
             </button>
           </div>
 
           <div className="w-full p-4">
             {isAuthenticated && isHovered &&
                 <button
-                  className={'w-full btn-primary'}
-                  onClick={() => handleLogout()}
+                    className={'w-full btn-primary'}
+                    onClick={() => handleLogout()}
                 >
-                  Logout
+                    Logout
                 </button>
             }
             {!isAuthenticated && isHovered &&
                 <Link to="/login" className={'w-full btn-primary'}>
-                  Login
+                    Login
                 </Link>
             }
           </div>
@@ -110,44 +110,45 @@ export default function Navbar() {
 }
 
 function NavLinks({onLinkClick, isExpanded, isAdmin}: {
-  onLinkClick?: () => void; isExpanded?: boolean; isAdmin?: boolean }) {
+  onLinkClick?: () => void; isExpanded?: boolean; isAdmin?: boolean
+}) {
   let linkClasses =
-    "flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-theme hover:bg-[var(--color-secondary-bg)] hover:text-[var(--color-accent)]";
+      "flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-theme hover:bg-[var(--color-secondary-bg)] hover:text-[var(--color-accent)]";
 
 
   const links = [
-    { to: "/overview", label: "Overview", icon: "🏠" },
+    {to: "/overview", label: "Overview", icon: "🏠"},
   ];
 
   if (!isAdmin) {
     links.push(
-      { to: "/plants", label: "My Plants", icon: "🪴" },
-      { to: "/catalog", label: "Catalog", icon: "🏠" },
-      { to: "/locations", label: "Locations", icon: "🏠" },
+        {to: "/plants", label: "My Plants", icon: "🪴"},
+        {to: "/catalog", label: "Catalog", icon: "🏠"},
+        {to: "/locations", label: "Locations", icon: "🏠"},
     )
   }
 
   if (isAdmin) {
     links.push(
-      { to: "/admin/species", label: "Admin", icon: "⚙️" },
+        {to: "/admin/species", label: "Admin", icon: "⚙️"},
     )
   }
 
   return (
-    <div className="flex flex-col px-2">
-      {links.map(({ to, label, icon }) => (
-        <NavLink
-          key={to}
-          to={to}
-          className={({ isActive }) =>
-            `${linkClasses} ${isActive ? "underline" : ""}`
-          }
-          onClick={onLinkClick}
-        >
-          <span className="text-xl">{icon}</span>
-          {isExpanded && <span className="text-base">{label}</span>}
-        </NavLink>
-      ))}
-    </div>
+      <div className="flex flex-col px-2">
+        {links.map(({to, label, icon}) => (
+            <NavLink
+                key={to}
+                to={to}
+                className={({isActive}) =>
+                    `${linkClasses} ${isActive ? "underline" : ""}`
+                }
+                onClick={onLinkClick}
+            >
+              <span className="text-xl">{icon}</span>
+              {isExpanded && <span className="text-base">{label}</span>}
+            </NavLink>
+        ))}
+      </div>
   );
 }
