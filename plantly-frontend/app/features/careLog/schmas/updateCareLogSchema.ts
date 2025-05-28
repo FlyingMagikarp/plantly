@@ -16,7 +16,7 @@ export const updateCareLogSchema = z.object({
         }
         return undefined;
       },
-      z.date().optional()
+      z.date()
   ),
   eventType: eventTypeSchema,
   notes: z
