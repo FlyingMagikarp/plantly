@@ -19,4 +19,7 @@ public interface PlantRepository extends JpaRepository<Plant, Integer> {
 
     @Query("select p from Plant p where p.location.id = ?1")
     Plant findByLocationId(Integer locationId);
+
+    @Query("select p from Plant p where p.location.id = ?1 and p.user.id = ?2")
+    List<Plant> findByLocationIdAndUser(Integer locationId, UUID userId);
 }

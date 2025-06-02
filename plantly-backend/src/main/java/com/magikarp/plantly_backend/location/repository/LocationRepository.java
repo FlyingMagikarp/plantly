@@ -13,4 +13,7 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
 
     @Query("select l from Location l where l.user.id = ?1 and l.id = ?2")
     Location findByUserAndId(UUID userId, Integer locationId);
+
+    @Query("select l from Location l where l.user.id = ?1 and exists (select 1 from Plant p where p.location.id = l.id)")
+    List<Location> findLocationsWithPlants(UUID userId);
 }

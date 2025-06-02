@@ -1,4 +1,4 @@
-import type {PlacementType, EventType} from '~/common/types/enums'
+import type {EventType, PlacementType} from '~/common/types/enums'
 
 export interface ISpeciesOverviewDtoData {
   speciesId: number;
@@ -76,4 +76,11 @@ export interface ICareLogDtoData {
   eventType: EventType;
   eventDate: string;
   notes: string;
+}
+
+export interface IGroupedPlantsDtoData {
+  locationId: number;
+  locationName: string;
+  plantCount: number;
+  plants: IPlantDtoData[];
 }

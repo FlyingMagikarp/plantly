@@ -21,6 +21,10 @@ export default [
       ])
     ]),
 
+    ...prefix('log', [
+      index('./features/quickLog/routes/QuickLogIndexRoute.tsx'),
+    ]),
+
     ...prefix('care', [
       ...prefix(':plantId', [
         index('./features/careLog/routes/CareLogIndexRoute.tsx'),
