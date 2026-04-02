@@ -1,7 +1,7 @@
 import type { Route } from "./+types/detail";
 import { Link, useLoaderData, Form, redirect } from "react-router";
 
-const API_URL = "http://localhost:3001";
+const API_URL = "http://localhost:8081";
 
 export async function action({ params }: Route.ActionArgs) {
   const response = await fetch(`${API_URL}/species/${params.id}`, {

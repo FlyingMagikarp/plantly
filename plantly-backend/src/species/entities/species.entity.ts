@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { SpeciesSeasonalTask } from './species-seasonal-task.entity';
+import { Plant } from '../../plant/entities/plant.entity';
 import { PlacementType } from '../enums/placement-type.enum';
 import { LightLevel } from '../enums/light-level.enum';
 import { WateringStrategy } from '../enums/watering-strategy.enum';
@@ -24,7 +25,12 @@ export class Species {
   @Column({ name: 'common_name_de', type: 'varchar', length: 150 })
   commonNameDe!: string;
 
-  @Column({ name: 'scientific_name', type: 'varchar', length: 200, unique: true })
+  @Column({
+    name: 'scientific_name',
+    type: 'varchar',
+    length: 200,
+    unique: true,
+  })
   scientificName!: string;
 
   @Column({ type: 'text', nullable: true })
@@ -99,10 +105,18 @@ export class Species {
   @Column({ name: 'fertilizing_growing_max_days', type: 'int', nullable: true })
   fertilizingGrowingMaxDays?: number | null;
 
-  @Column({ name: 'repotting_frequency_min_months', type: 'int', nullable: true })
+  @Column({
+    name: 'repotting_frequency_min_months',
+    type: 'int',
+    nullable: true,
+  })
   repottingFrequencyMinMonths?: number | null;
 
-  @Column({ name: 'repotting_frequency_max_months', type: 'int', nullable: true })
+  @Column({
+    name: 'repotting_frequency_max_months',
+    type: 'int',
+    nullable: true,
+  })
   repottingFrequencyMaxMonths?: number | null;
 
   @Column({
@@ -123,13 +137,31 @@ export class Species {
   })
   pruningSeason?: SeasonType | null;
 
-  @Column({ name: 'ideal_temp_min_c', type: 'numeric', precision: 5, scale: 2, nullable: true })
+  @Column({
+    name: 'ideal_temp_min_c',
+    type: 'numeric',
+    precision: 5,
+    scale: 2,
+    nullable: true,
+  })
   idealTempMinC?: string | null;
 
-  @Column({ name: 'ideal_temp_max_c', type: 'numeric', precision: 5, scale: 2, nullable: true })
+  @Column({
+    name: 'ideal_temp_max_c',
+    type: 'numeric',
+    precision: 5,
+    scale: 2,
+    nullable: true,
+  })
   idealTempMaxC?: string | null;
 
-  @Column({ name: 'absolute_temp_min_c', type: 'numeric', precision: 5, scale: 2, nullable: true })
+  @Column({
+    name: 'absolute_temp_min_c',
+    type: 'numeric',
+    precision: 5,
+    scale: 2,
+    nullable: true,
+  })
   absoluteTempMinC?: string | null;
 
   @Column({ name: 'watering_notes', type: 'text', nullable: true })
@@ -167,4 +199,7 @@ export class Species {
 
   @OneToMany(() => SpeciesSeasonalTask, (task) => task.species)
   seasonalTasks!: SpeciesSeasonalTask[];
+
+  @OneToMany(() => Plant, (plant) => plant.species)
+  plants!: Plant[];
 }

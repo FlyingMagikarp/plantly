@@ -2,7 +2,7 @@ import type { Route } from "./+types/list";
 import { Link, useLoaderData } from "react-router";
 
 // Should ideally be in a shared config
-const API_URL = "http://localhost:3001";
+const API_URL = "http://localhost:8081";
 
 export async function loader({}: Route.LoaderArgs) {
   const response = await fetch(`${API_URL}/species`);

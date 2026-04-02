@@ -2,7 +2,7 @@ import type { Route } from "./+types/edit";
 import { redirect, useLoaderData, useNavigation } from "react-router";
 import { SpeciesForm } from "../../components/species-form";
 
-const API_URL = "http://localhost:3001";
+const API_URL = "http://localhost:8081";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const response = await fetch(`${API_URL}/species/${params.id}`);

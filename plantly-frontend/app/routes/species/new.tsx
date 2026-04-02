@@ -2,7 +2,7 @@ import type { Route } from "./+types/new";
 import { redirect, useNavigation } from "react-router";
 import { SpeciesForm } from "../../components/species-form";
 
-const API_URL = "http://localhost:3001";
+const API_URL = "http://localhost:8081";
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();

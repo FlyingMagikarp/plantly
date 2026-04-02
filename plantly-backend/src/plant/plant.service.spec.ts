@@ -1,0 +1,92 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { PlantService } from './plant.service';
+import { Plant } from './entities/plant.entity';
+import { Species } from '../species/entities/species.entity';
+import { NotFoundException } from '@nestjs/common';
+
+describe('PlantService', () => {
+  let service: PlantService;
+  let plantRepository: any;
+  let speciesRepository: any;
+
+  beforeEach(async () => {
+    plantRepository = {
+      create: jest.fn().mockImplementation((dto) => dto),
+      save: jest.fn().mockImplementation((plant) => Promise.resolve({ id: '1', ...plant })),
+      find: jest.fn(),
+      findOne: jest.fn(),
+    };
+
+    speciesRepository = {
+      findOneBy: jest.fn(),
+    };
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        PlantService,
+        {
+          provide: getRepositoryToken(Plant),
+          useValue: plantRepository,
+        },
+        {
+          provide: getRepositoryToken(Species),
+          useValue: speciesRepository,
+        },
+      ],
+    }).compile();
+
+    service = module.get<PlantService>(PlantService);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
+  describe('create', () => {
+    it('should successfully create a plant', async () => {
+      const dto = { nickname: 'Pothos', speciesId: '1' };
+      speciesRepository.findOneBy.mockResolvedValue({ id: '1' });
+
+      const result = await service.create(dto);
+
+      expect(result).toBeDefined();
+      expect(result.nickname).toBe('Pothos');
+      expect(plantRepository.create).toHaveBeenCalled();
+      expect(plantRepository.save).toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException if species does not exist', async () => {
+      const dto = { nickname: 'Pothos', speciesId: '999' };
+      speciesRepository.findOneBy.mockResolvedValue(null);
+
+      await expect(service.create(dto)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return all plants', async () => {
+      plantRepository.find.mockResolvedValue([]);
+      const result = await service.findAll();
+      expect(result).toEqual([]);
+      expect(plantRepository.find).toHaveBeenCalledWith({
+        relations: ['species'],
+        order: { nickname: 'ASC' },
+      });
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return a single plant', async () => {
+      const plant = { id: '1', nickname: 'Pothos' };
+      plantRepository.findOne.mockResolvedValue(plant);
+      const result = await service.findOne('1');
+      expect(result).toEqual(plant);
+    });
+
+    it('should throw NotFoundException if plant not found', async () => {
+      plantRepository.findOne.mockResolvedValue(null);
+      await expect(service.findOne('999')).rejects.toThrow(NotFoundException);
+    });
+  });
+});

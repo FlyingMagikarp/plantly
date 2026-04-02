@@ -35,7 +35,10 @@ export class SpeciesService {
     return species;
   }
 
-  async update(id: string, updateSpeciesDto: UpdateSpeciesDto): Promise<Species> {
+  async update(
+    id: string,
+    updateSpeciesDto: UpdateSpeciesDto,
+  ): Promise<Species> {
     const species = await this.findOne(id);
     Object.assign(species, updateSpeciesDto);
     return await this.speciesRepository.save(species);

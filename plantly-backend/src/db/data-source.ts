@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 
 import { Species } from '../species/entities/species.entity';
 import { SpeciesSeasonalTask } from '../species/entities/species-seasonal-task.entity';
+import { Plant } from '../plant/entities/plant.entity';
 
 const AppDataSource = new DataSource({
   type: 'postgres',
@@ -14,14 +15,9 @@ const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 
-  entities: [
-    Species,
-    SpeciesSeasonalTask,
-  ],
+  entities: [Species, SpeciesSeasonalTask, Plant],
 
-  migrations: [
-    'src/db/migration/*.ts',
-  ],
+  migrations: ['src/db/migration/*.ts'],
 
   synchronize: false,
 

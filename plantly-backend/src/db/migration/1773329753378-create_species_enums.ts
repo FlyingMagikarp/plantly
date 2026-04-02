@@ -1,13 +1,13 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateSpeciesEnums1773329753378 implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    /* ENUMS */
+    await queryRunner.query(
+      `CREATE TYPE placement_type AS ENUM ('INDOOR', 'OUTDOOR', 'BOTH');`,
+    );
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-
-        /* ENUMS */
-        await queryRunner.query(`CREATE TYPE placement_type AS ENUM ('INDOOR', 'OUTDOOR', 'BOTH');`);
-
-        await queryRunner.query(`
+    await queryRunner.query(`
         CREATE TYPE light_level AS ENUM (
           'LOW',
           'MEDIUM',
@@ -18,7 +18,7 @@ export class CreateSpeciesEnums1773329753378 implements MigrationInterface {
         );
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE TYPE watering_strategy AS ENUM (
               'KEEP_EVENLY_MOIST',
               'WATER_WHEN_TOP_SOIL_DRY',
@@ -27,11 +27,15 @@ export class CreateSpeciesEnums1773329753378 implements MigrationInterface {
             );
         `);
 
-        await queryRunner.query(`CREATE TYPE humidity_preference AS ENUM ('LOW', 'NORMAL', 'HIGH');`);
+    await queryRunner.query(
+      `CREATE TYPE humidity_preference AS ENUM ('LOW', 'NORMAL', 'HIGH');`,
+    );
 
-        await queryRunner.query(`CREATE TYPE season_type AS ENUM ('SPRING', 'SUMMER', 'AUTUMN', 'WINTER', 'ALL_YEAR');`);
+    await queryRunner.query(
+      `CREATE TYPE season_type AS ENUM ('SPRING', 'SUMMER', 'AUTUMN', 'WINTER', 'ALL_YEAR');`,
+    );
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE TYPE plant_task_type AS ENUM (
               'CHECK',
               'WATER',
@@ -44,9 +48,9 @@ export class CreateSpeciesEnums1773329753378 implements MigrationInterface {
             );
         `);
 
-        /* TABLES */
+    /* TABLES */
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE TABLE species (
                 id BIGSERIAL PRIMARY KEY,
                 
@@ -127,7 +131,7 @@ export class CreateSpeciesEnums1773329753378 implements MigrationInterface {
                 );
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE TABLE species_seasonal_task (
             id BIGSERIAL PRIMARY KEY,
             
@@ -167,26 +171,23 @@ export class CreateSpeciesEnums1773329753378 implements MigrationInterface {
             )
             );
         `);
-    }
+  }
 
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`DROP TABLE IF EXISTS species_seasonal_task`);
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`DROP TABLE IF EXISTS species`);
 
-        await queryRunner.query(`DROP TABLE IF EXISTS species_seasonal_task`);
+    await queryRunner.query(`DROP TYPE IF EXISTS plant_task_type`);
 
-        await queryRunner.query(`DROP TABLE IF EXISTS species`);
+    await queryRunner.query(`DROP TYPE IF EXISTS season_type`);
 
-        await queryRunner.query(`DROP TYPE IF EXISTS plant_task_type`);
+    await queryRunner.query(`DROP TYPE IF EXISTS humidity_preference`);
 
-        await queryRunner.query(`DROP TYPE IF EXISTS season_type`);
+    await queryRunner.query(`DROP TYPE IF EXISTS watering_strategy`);
 
-        await queryRunner.query(`DROP TYPE IF EXISTS humidity_preference`);
+    await queryRunner.query(`DROP TYPE IF EXISTS light_level`);
 
-        await queryRunner.query(`DROP TYPE IF EXISTS watering_strategy`);
-
-        await queryRunner.query(`DROP TYPE IF EXISTS light_level`);
-
-        await queryRunner.query(`DROP TYPE IF EXISTS placement_type`);
-    }
-
+    await queryRunner.query(`DROP TYPE IF EXISTS placement_type`);
+  }
 }
