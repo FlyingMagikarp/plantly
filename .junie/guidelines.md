@@ -73,7 +73,7 @@ Do not make broad architectural changes unless explicitly asked.
 ## Architecture rules
 
 ### Backend
-- Keep the backend under the folder `plantly\plantly-backend`.
+- Keep the backend under the folder `plantly/plantly-backend`.
 - Use feature-based NestJS modules.
 - Keep controllers thin.
 - Put business and domain logic in services.
@@ -83,7 +83,7 @@ Do not make broad architectural changes unless explicitly asked.
 - Prefer predictable and simple service flows over “magic”.
 
 ### Frontend
-- Keep the frontend under the folder `plantly\plantly-frontend`.
+- Keep the frontend under the folder `plantly/plantly-frontend`.
 - Use TypeScript everywhere.
 - Prefer existing React Router v7 patterns already present in the project.
 - Keep components focused and composable.
@@ -105,8 +105,7 @@ The plant domain is important. Do not flatten or oversimplify it.
 
 ### Species vs user data
 - Species care information is structured reference data.
-- User-contributed care tips must remain separate from official/reference care data.
-- Do not merge user-contributed tips into the smart recommendation system unless explicitly requested.
+- Care-tips can be added for a specific plant instance and should be kept separate from the species data.
 
 ### Plant lifecycle
 Plants may have lifecycle and activity states such as:
@@ -164,7 +163,7 @@ When changing persistence:
 ---
 
 ## Testing and verification
-Create test cases for essential use-cases such as creating a new plant.
+Add test cases for essential use-cases when they are part of the feature being implemented, especially for important backend service logic and core user flows such as creating a new plant.
 
 For non-trivial backend logic:
 - add or update tests where appropriate
@@ -181,6 +180,7 @@ When claiming a task is complete, verify using the most relevant checks availabl
 - integration tests
 - type checks
 - build
+- application startup when relevant
 
 If something could not be verified, say so explicitly.
 
