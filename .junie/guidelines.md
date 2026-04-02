@@ -306,3 +306,17 @@ When in doubt:
 - choose clarity over cleverness
 - choose consistency over novelty
 - choose safe incremental changes over broad rewrites
+
+---
+
+## Efficiency and scope control
+
+- Prefer small, focused tasks over broad multi-feature requests.
+- For larger work, first propose a plan, then implement only one step at a time.
+- Inspect only the files and modules relevant to the current task.
+- Avoid repo-wide analysis unless explicitly requested.
+- Keep summaries concise unless a detailed explanation is requested.
+- Prefer the most relevant validation command(s) only.
+- Do not run every possible test or command after small changes.
+- When debugging, analyze provided stack traces or error output before running additional commands.
+- Avoid speculative refactors, cleanup, or future-proofing unless explicitly requested.

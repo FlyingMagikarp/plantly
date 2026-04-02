@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Plant } from './entities/plant.entity';
 import { CreatePlantDto } from './dto/create-plant.dto';
+import { UpdatePlantDto } from './dto/update-plant.dto';
 import { Species } from '../species/entities/species.entity';
 
 @Injectable()
@@ -52,5 +53,34 @@ export class PlantService {
     }
 
     return plant;
+  }
+
+  async update(id: string, updatePlantDto: UpdatePlantDto): Promise<Plant> {
+    const plant = await this.findOne(id);
+
+    if (updatePlantDto.speciesId) {
+      const species = await this.speciesRepository.findOneBy({
+        id: updatePlantDto.speciesId,
+      });
+      if (!species) {
+        throw new NotFoundException(
+          `Species with ID ${updatePlantDto.speciesId} not found`,
+        );
+      }
+    }
+
+    const updatedPlant = this.plantRepository.merge(plant, {
+      ...updatePlantDto,
+      acquiredAt: updatePlantDto.acquiredAt
+        ? new Date(updatePlantDto.acquiredAt)
+        : plant.acquiredAt,
+    });
+
+    return this.plantRepository.save(updatedPlant);
+  }
+
+  async remove(id: string): Promise<void> {
+    const plant = await this.findOne(id);
+    await this.plantRepository.remove(plant);
   }
 }

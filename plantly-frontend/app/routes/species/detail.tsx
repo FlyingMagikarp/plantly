@@ -1,5 +1,7 @@
 import type { Route } from "./+types/detail";
-import { Link, useLoaderData, Form, redirect } from "react-router";
+import { Link, useLoaderData, Form, redirect, useSubmit } from "react-router";
+import * as React from "react";
+import { ConfirmationDialog } from "../../components/confirmation-dialog";
 
 const API_URL = "http://localhost:8081";
 
@@ -23,9 +25,22 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 export default function SpeciesDetail() {
   const s = useLoaderData() as any;
+  const submit = useSubmit();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
   return (
     <div className="space-y-8">
+      <ConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={() => {
+          submit(null, { method: "post" });
+        }}
+        title="Delete Species"
+        message={`Are you sure you want to delete "${s.commonName}"? This action cannot be undone.`}
+        confirmText="Delete"
+        type="danger"
+      />
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-neutral-900">
@@ -40,21 +55,13 @@ export default function SpeciesDetail() {
           >
             Edit
           </Link>
-          <Form
-            method="post"
-            onSubmit={(e) => {
-              if (!confirm("Are you sure you want to delete this species?")) {
-                e.preventDefault();
-              }
-            }}
+          <button
+            type="button"
+            onClick={() => setIsDeleteDialogOpen(true)}
+            className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-red-300 hover:bg-red-50"
           >
-            <button
-              type="submit"
-              className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-red-300 hover:bg-red-50"
-            >
-              Delete
-            </button>
-          </Form>
+            Delete
+          </button>
           <Link
             to="/species"
             className="inline-flex items-center rounded-md bg-neutral-100 px-4 py-2 text-sm font-semibold text-neutral-700 hover:bg-neutral-200"

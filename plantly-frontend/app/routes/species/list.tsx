@@ -23,7 +23,7 @@ export default function SpeciesList() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold tracking-tight text-neutral-900">
-          Plant Library
+          Species Library
         </h2>
         <Link
           to="/species/new"

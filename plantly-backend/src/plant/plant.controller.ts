@@ -1,6 +1,15 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { PlantService } from './plant.service';
 import { CreatePlantDto } from './dto/create-plant.dto';
+import { UpdatePlantDto } from './dto/update-plant.dto';
 import { Plant } from './entities/plant.entity';
 
 @Controller('plants')
@@ -20,5 +29,18 @@ export class PlantController {
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Plant> {
     return this.plantService.findOne(id);
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updatePlantDto: UpdatePlantDto,
+  ): Promise<Plant> {
+    return this.plantService.update(id, updatePlantDto);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string): Promise<void> {
+    return this.plantService.remove(id);
   }
 }

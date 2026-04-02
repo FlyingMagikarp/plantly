@@ -50,7 +50,7 @@ export default function App() {
       <aside className="w-64 border-r border-neutral-200 bg-white p-6 shadow-sm">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-green-700">Plantly</h1>
-          <p className="text-sm text-neutral-500">Species Library</p>
+          <p className="text-sm text-neutral-500">Plant Care</p>
         </div>
         <nav className="space-y-1">
           <NavLink
@@ -66,7 +66,7 @@ export default function App() {
             Dashboard
           </NavLink>
           <NavLink
-            to="/species"
+            to="/plants"
             className={({ isActive }) =>
               `flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 isActive
@@ -78,7 +78,7 @@ export default function App() {
             Plant Library
           </NavLink>
           <NavLink
-            to="/species/new"
+            to="/species"
             className={({ isActive }) =>
               `flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 isActive
@@ -87,7 +87,19 @@ export default function App() {
               }`
             }
           >
-            Add New Species
+            Species Library
+          </NavLink>
+          <NavLink
+            to="/plants/new"
+            className={({ isActive }) =>
+              `flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                isActive
+                  ? "bg-green-50 text-green-700"
+                  : "text-neutral-600 hover:bg-neutral-100"
+              }`
+            }
+          >
+            Add New Plant
           </NavLink>
         </nav>
       </aside>
