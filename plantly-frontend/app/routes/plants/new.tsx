@@ -5,7 +5,7 @@ import { PlantForm } from "../../components/plant-form";
 const API_URL = "http://localhost:8081";
 
 export async function loader() {
-  const response = await fetch(`${API_URL}/species`);
+  const response = await fetch(`${API_URL}/species?onlyActive=true`);
   if (!response.ok) {
     throw new Error("Failed to fetch species");
   }

@@ -74,6 +74,7 @@ Do not make broad architectural changes unless explicitly asked.
 
 ### Backend
 - Keep the backend under the folder `plantly/plantly-backend`.
+- The source root is `plantly/plantly-backend/src`.
 - Use feature-based NestJS modules.
 - Keep controllers thin.
 - Put business and domain logic in services.
@@ -81,9 +82,12 @@ Do not make broad architectural changes unless explicitly asked.
 - Avoid mixing transport logic, business logic, and DB logic in one place.
 - Keep DTOs explicit and validated.
 - Prefer predictable and simple service flows over “magic”.
+- Use TypeORM for persistence.
+- Use TypeORM repositories for data access.
 
 ### Frontend
 - Keep the frontend under the folder `plantly/plantly-frontend`.
+- The source root is `plantly/plantly-frontend/app`.
 - Use TypeScript everywhere.
 - Prefer existing React Router v7 patterns already present in the project.
 - Keep components focused and composable.
@@ -91,6 +95,10 @@ Do not make broad architectural changes unless explicitly asked.
 - Use Zod for frontend validation where applicable.
 - Do not introduce state management libraries unless clearly needed.
 - Prefer server-driven data flow patterns already used in the app.
+- Mobile responsiveness is a priority.
+- Keep styling consistent with the rest of the app.
+- Use Suspense components for loading states to prevent the screen from flickering.
+- Use responsive design principles to ensure a seamless user experience across devices.
 
 ### Shared
 - Keep backend and frontend contracts aligned.
@@ -152,6 +160,7 @@ Do not design the system in a way that makes future log expansion difficult.
 - Be careful with enum changes, renames, and destructive schema edits.
 - Do not silently drop or recreate columns/tables unless explicitly intended.
 - If a migration may cause data loss, explain it clearly.
+- Do not change existing migrations unless explicitly requested.
 
 When changing persistence:
 1. inspect related entities

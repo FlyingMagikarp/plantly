@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { SpeciesService } from './species.service';
 import { CreateSpeciesDto } from './dto/create-species.dto';
@@ -21,8 +22,8 @@ export class SpeciesController {
   }
 
   @Get()
-  findAll() {
-    return this.speciesService.findAll();
+  findAll(@Query('onlyActive') onlyActive?: string) {
+    return this.speciesService.findAll(onlyActive === 'true');
   }
 
   @Get(':id')

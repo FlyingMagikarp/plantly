@@ -7,7 +7,7 @@ const API_URL = "http://localhost:8081";
 export async function loader({ params }: Route.LoaderArgs) {
   const [plantResponse, speciesResponse] = await Promise.all([
     fetch(`${API_URL}/plants/${params.id}`),
-    fetch(`${API_URL}/species`),
+    fetch(`${API_URL}/species?onlyActive=true`),
   ]);
 
   if (!plantResponse.ok || !speciesResponse.ok) {

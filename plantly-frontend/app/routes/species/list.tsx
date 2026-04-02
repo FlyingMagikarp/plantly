@@ -46,8 +46,13 @@ export default function SpeciesList() {
               className="group overflow-hidden rounded-xl border border-neutral-200 bg-white transition-all hover:border-green-300 hover:shadow-md"
             >
               <div className="p-6">
-                <h3 className="text-lg font-bold text-neutral-900 group-hover:text-green-700">
+                <h3 className="flex items-center justify-between text-lg font-bold text-neutral-900 group-hover:text-green-700">
                   {s.commonName}
+                  {!s.isActive && (
+                    <span className="ml-2 inline-flex items-center rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-600 ring-1 ring-inset ring-neutral-500/10">
+                      Inactive
+                    </span>
+                  )}
                 </h3>
                 <p className="text-sm font-medium italic text-neutral-500">
                   {s.scientificName}

@@ -1,15 +1,52 @@
 import type { Route } from "./+types/detail";
-import { Link, useLoaderData, Form, redirect, useSubmit } from "react-router";
+import { Link, useLoaderData, Form, redirect, useSubmit, useActionData } from "react-router";
 import * as React from "react";
 import { ConfirmationDialog } from "../../components/confirmation-dialog";
 
 const API_URL = "http://localhost:8081";
 
-export async function action({ params }: Route.ActionArgs) {
+export async function action({ params, request }: Route.ActionArgs) {
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+
+  if (intent === "inactivate") {
+    const response = await fetch(`${API_URL}/species/${params.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ isActive: false }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to inactivate species");
+    }
+    return redirect("/species");
+  }
+
+  if (intent === "activate") {
+    const response = await fetch(`${API_URL}/species/${params.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ isActive: true }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to activate species");
+    }
+    return redirect(`/species/${params.id}`);
+  }
+
   const response = await fetch(`${API_URL}/species/${params.id}`, {
     method: "DELETE",
   });
+
   if (!response.ok) {
+    if (response.status === 409) {
+      return await response.json();
+    }
     throw new Error("Failed to delete species");
   }
   return redirect("/species");
@@ -25,8 +62,16 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 export default function SpeciesDetail() {
   const s = useLoaderData() as any;
+  const actionData = useActionData() as any;
   const submit = useSubmit();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const [isInUseDialogOpen, setIsInUseDialogOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (actionData?.error === "SpeciesInUse") {
+      setIsInUseDialogOpen(true);
+    }
+  }, [actionData]);
 
   return (
     <div className="space-y-8">
@@ -41,10 +86,33 @@ export default function SpeciesDetail() {
         confirmText="Delete"
         type="danger"
       />
+
+      <ConfirmationDialog
+        isOpen={isInUseDialogOpen}
+        onClose={() => setIsInUseDialogOpen(false)}
+        onConfirm={() => {
+          const formData = new FormData();
+          formData.append("intent", "inactivate");
+          submit(formData, { method: "post" });
+        }}
+        title="Species In Use"
+        message={`"${
+          s.commonName
+        }" is currently used by ${actionData?.plantCount} plant(s): ${actionData?.plants
+          ?.map((p: any) => p.nickname)
+          .join(", ")}. It cannot be deleted. Would you like to mark it as inactive instead? Inactive species won't appear in new plant selections.`}
+        confirmText="Mark Inactive"
+        type="warning"
+      />
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-neutral-900">
             {s.commonName}
+            {!s.isActive && (
+              <span className="ml-3 inline-flex items-center rounded-md bg-neutral-100 px-2 py-1 text-xs font-medium text-neutral-600 ring-1 ring-inset ring-neutral-500/10">
+                Inactive
+              </span>
+            )}
           </h2>
           <p className="text-lg italic text-neutral-500">{s.scientificName}</p>
         </div>
@@ -55,6 +123,31 @@ export default function SpeciesDetail() {
           >
             Edit
           </Link>
+          {s.isActive ? (
+            <button
+              type="button"
+              onClick={() => {
+                const formData = new FormData();
+                formData.append("intent", "inactivate");
+                submit(formData, { method: "post" });
+              }}
+              className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-neutral-600 shadow-sm ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50"
+            >
+              Mark Inactive
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                const formData = new FormData();
+                formData.append("intent", "activate");
+                submit(formData, { method: "post" });
+              }}
+              className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-green-600 shadow-sm ring-1 ring-inset ring-green-300 hover:bg-green-50"
+            >
+              Mark Active
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setIsDeleteDialogOpen(true)}
