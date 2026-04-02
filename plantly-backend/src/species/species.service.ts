@@ -1,37 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSpeciesDto } from './dto/create-species.dto';
 import { UpdateSpeciesDto } from './dto/update-species.dto';
-import {InjectRepository} from "@nestjs/typeorm";
-import {Species} from "./entities/species.entity";
-import {Repository} from "typeorm";
+import { InjectRepository } from '@nestjs/typeorm';
+import { Species } from './entities/species.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class SpeciesService {
   constructor(
-      @InjectRepository(Species)
-      private speciesRepository: Repository<Species>
+    @InjectRepository(Species)
+    private readonly speciesRepository: Repository<Species>,
   ) {}
 
-  create(createSpeciesDto: CreateSpeciesDto) {
-    return 'This action adds a new species';
+  async create(createSpeciesDto: CreateSpeciesDto): Promise<Species> {
+    const species = this.speciesRepository.create(createSpeciesDto);
+    return await this.speciesRepository.save(species);
   }
 
-  findAll() {
-    return this.speciesRepository.find({
-      relations: {seasonalTasks: true},
-      order: {commonName: 'ASC'}
+  async findAll(): Promise<Species[]> {
+    return await this.speciesRepository.find({
+      relations: { seasonalTasks: true },
+      order: { commonName: 'ASC' },
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} species`;
+  async findOne(id: string): Promise<Species> {
+    const species = await this.speciesRepository.findOne({
+      where: { id },
+      relations: { seasonalTasks: true },
+    });
+    if (!species) {
+      throw new NotFoundException(`Species with ID ${id} not found`);
+    }
+    return species;
   }
 
-  update(id: number, updateSpeciesDto: UpdateSpeciesDto) {
-    return `This action updates a #${id} species`;
+  async update(id: string, updateSpeciesDto: UpdateSpeciesDto): Promise<Species> {
+    const species = await this.findOne(id);
+    Object.assign(species, updateSpeciesDto);
+    return await this.speciesRepository.save(species);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} species`;
+  async remove(id: string): Promise<void> {
+    const species = await this.findOne(id);
+    await this.speciesRepository.remove(species);
   }
 }

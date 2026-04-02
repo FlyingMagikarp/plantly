@@ -1,8 +1,27 @@
 # Plantly – Junie Guidelines
 
-## Project overview
-
+## Product Goal
 Plantly is a plant care web application.
+
+It aims to provide a simple and intuitive way to manage your plants.
+
+The app will only be used by the admin and no other users
+
+Care Tips for species will be updated manually.
+
+Plants can be added, with location and name.
+
+Care logs can be added for each plant.
+
+Care logs can be checked.
+
+The app will automatically create reminders for watering, checking up and recommend other actions like repotting depending on the current season.
+
+The app will also provide a smart recommendation system based on the care logs.
+
+
+
+## Project overview
 
 Current stack:
 - Backend: NestJS

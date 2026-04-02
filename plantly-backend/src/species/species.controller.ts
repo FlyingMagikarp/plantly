@@ -19,16 +19,16 @@ export class SpeciesController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.speciesService.findOne(+id);
+    return this.speciesService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSpeciesDto: UpdateSpeciesDto) {
-    return this.speciesService.update(+id, updateSpeciesDto);
+    return this.speciesService.update(id, updateSpeciesDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.speciesService.remove(+id);
+    return this.speciesService.remove(id);
   }
 }

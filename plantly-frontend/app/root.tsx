@@ -41,8 +41,65 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+import { NavLink } from "react-router";
+
 export default function App() {
-  return <Outlet />;
+  return (
+    <div className="flex min-h-screen bg-neutral-50 font-sans text-neutral-900">
+      {/* Sidebar */}
+      <aside className="w-64 border-r border-neutral-200 bg-white p-6 shadow-sm">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-green-700">Plantly</h1>
+          <p className="text-sm text-neutral-500">Species Library</p>
+        </div>
+        <nav className="space-y-1">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                isActive
+                  ? "bg-green-50 text-green-700"
+                  : "text-neutral-600 hover:bg-neutral-100"
+              }`
+            }
+          >
+            Dashboard
+          </NavLink>
+          <NavLink
+            to="/species"
+            className={({ isActive }) =>
+              `flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                isActive
+                  ? "bg-green-50 text-green-700"
+                  : "text-neutral-600 hover:bg-neutral-100"
+              }`
+            }
+          >
+            Plant Library
+          </NavLink>
+          <NavLink
+            to="/species/new"
+            className={({ isActive }) =>
+              `flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                isActive
+                  ? "bg-green-50 text-green-700"
+                  : "text-neutral-600 hover:bg-neutral-100"
+              }`
+            }
+          >
+            Add New Species
+          </NavLink>
+        </nav>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto p-8">
+        <div className="mx-auto max-w-5xl">
+          <Outlet />
+        </div>
+      </main>
+    </div>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
