@@ -41,16 +41,58 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-import { NavLink } from "react-router";
+import { useEffect, useState } from "react";
+import { NavLink, useLocation } from "react-router";
 
 export default function App() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const location = useLocation();
+
+  // Close sidebar when route changes on mobile
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
+
   return (
     <div className="flex min-h-screen bg-neutral-50 font-sans text-neutral-900">
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-neutral-900/50 backdrop-blur-sm lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 border-r border-neutral-200 bg-white p-6 shadow-sm">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-green-700">Plantly</h1>
-          <p className="text-sm text-neutral-500">Plant Care</p>
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform border-r border-neutral-200 bg-white p-6 shadow-sm transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-green-700">Plantly</h1>
+            <p className="text-sm text-neutral-500">Plant Care</p>
+          </div>
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="rounded-md p-2 text-neutral-500 hover:bg-neutral-100 lg:hidden"
+            aria-label="Close sidebar"
+          >
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
         <nav className="space-y-1">
           <NavLink
@@ -105,8 +147,34 @@ export default function App() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-8">
-        <div className="mx-auto max-w-5xl">
+      <main className="flex-1 overflow-y-auto">
+        {/* Mobile Header */}
+        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-neutral-200 bg-white/80 px-4 py-4 backdrop-blur-md lg:hidden">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="rounded-md p-2 text-neutral-500 hover:bg-neutral-100"
+              aria-label="Open sidebar"
+            >
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
+              </svg>
+            </button>
+            <span className="text-xl font-bold text-green-700">Plantly</span>
+          </div>
+        </header>
+
+        <div className="mx-auto max-w-5xl p-4 sm:p-8">
           <Outlet />
         </div>
       </main>

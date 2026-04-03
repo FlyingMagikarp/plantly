@@ -329,3 +329,21 @@ When in doubt:
 - Do not run every possible test or command after small changes.
 - When debugging, analyze provided stack traces or error output before running additional commands.
 - Avoid speculative refactors, cleanup, or future-proofing unless explicitly requested.
+
+---
+
+## Mobile compatibility
+
+Mobile compatibility is a project priority.
+
+For frontend work:
+- consider small-screen usability by default
+- avoid horizontal overflow
+- ensure forms and actions remain usable on narrow screens
+- prefer incremental responsive improvements over full redesigns
+- keep desktop usability intact unless explicitly asked otherwise
+
+When improving existing UI:
+- review the current page/component first
+- make the smallest responsive changes that solve the problem
+- avoid broad visual redesign unless explicitly requested

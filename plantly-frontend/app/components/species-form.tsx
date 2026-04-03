@@ -10,8 +10,8 @@ export function SpeciesForm({ species, isSubmitting, errors }: SpeciesFormProps)
   const isEdit = !!species;
 
   return (
-    <Form method="post" className="space-y-8 divide-y divide-neutral-200">
-      <div className="space-y-6 pt-8">
+    <Form method="post" className="space-y-6 sm:space-y-8 divide-y divide-neutral-200">
+      <div className="space-y-6 pt-4 sm:pt-8">
         <div>
           <h3 className="text-lg font-medium text-neutral-900">
             {isEdit ? "Edit Species" : "New Species"}
@@ -139,18 +139,18 @@ export function SpeciesForm({ species, isSubmitting, errors }: SpeciesFormProps)
         </div>
       </div>
 
-      <div className="pt-5">
-        <div className="flex justify-end gap-3">
+      <div className="pt-5 pb-8 sm:pb-0">
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-3">
           <Link
             to={isEdit ? `/species/${species.id}` : "/species"}
-            className="rounded-md border border-neutral-300 bg-white py-2 px-4 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            className="w-full sm:w-auto text-center rounded-md border border-neutral-300 bg-white py-2.5 px-4 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
+            className="inline-flex w-full sm:w-auto justify-center rounded-md border border-transparent bg-green-600 py-2.5 px-4 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
           >
             {isSubmitting ? "Saving..." : isEdit ? "Update Species" : "Create Species"}
           </button>
