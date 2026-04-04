@@ -1,5 +1,10 @@
 import type { Route } from "./+types/list";
 import { Link, useLoaderData } from "react-router";
+import {
+  PLACEMENT_TYPE_LABELS,
+  WATERING_STRATEGY_LABELS,
+  formatEnum,
+} from "../../utils/enum-mappings";
 
 // Should ideally be in a shared config
 const API_URL = "http://localhost:8081";
@@ -59,10 +64,10 @@ export default function SpeciesList() {
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                    {s.placementType}
+                    {formatEnum(s.placementType, PLACEMENT_TYPE_LABELS)}
                   </span>
                   <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-                    {s.wateringStrategy}
+                    {formatEnum(s.wateringStrategy, WATERING_STRATEGY_LABELS)}
                   </span>
                 </div>
               </div>

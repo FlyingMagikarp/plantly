@@ -13,7 +13,9 @@ describe('PlantService', () => {
   beforeEach(async () => {
     plantRepository = {
       create: jest.fn().mockImplementation((dto) => dto),
-      save: jest.fn().mockImplementation((plant) => Promise.resolve({ id: '1', ...plant })),
+      save: jest
+        .fn()
+        .mockImplementation((plant) => Promise.resolve({ id: '1', ...plant })),
       find: jest.fn(),
       findOne: jest.fn(),
     };

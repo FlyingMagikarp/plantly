@@ -1,5 +1,6 @@
 import type { Route } from "./+types/list";
 import { Link, useLoaderData } from "react-router";
+import { PLANT_STATUS_LABELS, formatEnum } from "../../utils/enum-mappings";
 
 const API_URL = "http://localhost:8081";
 
@@ -54,7 +55,7 @@ export default function PlantList() {
                     p.status === 'dead' ? 'bg-red-50 text-red-700 ring-red-600/20' :
                     'bg-gray-50 text-gray-700 ring-gray-600/20'
                   }`}>
-                    {p.status}
+                    {formatEnum(p.status, PLANT_STATUS_LABELS)}
                   </span>
                 </div>
                 <p className="text-sm font-medium italic text-neutral-500">

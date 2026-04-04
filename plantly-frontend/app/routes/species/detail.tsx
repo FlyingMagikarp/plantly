@@ -2,6 +2,15 @@ import type { Route } from "./+types/detail";
 import { Link, useLoaderData, Form, redirect, useSubmit, useActionData } from "react-router";
 import * as React from "react";
 import { ConfirmationDialog } from "../../components/confirmation-dialog";
+import {
+  PLACEMENT_TYPE_LABELS,
+  LIGHT_LEVEL_LABELS,
+  WATERING_STRATEGY_LABELS,
+  HUMIDITY_PREFERENCE_LABELS,
+  SEASON_TYPE_LABELS,
+  PLANT_TASK_TYPE_LABELS,
+  formatEnum,
+} from "../../utils/enum-mappings";
 
 const API_URL = "http://localhost:8081";
 
@@ -175,27 +184,95 @@ export default function SpeciesDetail() {
               <div>
                 <dt className="text-xs font-medium text-neutral-400">Placement</dt>
                 <dd className="text-sm font-semibold text-neutral-900">
-                  {s.placementType}
+                  {formatEnum(s.placementType, PLACEMENT_TYPE_LABELS)}
                 </dd>
               </div>
               <div>
                 <dt className="text-xs font-medium text-neutral-400">Light Level</dt>
                 <dd className="text-sm font-semibold text-neutral-900">
-                  {s.lightLevel}
+                  {formatEnum(s.lightLevel, LIGHT_LEVEL_LABELS)}
                 </dd>
               </div>
               <div>
                 <dt className="text-xs font-medium text-neutral-400">Watering</dt>
                 <dd className="text-sm font-semibold text-neutral-900">
-                  {s.wateringStrategy}
+                  {formatEnum(s.wateringStrategy, WATERING_STRATEGY_LABELS)}
                 </dd>
               </div>
               {s.humidityPreference && (
                 <div>
                   <dt className="text-xs font-medium text-neutral-400">Humidity</dt>
                   <dd className="text-sm font-semibold text-neutral-900">
-                    {s.humidityPreference}
+                    {formatEnum(s.humidityPreference, HUMIDITY_PREFERENCE_LABELS)}
                   </dd>
+                </div>
+              )}
+              {s.growthSeasonStart && (
+                <div>
+                  <dt className="text-xs font-medium text-neutral-400">Growth Season Start</dt>
+                  <dd className="text-sm font-semibold text-neutral-900">
+                    {formatEnum(s.growthSeasonStart, SEASON_TYPE_LABELS)}
+                  </dd>
+                </div>
+              )}
+              {s.dormantSeasonStart && (
+                <div>
+                  <dt className="text-xs font-medium text-neutral-400">Dormant Season Start</dt>
+                  <dd className="text-sm font-semibold text-neutral-900">
+                    {formatEnum(s.dormantSeasonStart, SEASON_TYPE_LABELS)}
+                  </dd>
+                </div>
+              )}
+            </dl>
+          </section>
+
+          <section className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+            <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-neutral-500">
+              Care Intervals
+            </h3>
+            <dl className="space-y-4 text-sm">
+              {(s.wateringGrowingMinDays || s.wateringGrowingMaxDays) && (
+                <div>
+                  <dt className="text-xs font-medium text-neutral-400">Watering (Growing)</dt>
+                  <dd className="font-semibold">
+                    {s.wateringGrowingMinDays ?? "?"} to {s.wateringGrowingMaxDays ?? "?"} days
+                  </dd>
+                </div>
+              )}
+              {(s.wateringDormantMinDays || s.wateringDormantMaxDays) && (
+                <div>
+                  <dt className="text-xs font-medium text-neutral-400">Watering (Dormant)</dt>
+                  <dd className="font-semibold">
+                    {s.wateringDormantMinDays ?? "?"} to {s.wateringDormantMaxDays ?? "?"} days
+                  </dd>
+                </div>
+              )}
+              {(s.fertilizingGrowingMinDays || s.fertilizingGrowingMaxDays) && (
+                <div>
+                  <dt className="text-xs font-medium text-neutral-400">Fertilizing (Growing)</dt>
+                  <dd className="font-semibold">
+                    {s.fertilizingGrowingMinDays ?? "?"} to {s.fertilizingGrowingMaxDays ?? "?"} days
+                  </dd>
+                </div>
+              )}
+              {(s.repottingFrequencyMinMonths || s.repottingFrequencyMaxMonths) && (
+                <div>
+                  <dt className="text-xs font-medium text-neutral-400">Repotting Frequency</dt>
+                  <dd className="font-semibold">
+                    {s.repottingFrequencyMinMonths ?? "?"} to {s.repottingFrequencyMaxMonths ?? "?"} months
+                  </dd>
+                </div>
+              )}
+              {s.repottingSeason && (
+                <div>
+                  <dt className="text-xs font-medium text-neutral-400">Repotting Season</dt>
+                  <dd className="font-semibold">{formatEnum(s.repottingSeason, SEASON_TYPE_LABELS)}</dd>
+                </div>
+              )}
+              {s.pruningSeason && (
+                <div>
+                  <dt className="text-xs font-medium text-neutral-400">Pruning Season</dt>
+                  <dd className="font-semibold">{formatEnum(s.pruningSeason, SEASON_TYPE_LABELS)}</dd>
                 </div>
               )}
             </dl>
@@ -211,8 +288,8 @@ export default function SpeciesDetail() {
                 {s.idealTempMaxC ?? "?"}°C
               </p>
               {s.absoluteTempMinC && (
-                <p className="mt-2 text-xs text-red-600">
-                  Warning: Minimum safe temp is {s.absoluteTempMinC}°C
+                <p className="mt-2 text-xs text-red-600 font-bold">
+                  DANGER: Absolute Min Temp is {s.absoluteTempMinC}°C
                 </p>
               )}
             </div>
@@ -225,23 +302,80 @@ export default function SpeciesDetail() {
             <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-neutral-500">
               Description
             </h3>
-            <p className="text-sm leading-relaxed text-neutral-700">
+            <p className="text-sm leading-relaxed text-neutral-700 whitespace-pre-wrap">
               {s.description || "No description provided."}
             </p>
           </section>
 
           <section className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-              <h4 className="mb-2 text-sm font-bold text-neutral-900">Watering</h4>
-              <p className="text-sm text-neutral-600">
+              <h4 className="mb-2 text-sm font-bold text-neutral-900">Watering Notes</h4>
+              <p className="text-sm text-neutral-600 whitespace-pre-wrap">
                 {s.wateringNotes || "Standard watering based on strategy."}
               </p>
             </div>
             <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-              <h4 className="mb-2 text-sm font-bold text-neutral-900">Soil</h4>
-              <p className="text-sm text-neutral-600">
-                {s.soilNotes || "No specific soil notes."}
+              <h4 className="mb-2 text-sm font-bold text-neutral-900">Fertilizing Notes</h4>
+              <p className="text-sm text-neutral-600 whitespace-pre-wrap">
+                {s.fertilizingNotes || "No specific fertilizing notes."}
               </p>
+            </div>
+            <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+              <h4 className="mb-2 text-sm font-bold text-neutral-900">Repotting & Soil</h4>
+              <div className="space-y-4">
+                {s.repottingNotes && (
+                  <div>
+                    <h5 className="text-xs font-bold text-neutral-400 uppercase">Repotting</h5>
+                    <p className="text-sm text-neutral-600 whitespace-pre-wrap">{s.repottingNotes}</p>
+                  </div>
+                )}
+                {s.soilNotes && (
+                  <div>
+                    <h5 className="text-xs font-bold text-neutral-400 uppercase">Soil</h5>
+                    <p className="text-sm text-neutral-600 whitespace-pre-wrap">{s.soilNotes}</p>
+                  </div>
+                )}
+                {!s.repottingNotes && !s.soilNotes && (
+                  <p className="text-sm text-neutral-600 italic">No specific notes.</p>
+                )}
+              </div>
+            </div>
+            <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+              <h4 className="mb-2 text-sm font-bold text-neutral-900">Placement & Seasons</h4>
+              <div className="space-y-4">
+                {s.placementNotes && (
+                  <div>
+                    <h5 className="text-xs font-bold text-neutral-400 uppercase">Placement</h5>
+                    <p className="text-sm text-neutral-600 whitespace-pre-wrap">{s.placementNotes}</p>
+                  </div>
+                )}
+                {s.seasonNotes && (
+                  <div>
+                    <h5 className="text-xs font-bold text-neutral-400 uppercase">Seasons</h5>
+                    <p className="text-sm text-neutral-600 whitespace-pre-wrap">{s.seasonNotes}</p>
+                  </div>
+                )}
+                {!s.placementNotes && !s.seasonNotes && (
+                  <p className="text-sm text-neutral-600 italic">No specific notes.</p>
+                )}
+              </div>
+            </div>
+            <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm sm:col-span-2">
+              <h4 className="mb-2 text-sm font-bold text-neutral-900">Pruning & Pest Control</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <h5 className="text-xs font-bold text-neutral-400 uppercase">Pruning</h5>
+                  <p className="text-sm text-neutral-600 whitespace-pre-wrap">
+                    {s.pruningNotes || "No specific pruning notes."}
+                  </p>
+                </div>
+                <div>
+                  <h5 className="text-xs font-bold text-neutral-400 uppercase">Pests</h5>
+                  <p className="text-sm text-neutral-600 whitespace-pre-wrap">
+                    {s.pestNotes || "No specific pest notes."}
+                  </p>
+                </div>
+              </div>
             </div>
           </section>
         </div>

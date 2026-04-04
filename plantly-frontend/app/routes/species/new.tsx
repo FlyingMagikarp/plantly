@@ -6,7 +6,27 @@ const API_URL = "http://localhost:8081";
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
-  const data = Object.fromEntries(formData);
+  const data: any = Object.fromEntries(formData);
+
+  // Clean up empty strings for optional fields and convert numbers
+  const numericFields = [
+    "wateringGrowingMinDays",
+    "wateringGrowingMaxDays",
+    "wateringDormantMinDays",
+    "wateringDormantMaxDays",
+    "fertilizingGrowingMinDays",
+    "fertilizingGrowingMaxDays",
+    "repottingFrequencyMinMonths",
+    "repottingFrequencyMaxMonths",
+  ];
+
+  for (const key in data) {
+    if (data[key] === "") {
+      delete data[key];
+    } else if (numericFields.includes(key)) {
+      data[key] = parseInt(data[key], 10);
+    }
+  }
 
   const response = await fetch(`${API_URL}/species`, {
     method: "POST",

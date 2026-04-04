@@ -14,7 +14,27 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 export async function action({ request, params }: Route.ActionArgs) {
   const formData = await request.formData();
-  const data = Object.fromEntries(formData);
+  const data: any = Object.fromEntries(formData);
+
+  // Clean up empty strings for optional fields and convert numbers
+  const numericFields = [
+    "wateringGrowingMinDays",
+    "wateringGrowingMaxDays",
+    "wateringDormantMinDays",
+    "wateringDormantMaxDays",
+    "fertilizingGrowingMinDays",
+    "fertilizingGrowingMaxDays",
+    "repottingFrequencyMinMonths",
+    "repottingFrequencyMaxMonths",
+  ];
+
+  for (const key in data) {
+    if (data[key] === "") {
+      data[key] = null; // Use null for PATCH to clear values if needed
+    } else if (numericFields.includes(key)) {
+      data[key] = parseInt(data[key], 10);
+    }
+  }
 
   const response = await fetch(`${API_URL}/species/${params.id}`, {
     method: "PATCH",

@@ -2,6 +2,13 @@ import { Link, useLoaderData, Form, redirect, useSubmit } from "react-router";
 import * as React from "react";
 import { ConfirmationDialog } from "../../components/confirmation-dialog";
 import type { Route } from "./+types/detail";
+import {
+  PLANT_STATUS_LABELS,
+  PLACEMENT_TYPE_LABELS,
+  LIGHT_LEVEL_LABELS,
+  WATERING_STRATEGY_LABELS,
+  formatEnum,
+} from "../../utils/enum-mappings";
 
 const API_URL = "http://localhost:8081";
 
@@ -165,7 +172,7 @@ export default function PlantDetail() {
                     plant.status === 'dead' ? 'bg-red-50 text-red-700 ring-red-600/20' :
                     'bg-gray-50 text-gray-700 ring-gray-600/20'
                   }`}>
-                    {plant.status}
+                    {formatEnum(plant.status, PLANT_STATUS_LABELS)}
                   </span>
                 </dd>
               </div>
@@ -189,15 +196,15 @@ export default function PlantDetail() {
              <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
               <div>
                 <dt className="text-sm font-medium text-neutral-500">Placement</dt>
-                <dd className="mt-1 text-sm text-neutral-900">{plant.species?.placementType}</dd>
+                <dd className="mt-1 text-sm text-neutral-900">{formatEnum(plant.species?.placementType, PLACEMENT_TYPE_LABELS)}</dd>
               </div>
               <div>
                 <dt className="text-sm font-medium text-neutral-500">Light Level</dt>
-                <dd className="mt-1 text-sm text-neutral-900">{plant.species?.lightLevel}</dd>
+                <dd className="mt-1 text-sm text-neutral-900">{formatEnum(plant.species?.lightLevel, LIGHT_LEVEL_LABELS)}</dd>
               </div>
                <div>
                 <dt className="text-sm font-medium text-neutral-500">Watering Strategy</dt>
-                <dd className="mt-1 text-sm text-neutral-900">{plant.species?.wateringStrategy}</dd>
+                <dd className="mt-1 text-sm text-neutral-900">{formatEnum(plant.species?.wateringStrategy, WATERING_STRATEGY_LABELS)}</dd>
               </div>
             </dl>
             <div className="mt-6">

@@ -76,7 +76,7 @@ export class Species {
     enumName: 'season_type',
     nullable: true,
   })
-  dormant_season_start?: SeasonType | null;
+  dormantSeasonStart?: SeasonType | null;
 
   @Column({
     name: 'growth_season_start',
@@ -85,7 +85,7 @@ export class Species {
     enumName: 'season_type',
     nullable: true,
   })
-  growth_season_start?: SeasonType | null;
+  growthSeasonStart?: SeasonType | null;
 
   @Column({ name: 'watering_growing_min_days', type: 'int', nullable: true })
   wateringGrowingMinDays?: number | null;

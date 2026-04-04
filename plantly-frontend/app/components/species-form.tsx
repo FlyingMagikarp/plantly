@@ -1,4 +1,11 @@
 import { Form, Link } from "react-router";
+import {
+  PLACEMENT_TYPE_LABELS,
+  LIGHT_LEVEL_LABELS,
+  WATERING_STRATEGY_LABELS,
+  HUMIDITY_PREFERENCE_LABELS,
+  SEASON_TYPE_LABELS,
+} from "../utils/enum-mappings";
 
 interface SpeciesFormProps {
   species?: any;
@@ -95,9 +102,9 @@ export function SpeciesForm({ species, isSubmitting, errors }: SpeciesFormProps)
               defaultValue={species?.placementType || "INDOOR"}
               className="mt-1 block w-full rounded-md border-neutral-300 py-2 pl-3 pr-10 text-base focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm border"
             >
-              <option value="INDOOR">Indoor</option>
-              <option value="OUTDOOR">Outdoor</option>
-              <option value="BOTH">Both</option>
+              {Object.entries(PLACEMENT_TYPE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
             </select>
           </div>
 
@@ -111,12 +118,9 @@ export function SpeciesForm({ species, isSubmitting, errors }: SpeciesFormProps)
               defaultValue={species?.lightLevel || "MEDIUM"}
               className="mt-1 block w-full rounded-md border-neutral-300 py-2 pl-3 pr-10 text-base focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm border"
             >
-              <option value="LOW">Low</option>
-              <option value="MEDIUM">Medium</option>
-              <option value="BRIGHT_INDIRECT">Bright Indirect</option>
-              <option value="DIRECT_SUN">Direct Sun</option>
-              <option value="FULL_SUN">Full Sun</option>
-              <option value="PARTIAL_SHADE">Partial Shade</option>
+              {Object.entries(LIGHT_LEVEL_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
             </select>
           </div>
 
@@ -130,11 +134,352 @@ export function SpeciesForm({ species, isSubmitting, errors }: SpeciesFormProps)
               defaultValue={species?.wateringStrategy || "WATER_WHEN_TOP_SOIL_DRY"}
               className="mt-1 block w-full rounded-md border-neutral-300 py-2 pl-3 pr-10 text-base focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm border"
             >
-              <option value="KEEP_EVENLY_MOIST">Keep Evenly Moist</option>
-              <option value="WATER_WHEN_TOP_SOIL_DRY">Water when top soil is dry</option>
-              <option value="LET_MOSTLY_DRY_OUT">Let mostly dry out</option>
-              <option value="LET_FULLY_DRY_OUT">Let fully dry out</option>
+              {Object.entries(WATERING_STRATEGY_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
             </select>
+          </div>
+
+          <div className="sm:col-span-2">
+            <label htmlFor="humidityPreference" className="block text-sm font-medium text-neutral-700">
+              Humidity Preference
+            </label>
+            <select
+              id="humidityPreference"
+              name="humidityPreference"
+              defaultValue={species?.humidityPreference || ""}
+              className="mt-1 block w-full rounded-md border-neutral-300 py-2 pl-3 pr-10 text-base focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm border"
+            >
+              <option value="">Select Humidity...</option>
+              {Object.entries(HUMIDITY_PREFERENCE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="sm:col-span-2">
+            <label htmlFor="dormantSeasonStart" className="block text-sm font-medium text-neutral-700">
+              Dormant Season Start
+            </label>
+            <select
+              id="dormantSeasonStart"
+              name="dormantSeasonStart"
+              defaultValue={species?.dormantSeasonStart || ""}
+              className="mt-1 block w-full rounded-md border-neutral-300 py-2 pl-3 pr-10 text-base focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm border"
+            >
+              <option value="">Select Season...</option>
+              {Object.entries(SEASON_TYPE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="sm:col-span-2">
+            <label htmlFor="growthSeasonStart" className="block text-sm font-medium text-neutral-700">
+              Growth Season Start
+            </label>
+            <select
+              id="growthSeasonStart"
+              name="growthSeasonStart"
+              defaultValue={species?.growthSeasonStart || ""}
+              className="mt-1 block w-full rounded-md border-neutral-300 py-2 pl-3 pr-10 text-base focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm border"
+            >
+              <option value="">Select Season...</option>
+              {Object.entries(SEASON_TYPE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-6 pt-8">
+        <div>
+          <h3 className="text-lg font-medium text-neutral-900">Care Intervals</h3>
+          <p className="mt-1 text-sm text-neutral-500">
+            Define frequency ranges for various care tasks. Use numbers only (days or months).
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+          <div className="sm:col-span-3">
+            <h4 className="text-sm font-semibold text-neutral-900 mb-4">Watering (Growing)</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="wateringGrowingMinDays" className="block text-xs font-medium text-neutral-500 uppercase">Min Days</label>
+                <input
+                  type="number"
+                  name="wateringGrowingMinDays"
+                  id="wateringGrowingMinDays"
+                  defaultValue={species?.wateringGrowingMinDays}
+                  className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+                />
+              </div>
+              <div>
+                <label htmlFor="wateringGrowingMaxDays" className="block text-xs font-medium text-neutral-500 uppercase">Max Days</label>
+                <input
+                  type="number"
+                  name="wateringGrowingMaxDays"
+                  id="wateringGrowingMaxDays"
+                  defaultValue={species?.wateringGrowingMaxDays}
+                  className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="sm:col-span-3">
+            <h4 className="text-sm font-semibold text-neutral-900 mb-4">Watering (Dormant)</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="wateringDormantMinDays" className="block text-xs font-medium text-neutral-500 uppercase">Min Days</label>
+                <input
+                  type="number"
+                  name="wateringDormantMinDays"
+                  id="wateringDormantMinDays"
+                  defaultValue={species?.wateringDormantMinDays}
+                  className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+                />
+              </div>
+              <div>
+                <label htmlFor="wateringDormantMaxDays" className="block text-xs font-medium text-neutral-500 uppercase">Max Days</label>
+                <input
+                  type="number"
+                  name="wateringDormantMaxDays"
+                  id="wateringDormantMaxDays"
+                  defaultValue={species?.wateringDormantMaxDays}
+                  className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="sm:col-span-3">
+            <h4 className="text-sm font-semibold text-neutral-900 mb-4">Fertilizing (Growing)</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="fertilizingGrowingMinDays" className="block text-xs font-medium text-neutral-500 uppercase">Min Days</label>
+                <input
+                  type="number"
+                  name="fertilizingGrowingMinDays"
+                  id="fertilizingGrowingMinDays"
+                  defaultValue={species?.fertilizingGrowingMinDays}
+                  className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+                />
+              </div>
+              <div>
+                <label htmlFor="fertilizingGrowingMaxDays" className="block text-xs font-medium text-neutral-500 uppercase">Max Days</label>
+                <input
+                  type="number"
+                  name="fertilizingGrowingMaxDays"
+                  id="fertilizingGrowingMaxDays"
+                  defaultValue={species?.fertilizingGrowingMaxDays}
+                  className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="sm:col-span-3">
+            <h4 className="text-sm font-semibold text-neutral-900 mb-4">Repotting</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="repottingFrequencyMinMonths" className="block text-xs font-medium text-neutral-500 uppercase">Min Months</label>
+                <input
+                  type="number"
+                  name="repottingFrequencyMinMonths"
+                  id="repottingFrequencyMinMonths"
+                  defaultValue={species?.repottingFrequencyMinMonths}
+                  className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+                />
+              </div>
+              <div>
+                <label htmlFor="repottingFrequencyMaxMonths" className="block text-xs font-medium text-neutral-500 uppercase">Max Months</label>
+                <input
+                  type="number"
+                  name="repottingFrequencyMaxMonths"
+                  id="repottingFrequencyMaxMonths"
+                  defaultValue={species?.repottingFrequencyMaxMonths}
+                  className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="sm:col-span-3">
+            <label htmlFor="repottingSeason" className="block text-sm font-medium text-neutral-700">
+              Repotting Season
+            </label>
+            <select
+              id="repottingSeason"
+              name="repottingSeason"
+              defaultValue={species?.repottingSeason || ""}
+              className="mt-1 block w-full rounded-md border-neutral-300 py-2 pl-3 pr-10 text-base focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm border"
+            >
+              <option value="">Select Season...</option>
+              {Object.entries(SEASON_TYPE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="sm:col-span-3">
+            <label htmlFor="pruningSeason" className="block text-sm font-medium text-neutral-700">
+              Pruning Season
+            </label>
+            <select
+              id="pruningSeason"
+              name="pruningSeason"
+              defaultValue={species?.pruningSeason || ""}
+              className="mt-1 block w-full rounded-md border-neutral-300 py-2 pl-3 pr-10 text-base focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm border"
+            >
+              <option value="">Select Season...</option>
+              {Object.entries(SEASON_TYPE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-6 pt-8">
+        <div>
+          <h3 className="text-lg font-medium text-neutral-900">Temperature (°C)</h3>
+          <p className="mt-1 text-sm text-neutral-500">
+            Define ideal and safe temperature ranges for this species.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+          <div className="sm:col-span-2">
+            <label htmlFor="idealTempMinC" className="block text-sm font-medium text-neutral-700">
+              Ideal Min
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              name="idealTempMinC"
+              id="idealTempMinC"
+              defaultValue={species?.idealTempMinC}
+              className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <label htmlFor="idealTempMaxC" className="block text-sm font-medium text-neutral-700">
+              Ideal Max
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              name="idealTempMaxC"
+              id="idealTempMaxC"
+              defaultValue={species?.idealTempMaxC}
+              className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <label htmlFor="absoluteTempMinC" className="block text-sm font-medium text-neutral-700">
+              Absolute Min
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              name="absoluteTempMinC"
+              id="absoluteTempMinC"
+              defaultValue={species?.absoluteTempMinC}
+              className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-6 pt-8">
+        <div>
+          <h3 className="text-lg font-medium text-neutral-900">Detailed Care Notes</h3>
+          <p className="mt-1 text-sm text-neutral-500">
+            Provide specific tips and instructions for each category.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+          <div className="sm:col-span-3">
+            <label htmlFor="wateringNotes" className="block text-sm font-medium text-neutral-700">Watering Notes</label>
+            <textarea
+              id="wateringNotes"
+              name="wateringNotes"
+              rows={2}
+              defaultValue={species?.wateringNotes}
+              className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+            />
+          </div>
+          <div className="sm:col-span-3">
+            <label htmlFor="fertilizingNotes" className="block text-sm font-medium text-neutral-700">Fertilizing Notes</label>
+            <textarea
+              id="fertilizingNotes"
+              name="fertilizingNotes"
+              rows={2}
+              defaultValue={species?.fertilizingNotes}
+              className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+            />
+          </div>
+          <div className="sm:col-span-3">
+            <label htmlFor="repottingNotes" className="block text-sm font-medium text-neutral-700">Repotting Notes</label>
+            <textarea
+              id="repottingNotes"
+              name="repottingNotes"
+              rows={2}
+              defaultValue={species?.repottingNotes}
+              className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+            />
+          </div>
+          <div className="sm:col-span-3">
+            <label htmlFor="pruningNotes" className="block text-sm font-medium text-neutral-700">Pruning Notes</label>
+            <textarea
+              id="pruningNotes"
+              name="pruningNotes"
+              rows={2}
+              defaultValue={species?.pruningNotes}
+              className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+            />
+          </div>
+          <div className="sm:col-span-3">
+            <label htmlFor="placementNotes" className="block text-sm font-medium text-neutral-700">Placement Notes</label>
+            <textarea
+              id="placementNotes"
+              name="placementNotes"
+              rows={2}
+              defaultValue={species?.placementNotes}
+              className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+            />
+          </div>
+          <div className="sm:col-span-3">
+            <label htmlFor="seasonNotes" className="block text-sm font-medium text-neutral-700">Season Notes</label>
+            <textarea
+              id="seasonNotes"
+              name="seasonNotes"
+              rows={2}
+              defaultValue={species?.seasonNotes}
+              className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+            />
+          </div>
+          <div className="sm:col-span-3">
+            <label htmlFor="soilNotes" className="block text-sm font-medium text-neutral-700">Soil Notes</label>
+            <textarea
+              id="soilNotes"
+              name="soilNotes"
+              rows={2}
+              defaultValue={species?.soilNotes}
+              className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+            />
+          </div>
+          <div className="sm:col-span-3">
+            <label htmlFor="pestNotes" className="block text-sm font-medium text-neutral-700">Pest Notes</label>
+            <textarea
+              id="pestNotes"
+              name="pestNotes"
+              rows={2}
+              defaultValue={species?.pestNotes}
+              className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
+            />
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { Form, Link } from "react-router";
+import { PLANT_STATUS_LABELS } from "../utils/enum-mappings";
 
 interface PlantFormProps {
   plant?: any;
@@ -89,10 +90,9 @@ export function PlantForm({ plant, species, isSubmitting, errors }: PlantFormPro
                 defaultValue={plant?.status || "active"}
                 className="mt-1 block w-full rounded-md border-neutral-300 py-2 pl-3 pr-10 text-base focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm border"
               >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="removed">Removed</option>
-                <option value="dead">Dead</option>
+                {Object.entries(PLANT_STATUS_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
               </select>
             </div>
           </div>

@@ -1,6 +1,7 @@
 export enum SeasonType {
   SPRING = 'SPRING',
   SUMMER = 'SUMMER',
-  FALL = 'FALL',
+  AUTUMN = 'AUTUMN',
   WINTER = 'WINTER',
+  ALL_YEAR = 'ALL_YEAR',
 }

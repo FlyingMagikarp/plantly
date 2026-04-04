@@ -50,11 +50,11 @@ export class CreateSpeciesDto {
 
   @IsEnum(SeasonType)
   @IsOptional()
-  dormant_season_start?: SeasonType;
+  dormantSeasonStart?: SeasonType;
 
   @IsEnum(SeasonType)
   @IsOptional()
-  growth_season_start?: SeasonType;
+  growthSeasonStart?: SeasonType;
 
   @IsInt()
   @Min(0)
