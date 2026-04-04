@@ -5,6 +5,8 @@ import { Plant } from './entities/plant.entity';
 import { Species } from '../species/entities/species.entity';
 import { NotFoundException } from '@nestjs/common';
 
+import { PlantStatus } from './enums/plant-status.enum';
+
 describe('PlantService', () => {
   let service: PlantService;
   let plantRepository: any;
@@ -89,6 +91,22 @@ describe('PlantService', () => {
     it('should throw NotFoundException if plant not found', async () => {
       plantRepository.findOne.mockResolvedValue(null);
       await expect(service.findOne('999')).rejects.toThrow(NotFoundException);
+    });
+  });
+  describe('remove', () => {
+    it('should set plant status to REMOVED instead of deleting', async () => {
+      const plant = { id: '1', nickname: 'Pothos', status: PlantStatus.ACTIVE };
+      plantRepository.findOne.mockResolvedValue(plant);
+
+      await service.remove('1');
+
+      expect(plant.status).toBe(PlantStatus.REMOVED);
+      expect(plantRepository.save).toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException if plant not found', async () => {
+      plantRepository.findOne.mockResolvedValue(null);
+      await expect(service.remove('999')).rejects.toThrow(NotFoundException);
     });
   });
 });

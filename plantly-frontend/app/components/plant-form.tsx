@@ -73,7 +73,7 @@ export function PlantForm({ plant, species, isSubmitting, errors }: PlantFormPro
                 type="date"
                 name="acquiredAt"
                 id="acquiredAt"
-                defaultValue={plant?.acquiredAt ? new Date(plant.acquiredAt).toISOString().split('T')[0] : ""}
+                defaultValue={plant?.acquiredAt ? new Date(plant.acquiredAt).toLocaleDateString('en-CA') : ""}
                 className="block w-full rounded-md border-neutral-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm border p-2"
               />
             </div>

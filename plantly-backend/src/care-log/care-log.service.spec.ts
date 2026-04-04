@@ -48,7 +48,11 @@ describe('CareLogService', () => {
 
   describe('create', () => {
     it('should create a care log', async () => {
-      const dto = { type: CareLogType.WATERING, date: '2026-04-04T12:00:00Z', note: 'test' };
+      const dto = {
+        type: CareLogType.WATERING,
+        date: '2026-04-04T12:00:00Z',
+        note: 'test',
+      };
       plantRepository.findOneBy.mockResolvedValue({ id: '1' });
 
       const result = await service.create('1', dto);
@@ -64,7 +68,9 @@ describe('CareLogService', () => {
       const dto = { type: CareLogType.WATERING, date: '2026-04-04T12:00:00Z' };
       plantRepository.findOneBy.mockResolvedValue(null);
 
-      await expect(service.create('999', dto)).rejects.toThrow(NotFoundException);
+      await expect(service.create('999', dto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 

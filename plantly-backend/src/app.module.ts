@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { SpeciesModule } from './species/species.module';
 import { PlantModule } from './plant/plant.module';
 import { CareLogModule } from './care-log/care-log.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
@@ -11,6 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     SpeciesModule,
     PlantModule,
     CareLogModule,
+    DashboardModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',

@@ -245,7 +245,11 @@ export default function PlantDetail() {
             <div className="flex flex-wrap gap-2">
               <Form method="post" className="contents">
                 <input type="hidden" name="intent" value="add-care-log" />
-                <input type="hidden" name="date" value={new Date().toISOString().slice(0, 16)} />
+                <input type="hidden" name="date" value={(() => {
+                  const now = new Date();
+                  const offset = now.getTimezoneOffset() * 60000;
+                  return new Date(now.getTime() - offset).toISOString().slice(0, 16);
+                })()} />
                 <button
                   type="submit"
                   name="type"
@@ -484,7 +488,12 @@ export default function PlantDetail() {
                       name="date"
                       id="date"
                       required
-                      defaultValue={new Date().toISOString().slice(0, 16)}
+                      defaultValue={(() => {
+                        const now = new Date();
+                        const offset = now.getTimezoneOffset() * 60000;
+                        const localISODate = new Date(now.getTime() - offset).toISOString().slice(0, 16);
+                        return localISODate;
+                      })()}
                       className="block w-full rounded-lg border-green-200 bg-white py-2 text-sm text-neutral-900 focus:border-green-500 focus:ring-green-500 transition-shadow"
                     />
                   </div>

@@ -14,7 +14,10 @@ export class CareLogService {
     private readonly plantRepository: Repository<Plant>,
   ) {}
 
-  async create(plantId: string, createCareLogDto: CreateCareLogDto): Promise<CareLog> {
+  async create(
+    plantId: string,
+    createCareLogDto: CreateCareLogDto,
+  ): Promise<CareLog> {
     const plant = await this.plantRepository.findOneBy({ id: plantId });
     if (!plant) {
       throw new NotFoundException(`Plant with ID ${plantId} not found`);

@@ -6,6 +6,8 @@ import { CreatePlantDto } from './dto/create-plant.dto';
 import { UpdatePlantDto } from './dto/update-plant.dto';
 import { Species } from '../species/entities/species.entity';
 
+import { PlantStatus } from './enums/plant-status.enum';
+
 @Injectable()
 export class PlantService {
   constructor(
@@ -81,6 +83,7 @@ export class PlantService {
 
   async remove(id: string): Promise<void> {
     const plant = await this.findOne(id);
-    await this.plantRepository.remove(plant);
+    plant.status = PlantStatus.REMOVED;
+    await this.plantRepository.save(plant);
   }
 }

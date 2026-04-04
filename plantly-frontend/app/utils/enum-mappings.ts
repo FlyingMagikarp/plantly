@@ -60,6 +60,14 @@ export const CARE_LOG_TYPE_LABELS: Record<string, string> = {
   CHECK: 'Check-up',
 };
 
+export const ACTIVITY_TYPE_LABELS: Record<string, string> = {
+  CARE_LOG: 'Care Activity',
+  PLANT_ADDED: 'Added',
+  PLANT_REMOVED: 'Removed',
+  PLANT_DEAD: 'Died',
+  PLANT_GIVEN_AWAY: 'Given Away',
+};
+
 /**
  * Formats an enum value into a human-readable label.
  * If no mapping exists, it returns the value as-is (with underscores replaced by spaces).
