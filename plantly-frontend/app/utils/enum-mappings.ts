@@ -52,6 +52,14 @@ export const PLANT_STATUS_LABELS: Record<string, string> = {
   removed: 'Given away / Removed',
 };
 
+export const CARE_LOG_TYPE_LABELS: Record<string, string> = {
+  WATERING: 'Watering',
+  FERTILIZING: 'Fertilizing',
+  PRUNING: 'Pruning',
+  REPOTTING: 'Repotting',
+  CHECK: 'Check-up',
+};
+
 /**
  * Formats an enum value into a human-readable label.
  * If no mapping exists, it returns the value as-is (with underscores replaced by spaces).

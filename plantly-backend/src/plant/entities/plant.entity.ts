@@ -3,11 +3,13 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   JoinColumn,
 } from 'typeorm';
 import { Species } from '../../species/entities/species.entity';
+import { CareLog } from '../../care-log/entities/care-log.entity';
 import { PlantStatus } from '../enums/plant-status.enum';
 
 @Entity({ name: 'plants' })
@@ -24,6 +26,9 @@ export class Plant {
   @ManyToOne(() => Species, (species) => species.plants)
   @JoinColumn({ name: 'species_id' })
   species!: Species;
+
+  @OneToMany(() => CareLog, (careLog) => careLog.plant)
+  careLogs!: CareLog[];
 
   @Column({ name: 'acquired_at', type: 'timestamptz', nullable: true })
   acquiredAt?: Date | null;

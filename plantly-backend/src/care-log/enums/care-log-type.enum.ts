@@ -1,0 +1,7 @@
+export enum CareLogType {
+  WATERING = 'WATERING',
+  FERTILIZING = 'FERTILIZING',
+  PRUNING = 'PRUNING',
+  REPOTTING = 'REPOTTING',
+  CHECK = 'CHECK',
+}

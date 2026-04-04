@@ -1,4 +1,4 @@
-import { Link, useLoaderData, Form, redirect, useSubmit } from "react-router";
+import { Link, useLoaderData, Form, redirect, useSubmit, useActionData } from "react-router";
 import * as React from "react";
 import { ConfirmationDialog } from "../../components/confirmation-dialog";
 import type { Route } from "./+types/detail";
@@ -7,25 +7,64 @@ import {
   PLACEMENT_TYPE_LABELS,
   LIGHT_LEVEL_LABELS,
   WATERING_STRATEGY_LABELS,
+  CARE_LOG_TYPE_LABELS,
   formatEnum,
 } from "../../utils/enum-mappings";
 
 const API_URL = "http://localhost:8081";
 
 export async function loader({ params }: Route.LoaderArgs) {
-  const response = await fetch(`${API_URL}/plants/${params.id}`);
-  if (!response.ok) {
-    if (response.status === 404) {
+  const [plantResponse, careLogsResponse] = await Promise.all([
+    fetch(`${API_URL}/plants/${params.id}`),
+    fetch(`${API_URL}/plants/${params.id}/care-logs`),
+  ]);
+
+  if (!plantResponse.ok) {
+    if (plantResponse.status === 404) {
       throw new Response("Plant Not Found", { status: 404 });
     }
     throw new Error("Failed to fetch plant");
   }
-  return await response.json();
+
+  const plant = await plantResponse.json();
+  const careLogs = careLogsResponse.ok ? await careLogsResponse.json() : [];
+
+  return { plant, careLogs };
 }
 
 export async function action({ params, request }: Route.ActionArgs) {
   const formData = await request.formData();
   const intent = formData.get("intent");
+
+  if (intent === "add-care-log") {
+    const type = formData.get("type");
+    const date = formData.get("date");
+    const note = formData.get("note");
+
+    const response = await fetch(`${API_URL}/plants/${params.id}/care-logs`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, date, note }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { error: errorData.message || "Failed to add care log" };
+    }
+    return { success: true };
+  }
+
+  if (intent === "delete-care-log") {
+    const id = formData.get("id");
+    const response = await fetch(`${API_URL}/plants/${params.id}/care-logs/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete care log");
+    }
+    return { success: true };
+  }
 
   if (intent === "mark-dead") {
     const response = await fetch(`${API_URL}/plants/${params.id}`, {
@@ -67,9 +106,25 @@ export async function action({ params, request }: Route.ActionArgs) {
 }
 
 export default function PlantDetail() {
-  const plant = useLoaderData() as any;
+  const { plant, careLogs } = useLoaderData() as any;
   const submit = useSubmit();
+  const actionData = useActionData() as any;
   const [activeDialog, setActiveDialog] = React.useState<"dead" | "removed" | "delete" | null>(null);
+  const [logToDelete, setLogToDelete] = React.useState<any>(null);
+  const [isAddingLog, setIsAddingLog] = React.useState(false);
+  const formRef = React.useRef<HTMLFormElement>(null);
+
+  React.useEffect(() => {
+    if (actionData?.success) {
+      setIsAddingLog(false);
+    }
+  }, [actionData]);
+
+  React.useEffect(() => {
+    if (!isAddingLog && formRef.current) {
+      formRef.current.reset();
+    }
+  }, [isAddingLog]);
 
   const handleConfirm = () => {
     if (!activeDialog) return;
@@ -79,6 +134,15 @@ export default function PlantDetail() {
     
     submit({ intent }, { method });
     setActiveDialog(null);
+  };
+
+  const handleDeleteLog = () => {
+    if (!logToDelete) return;
+    submit(
+      { intent: "delete-care-log", id: logToDelete.id },
+      { method: "post" }
+    );
+    setLogToDelete(null);
   };
 
   return (
@@ -159,6 +223,16 @@ export default function PlantDetail() {
         type="danger"
       />
 
+      <ConfirmationDialog
+        isOpen={!!logToDelete}
+        onClose={() => setLogToDelete(null)}
+        onConfirm={handleDeleteLog}
+        title="Delete Care Log"
+        message="Are you sure you want to delete this care log entry? This action cannot be undone."
+        confirmText="Delete Log"
+        type="danger"
+      />
+
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-8">
           <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
@@ -214,6 +288,117 @@ export default function PlantDetail() {
               >
                 View full species details &rarr;
               </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="lg:col-span-1 space-y-8">
+          <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-neutral-900">Care History</h3>
+              <button
+                type="button"
+                onClick={() => setIsAddingLog(!isAddingLog)}
+                className="text-sm font-medium text-green-600 hover:text-green-500"
+              >
+                {isAddingLog ? 'Cancel' : 'Add Log'}
+              </button>
+            </div>
+
+            {isAddingLog && (
+              <Form method="post" ref={formRef} className="mb-6 space-y-4 p-4 rounded-lg bg-neutral-50 border border-neutral-100">
+                <input type="hidden" name="intent" value="add-care-log" />
+                <div>
+                  <label htmlFor="type" className="block text-xs font-medium text-neutral-500 uppercase tracking-wider">Type</label>
+                  <select
+                    name="type"
+                    id="type"
+                    required
+                    className="mt-1 block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm"
+                  >
+                    {Object.entries(CARE_LOG_TYPE_LABELS).map(([value, label]) => (
+                      <option key={value} value={value}>{label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="date" className="block text-xs font-medium text-neutral-500 uppercase tracking-wider">Date</label>
+                  <input
+                    type="datetime-local"
+                    name="date"
+                    id="date"
+                    required
+                    defaultValue={new Date().toISOString().slice(0, 16)}
+                    className="mt-1 block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="note" className="block text-xs font-medium text-neutral-500 uppercase tracking-wider">Note (Optional)</label>
+                  <textarea
+                    name="note"
+                    id="note"
+                    rows={2}
+                    className="mt-1 block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 transition-colors"
+                >
+                  Save Log
+                </button>
+              </Form>
+            )}
+
+            <div className="flow-root">
+              {careLogs.length === 0 ? (
+                <p className="text-sm text-neutral-500 text-center py-4">No care logs yet.</p>
+              ) : (
+                <ul className="-mb-8">
+                  {careLogs.map((log: any, logIdx: number) => (
+                    <li key={log.id}>
+                      <div className="relative pb-8">
+                        {logIdx !== careLogs.length - 1 ? (
+                          <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-neutral-200" aria-hidden="true" />
+                        ) : null}
+                        <div className="relative flex space-x-3">
+                          <div>
+                            <span className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center ring-8 ring-white">
+                              <span className="h-2 w-2 rounded-full bg-green-600" />
+                            </span>
+                          </div>
+                          <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
+                            <div>
+                              <p className="text-sm font-medium text-neutral-900">
+                                {formatEnum(log.type, CARE_LOG_TYPE_LABELS)}
+                              </p>
+                              {log.note && (
+                                <p className="mt-1 text-sm text-neutral-600 italic">
+                                  "{log.note}"
+                                </p>
+                              )}
+                            </div>
+                            <div className="flex flex-col items-end space-y-1">
+                              <time className="whitespace-nowrap text-xs text-neutral-500">
+                                {new Date(log.date).toLocaleDateString()}
+                                <br />
+                                {new Date(log.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </time>
+                              <button
+                                type="button"
+                                onClick={() => setLogToDelete(log)}
+                                className="text-xs text-red-400 hover:text-red-600"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
         </div>
