@@ -235,6 +235,68 @@ export default function PlantDetail() {
         </div>
       </div>
 
+      {/* Quick Actions Bar */}
+      {plant.status === "active" && (
+        <section className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider whitespace-nowrap">
+              Quick Care:
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              <Form method="post" className="contents">
+                <input type="hidden" name="intent" value="add-care-log" />
+                <input type="hidden" name="date" value={new Date().toISOString().slice(0, 16)} />
+                <button
+                  type="submit"
+                  name="type"
+                  value="WATERING"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700 border border-blue-100 hover:bg-blue-100 transition-all shadow-sm active:transform active:scale-95"
+                >
+                  <span className="text-blue-500">{careTypeIcons.WATERING}</span>
+                  Watering
+                </button>
+                <button
+                  type="submit"
+                  name="type"
+                  value="CHECK"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-4 py-2 text-sm font-bold text-green-700 border border-green-100 hover:bg-green-100 transition-all shadow-sm active:transform active:scale-95"
+                >
+                  <span className="text-green-500">{careTypeIcons.CHECK}</span>
+                  Check
+                </button>
+                <button
+                  type="submit"
+                  name="type"
+                  value="FERTILIZING"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-4 py-2 text-sm font-bold text-orange-700 border border-orange-100 hover:bg-orange-100 transition-all shadow-sm active:transform active:scale-95"
+                >
+                  <span className="text-orange-500">{careTypeIcons.FERTILIZING}</span>
+                  Fertilizing
+                </button>
+                <button
+                  type="submit"
+                  name="type"
+                  value="PRUNING"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 px-4 py-2 text-sm font-bold text-purple-700 border border-purple-100 hover:bg-purple-100 transition-all shadow-sm active:transform active:scale-95"
+                >
+                  <span className="text-purple-500">{careTypeIcons.PRUNING}</span>
+                  Pruning
+                </button>
+                <button
+                  type="submit"
+                  name="type"
+                  value="REPOTTING"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-4 py-2 text-sm font-bold text-amber-700 border border-amber-100 hover:bg-amber-100 transition-all shadow-sm active:transform active:scale-95"
+                >
+                  <span className="text-amber-500">{careTypeIcons.REPOTTING}</span>
+                  Repotting
+                </button>
+              </Form>
+            </div>
+          </div>
+        </section>
+      )}
+
       <ConfirmationDialog
         isOpen={activeDialog === "dead"}
         onClose={() => setActiveDialog(null)}
