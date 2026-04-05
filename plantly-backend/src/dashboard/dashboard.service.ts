@@ -11,6 +11,8 @@ import {
   ActivityType,
 } from './dto/dashboard.dto';
 
+import { PlantAttentionService } from '../plant/plant-attention.service';
+
 @Injectable()
 export class DashboardService {
   constructor(
@@ -18,6 +20,7 @@ export class DashboardService {
     private readonly plantRepository: Repository<Plant>,
     @InjectRepository(CareLog)
     private readonly careLogRepository: Repository<CareLog>,
+    private readonly plantAttentionService: PlantAttentionService,
   ) {}
 
   async getDashboardData(): Promise<DashboardDto> {
@@ -96,26 +99,21 @@ export class DashboardService {
       .sort((a, b) => b.date.getTime() - a.date.getTime())
       .slice(0, 10);
 
-    // "Needs check" logic: Active plants that haven't had a CHECK log in the last 7 days
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-    // Subquery-like approach: find active plants and their last CHECK log
+    // "Needs check" logic (v1 rules): Active plants that need attention according to PlantAttentionRules
     const activePlantsList = await this.plantRepository.find({
       where: { status: PlantStatus.ACTIVE },
-      relations: ['careLogs'],
+      relations: ['careLogs', 'species'],
     });
 
     const needsCheck: NeedsCheckPlantDto[] = [];
 
     for (const plant of activePlantsList) {
-      const logs = [...plant.careLogs].sort(
-        (a, b) => b.date.getTime() - a.date.getTime(),
-      );
+      if (this.plantAttentionService.needsAttention(plant)) {
+        const sortedLogs = [...plant.careLogs].sort(
+          (a, b) => b.date.getTime() - a.date.getTime(),
+        );
+        const lastLog = sortedLogs[0];
 
-      const lastLog = logs[0];
-
-      if (!lastLog || lastLog.date < sevenDaysAgo) {
         needsCheck.push({
           id: plant.id,
           nickname: plant.nickname,

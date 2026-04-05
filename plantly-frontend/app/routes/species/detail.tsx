@@ -113,8 +113,8 @@ export default function SpeciesDetail() {
         confirmText="Mark Inactive"
         type="warning"
       />
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between border-b border-neutral-200 pb-8">
+        <div className="space-y-2">
           <h2 className="text-3xl font-bold tracking-tight text-neutral-900">
             {s.commonName}
             {!s.isActive && (
@@ -125,7 +125,7 @@ export default function SpeciesDetail() {
           </h2>
           <p className="text-lg italic text-neutral-500">{s.scientificName}</p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-3">
           <Link
             to={`/species/${s.id}/edit`}
             className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50"

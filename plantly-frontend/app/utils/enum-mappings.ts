@@ -53,11 +53,14 @@ export const PLANT_STATUS_LABELS: Record<string, string> = {
 };
 
 export const CARE_LOG_TYPE_LABELS: Record<string, string> = {
-  WATERING: 'Watering',
-  FERTILIZING: 'Fertilizing',
-  PRUNING: 'Pruning',
-  REPOTTING: 'Repotting',
+  WATER: 'Watering',
+  FERTILIZE: 'Fertilizing',
+  PRUNE: 'Pruning',
+  REPOT: 'Repotting',
   CHECK: 'Check-up',
+  MOVE_INSIDE: 'Move inside',
+  MOVE_OUTSIDE: 'Move outside',
+  PEST_TREATMENT: 'Pest treatment',
 };
 
 export const ACTIVITY_TYPE_LABELS: Record<string, string> = {

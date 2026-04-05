@@ -5,8 +5,10 @@ import { DashboardService } from './dashboard.service';
 import { Plant } from '../plant/entities/plant.entity';
 import { CareLog } from '../care-log/entities/care-log.entity';
 
+import { PlantModule } from '../plant/plant.module';
+
 @Module({
-  imports: [TypeOrmModule.forFeature([Plant, CareLog])],
+  imports: [TypeOrmModule.forFeature([Plant, CareLog]), PlantModule],
   controllers: [DashboardController],
   providers: [DashboardService],
 })
