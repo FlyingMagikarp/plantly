@@ -3,6 +3,7 @@ import { Link, useLoaderData, Form, redirect, useSubmit, useActionData, useSearc
 import * as React from "react";
 import { ConfirmationDialog } from "../../components/confirmation-dialog";
 import { useToast } from "../../components/toast";
+import { API_BASE_URL } from "../../config";
 import {
   PLACEMENT_TYPE_LABELS,
   LIGHT_LEVEL_LABELS,
@@ -13,7 +14,7 @@ import {
   formatEnum,
 } from "../../utils/enum-mappings";
 
-const API_URL = "http://localhost:8081";
+const API_URL = API_BASE_URL;
 
 export async function action({ params, request }: Route.ActionArgs) {
   const formData = await request.formData();

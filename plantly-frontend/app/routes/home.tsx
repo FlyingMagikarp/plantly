@@ -1,8 +1,7 @@
 import type { Route } from "./+types/home";
 import { Link, useLoaderData } from "react-router";
 import { CARE_LOG_TYPE_LABELS, ACTIVITY_TYPE_LABELS, formatEnum } from "../utils/enum-mappings";
-
-const API_URL = "http://localhost:8081";
+import { API_BASE_URL } from "../config";
 
 interface DashboardData {
   counts: {
@@ -26,7 +25,7 @@ interface DashboardData {
 }
 
 export async function loader({}: Route.LoaderArgs) {
-  const response = await fetch(`${API_URL}/dashboard`);
+  const response = await fetch(`${API_BASE_URL}/dashboard`);
   if (!response.ok) {
     throw new Error("Could not fetch dashboard data");
   }

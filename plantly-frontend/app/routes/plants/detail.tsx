@@ -3,6 +3,7 @@ import * as React from "react";
 import { ConfirmationDialog } from "../../components/confirmation-dialog";
 import type { Route } from "./+types/detail";
 import { useToast } from "../../components/toast";
+import { API_BASE_URL } from "../../config";
 import {
   PLANT_STATUS_LABELS,
   PLACEMENT_TYPE_LABELS,
@@ -12,7 +13,7 @@ import {
   formatEnum,
 } from "../../utils/enum-mappings";
 
-const API_URL = "http://localhost:8081";
+const API_URL = API_BASE_URL;
 
 export async function loader({ params }: Route.LoaderArgs) {
   const [plantResponse, careLogsResponse] = await Promise.all([

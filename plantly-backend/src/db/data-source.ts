@@ -18,7 +18,11 @@ const AppDataSource = new DataSource({
 
   entities: [Species, SpeciesSeasonalTask, Plant, CareLog],
 
-  migrations: ['src/db/migration/*.ts'],
+  migrations: [
+    process.env.NODE_ENV === 'production'
+      ? 'dist/db/migration/*.js'
+      : 'src/db/migration/*.ts',
+  ],
 
   synchronize: false,
 

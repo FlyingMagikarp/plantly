@@ -1,10 +1,11 @@
 import { redirect, useNavigation, useLoaderData, useActionData } from "react-router";
+import { API_BASE_URL } from "../../config";
 import type { Route } from "./+types/edit";
 import { PlantForm } from "../../components/plant-form";
 import { useToast } from "../../components/toast";
 import { useEffect } from "react";
 
-const API_URL = "http://localhost:8081";
+const API_URL = API_BASE_URL;
 
 export async function loader({ params }: Route.LoaderArgs) {
   const [plantResponse, speciesResponse] = await Promise.all([

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../config";
 import type { Route } from "./+types/list";
 import { Link, useLoaderData, useSearchParams } from "react-router";
 import {
@@ -8,8 +9,7 @@ import {
 import { useToast } from "../../components/toast";
 import { useEffect, useRef } from "react";
 
-// Should ideally be in a shared config
-const API_URL = "http://localhost:8081";
+const API_URL = API_BASE_URL;
 
 export async function loader({}: Route.LoaderArgs) {
   const response = await fetch(`${API_URL}/species`);

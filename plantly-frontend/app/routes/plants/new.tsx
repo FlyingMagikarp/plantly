@@ -1,10 +1,11 @@
+import { API_BASE_URL } from "../../config";
 import { redirect, useNavigation, useLoaderData, useActionData } from "react-router";
 import type { Route } from "./+types/new";
 import { PlantForm } from "../../components/plant-form";
 import { useToast } from "../../components/toast";
 import { useEffect } from "react";
 
-const API_URL = "http://localhost:8081";
+const API_URL = API_BASE_URL;
 
 export async function loader() {
   const response = await fetch(`${API_URL}/species?onlyActive=true`);

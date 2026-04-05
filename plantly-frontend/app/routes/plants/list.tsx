@@ -1,10 +1,11 @@
+import { API_BASE_URL } from "../../config";
 import type { Route } from "./+types/list";
 import { Link, useLoaderData, useSearchParams } from "react-router";
 import { PLANT_STATUS_LABELS, formatEnum } from "../../utils/enum-mappings";
 import { useToast } from "../../components/toast";
 import { useEffect, useRef } from "react";
 
-const API_URL = "http://localhost:8081";
+const API_URL = API_BASE_URL;
 
 export async function loader({}: Route.LoaderArgs) {
   const response = await fetch(`${API_URL}/plants`);
