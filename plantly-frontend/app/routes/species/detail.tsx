@@ -1,7 +1,8 @@
 import type { Route } from "./+types/detail";
-import { Link, useLoaderData, Form, redirect, useSubmit, useActionData } from "react-router";
+import { Link, useLoaderData, Form, redirect, useSubmit, useActionData, useSearchParams } from "react-router";
 import * as React from "react";
 import { ConfirmationDialog } from "../../components/confirmation-dialog";
+import { useToast } from "../../components/toast";
 import {
   PLACEMENT_TYPE_LABELS,
   LIGHT_LEVEL_LABELS,
@@ -28,9 +29,10 @@ export async function action({ params, request }: Route.ActionArgs) {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to inactivate species");
+      const errorData = await response.json().catch(() => ({}));
+      return { error: errorData.message || "Could not inactivate species" };
     }
-    return redirect("/species");
+    return redirect("/species?success=species-inactivated");
   }
 
   if (intent === "activate") {
@@ -43,9 +45,10 @@ export async function action({ params, request }: Route.ActionArgs) {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to activate species");
+      const errorData = await response.json().catch(() => ({}));
+      return { error: errorData.message || "Could not activate species" };
     }
-    return redirect(`/species/${params.id}`);
+    return { success: true, message: "Species activated" };
   }
 
   const response = await fetch(`${API_URL}/species/${params.id}`, {
@@ -56,9 +59,10 @@ export async function action({ params, request }: Route.ActionArgs) {
     if (response.status === 409) {
       return await response.json();
     }
-    throw new Error("Failed to delete species");
+    const errorData = await response.json().catch(() => ({}));
+    return { error: errorData.message || "Could not delete species" };
   }
-  return redirect("/species");
+  return redirect("/species?success=species-deleted");
 }
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -73,14 +77,34 @@ export default function SpeciesDetail() {
   const s = useLoaderData() as any;
   const actionData = useActionData() as any;
   const submit = useSubmit();
+  const { success, error: showToastError } = useToast();
+  const [searchParams] = useSearchParams();
+  const notifiedRef = React.useRef(false);
+
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [isInUseDialogOpen, setIsInUseDialogOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (actionData?.error === "SpeciesInUse") {
       setIsInUseDialogOpen(true);
+    } else if (actionData?.error) {
+      showToastError(actionData.error);
+    } else if (actionData?.success && actionData.message) {
+      success(actionData.message);
     }
-  }, [actionData]);
+  }, [actionData, success, showToastError]);
+
+  React.useEffect(() => {
+    if (notifiedRef.current) return;
+    const successType = searchParams.get("success");
+    if (successType === "species-created") {
+      success("Species created");
+      notifiedRef.current = true;
+    } else if (successType === "species-updated") {
+      success("Species updated");
+      notifiedRef.current = true;
+    }
+  }, [searchParams, success]);
 
   return (
     <div className="space-y-8">

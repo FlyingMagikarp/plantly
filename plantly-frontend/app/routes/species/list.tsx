@@ -1,10 +1,12 @@
 import type { Route } from "./+types/list";
-import { Link, useLoaderData } from "react-router";
+import { Link, useLoaderData, useSearchParams } from "react-router";
 import {
   PLACEMENT_TYPE_LABELS,
   WATERING_STRATEGY_LABELS,
   formatEnum,
 } from "../../utils/enum-mappings";
+import { useToast } from "../../components/toast";
+import { useEffect, useRef } from "react";
 
 // Should ideally be in a shared config
 const API_URL = "http://localhost:8081";
@@ -12,7 +14,7 @@ const API_URL = "http://localhost:8081";
 export async function loader({}: Route.LoaderArgs) {
   const response = await fetch(`${API_URL}/species`);
   if (!response.ok) {
-    throw new Error("Failed to fetch species");
+    throw new Error("Could not fetch species");
   }
   return await response.json();
 }
@@ -23,6 +25,22 @@ export function meta({}: Route.MetaArgs) {
 
 export default function SpeciesList() {
   const species = useLoaderData() as any[];
+  const [searchParams] = useSearchParams();
+  const { success } = useToast();
+  const notifiedRef = useRef(false);
+
+  useEffect(() => {
+    if (notifiedRef.current) return;
+    
+    const successType = searchParams.get("success");
+    if (successType === "species-deleted") {
+      success("Species deleted");
+      notifiedRef.current = true;
+    } else if (successType === "species-inactivated") {
+      success("Species marked as inactive");
+      notifiedRef.current = true;
+    }
+  }, [searchParams, success]);
 
   return (
     <div className="space-y-6">

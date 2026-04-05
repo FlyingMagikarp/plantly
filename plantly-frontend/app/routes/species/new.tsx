@@ -1,6 +1,8 @@
 import type { Route } from "./+types/new";
-import { redirect, useNavigation } from "react-router";
+import { redirect, useNavigation, useActionData } from "react-router";
 import { SpeciesForm } from "../../components/species-form";
+import { useToast } from "../../components/toast";
+import { useEffect } from "react";
 
 const API_URL = "http://localhost:8081";
 
@@ -38,16 +40,24 @@ export async function action({ request }: Route.ActionArgs) {
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to create species");
+    return { errors: errorData.message || "Could not create species" };
   }
 
   const species = await response.json();
-  return redirect(`/species/${species.id}`);
+  return redirect(`/species/${species.id}?success=species-created`);
 }
 
 export default function SpeciesNew() {
   const navigation = useNavigation();
+  const actionData = useActionData() as any;
+  const { error } = useToast();
   const isSubmitting = navigation.state === "submitting";
+
+  useEffect(() => {
+    if (actionData?.errors) {
+      error(actionData.errors);
+    }
+  }, [actionData, error]);
 
   return (
     <div className="mx-auto max-w-3xl">

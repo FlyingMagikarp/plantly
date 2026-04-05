@@ -1,6 +1,8 @@
 import type { Route } from "./+types/edit";
-import { redirect, useLoaderData, useNavigation } from "react-router";
+import { redirect, useLoaderData, useNavigation, useActionData } from "react-router";
 import { SpeciesForm } from "../../components/species-form";
+import { useToast } from "../../components/toast";
+import { useEffect } from "react";
 
 const API_URL = "http://localhost:8081";
 
@@ -46,16 +48,24 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to update species");
+    return { errors: errorData.message || "Could not update species" };
   }
 
-  return redirect(`/species/${params.id}`);
+  return redirect(`/species/${params.id}?success=species-updated`);
 }
 
 export default function SpeciesEdit() {
   const species = useLoaderData() as any;
   const navigation = useNavigation();
+  const actionData = useActionData() as any;
+  const { error } = useToast();
   const isSubmitting = navigation.state === "submitting";
+
+  useEffect(() => {
+    if (actionData?.errors) {
+      error(actionData.errors);
+    }
+  }, [actionData, error]);
 
   return (
     <div className="mx-auto max-w-3xl">

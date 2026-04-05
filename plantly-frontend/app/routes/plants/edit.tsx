@@ -1,6 +1,8 @@
-import { redirect, useNavigation, useLoaderData } from "react-router";
+import { redirect, useNavigation, useLoaderData, useActionData } from "react-router";
 import type { Route } from "./+types/edit";
 import { PlantForm } from "../../components/plant-form";
+import { useToast } from "../../components/toast";
+import { useEffect } from "react";
 
 const API_URL = "http://localhost:8081";
 
@@ -11,7 +13,7 @@ export async function loader({ params }: Route.LoaderArgs) {
   ]);
 
   if (!plantResponse.ok || !speciesResponse.ok) {
-    throw new Error("Failed to fetch data");
+    throw new Error("Could not fetch data");
   }
 
   return {
@@ -34,16 +36,24 @@ export async function action({ params, request }: Route.ActionArgs) {
 
   if (!response.ok) {
     const errorData = await response.json();
-    return { errors: errorData.message || "Failed to update plant" };
+    return { errors: errorData.message || "Could not update plant" };
   }
 
-  return redirect(`/plants/${params.id}`);
+  return redirect(`/plants/${params.id}?success=plant-updated`);
 }
 
 export default function EditPlant() {
   const { plant, species } = useLoaderData() as { plant: any; species: any[] };
   const navigation = useNavigation();
+  const actionData = useActionData() as any;
+  const { error } = useToast();
   const isSubmitting = navigation.state === "submitting";
+
+  useEffect(() => {
+    if (actionData?.errors) {
+      error(actionData.errors);
+    }
+  }, [actionData, error]);
 
   return (
     <div className="mx-auto max-w-2xl">

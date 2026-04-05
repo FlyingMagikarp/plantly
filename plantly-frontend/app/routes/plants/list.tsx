@@ -1,13 +1,15 @@
 import type { Route } from "./+types/list";
-import { Link, useLoaderData } from "react-router";
+import { Link, useLoaderData, useSearchParams } from "react-router";
 import { PLANT_STATUS_LABELS, formatEnum } from "../../utils/enum-mappings";
+import { useToast } from "../../components/toast";
+import { useEffect, useRef } from "react";
 
 const API_URL = "http://localhost:8081";
 
 export async function loader({}: Route.LoaderArgs) {
   const response = await fetch(`${API_URL}/plants`);
   if (!response.ok) {
-    throw new Error("Failed to fetch plants");
+    throw new Error("Could not fetch plants");
   }
   return await response.json();
 }
@@ -18,6 +20,22 @@ export function meta({}: Route.MetaArgs) {
 
 export default function PlantList() {
   const plants = useLoaderData() as any[];
+  const [searchParams] = useSearchParams();
+  const { success } = useToast();
+  const notifiedRef = useRef(false);
+
+  useEffect(() => {
+    if (notifiedRef.current) return;
+    
+    const successType = searchParams.get("success");
+    if (successType === "plant-created") {
+      success("Plant created");
+      notifiedRef.current = true;
+    } else if (successType === "plant-deleted") {
+      success("Plant deleted");
+      notifiedRef.current = true;
+    }
+  }, [searchParams, success]);
 
   return (
     <div className="space-y-6">

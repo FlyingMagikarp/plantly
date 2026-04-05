@@ -28,7 +28,7 @@ interface DashboardData {
 export async function loader({}: Route.LoaderArgs) {
   const response = await fetch(`${API_URL}/dashboard`);
   if (!response.ok) {
-    throw new Error("Failed to fetch dashboard data");
+    throw new Error("Could not fetch dashboard data");
   }
   return await response.json();
 }

@@ -43,6 +43,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router";
+import { ToastProvider } from "./components/toast";
 
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -54,7 +55,8 @@ export default function App() {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen bg-neutral-50 font-sans text-neutral-900">
+    <ToastProvider>
+      <div className="flex min-h-screen bg-neutral-50 font-sans text-neutral-900">
       {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div
@@ -179,6 +181,7 @@ export default function App() {
         </div>
       </main>
     </div>
+    </ToastProvider>
   );
 }
 

@@ -1,7 +1,8 @@
-import { Link, useLoaderData, Form, redirect, useSubmit, useActionData } from "react-router";
+import { Link, useLoaderData, Form, redirect, useSubmit, useActionData, useSearchParams } from "react-router";
 import * as React from "react";
 import { ConfirmationDialog } from "../../components/confirmation-dialog";
 import type { Route } from "./+types/detail";
+import { useToast } from "../../components/toast";
 import {
   PLANT_STATUS_LABELS,
   PLACEMENT_TYPE_LABELS,
@@ -18,12 +19,12 @@ export async function loader({ params }: Route.LoaderArgs) {
     fetch(`${API_URL}/plants/${params.id}`),
     fetch(`${API_URL}/plants/${params.id}/care-logs`),
   ]);
-
+  
   if (!plantResponse.ok) {
     if (plantResponse.status === 404) {
       throw new Response("Plant Not Found", { status: 404 });
     }
-    throw new Error("Failed to fetch plant");
+    throw new Error("Could not fetch plant");
   }
 
   const plant = await plantResponse.json();
@@ -49,9 +50,9 @@ export async function action({ params, request }: Route.ActionArgs) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      return { error: errorData.message || "Failed to add care log" };
+      return { error: errorData.message || "Could not add care log" };
     }
-    return { success: true };
+    return { success: true, message: "Care log added" };
   }
 
   if (intent === "delete-care-log") {
@@ -61,9 +62,10 @@ export async function action({ params, request }: Route.ActionArgs) {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to delete care log");
+      const errorData = await response.json().catch(() => ({}));
+      return { error: errorData.message || "Could not delete care log" };
     }
-    return { success: true };
+    return { success: true, message: "Care log deleted" };
   }
 
   if (intent === "mark-dead") {
@@ -73,9 +75,10 @@ export async function action({ params, request }: Route.ActionArgs) {
       body: JSON.stringify({ status: "dead" }),
     });
     if (!response.ok) {
-      throw new Error("Failed to mark plant as dead");
+      const errorData = await response.json().catch(() => ({}));
+      return { error: errorData.message || "Could not mark plant as dead" };
     }
-    return null;
+    return { success: true, message: "Plant marked as dead" };
   }
 
   if (intent === "mark-removed") {
@@ -85,9 +88,10 @@ export async function action({ params, request }: Route.ActionArgs) {
       body: JSON.stringify({ status: "removed" }),
     });
     if (!response.ok) {
-      throw new Error("Failed to mark plant as removed");
+      const errorData = await response.json().catch(() => ({}));
+      return { error: errorData.message || "Could not mark plant as removed" };
     }
-    return null;
+    return { success: true, message: "Plant marked as removed" };
   }
 
   if (request.method === "DELETE" || intent === "delete") {
@@ -96,10 +100,11 @@ export async function action({ params, request }: Route.ActionArgs) {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to delete plant");
+      const errorData = await response.json().catch(() => ({}));
+      return { error: errorData.message || "Could not delete plant" };
     }
 
-    return redirect("/plants");
+    return redirect("/plants?success=plant-deleted");
   }
 
   return { error: "Method not allowed" };
@@ -109,6 +114,10 @@ export default function PlantDetail() {
   const { plant, careLogs } = useLoaderData() as any;
   const submit = useSubmit();
   const actionData = useActionData() as any;
+  const { success, error } = useToast();
+  const [searchParams] = useSearchParams();
+  const notifiedRef = React.useRef(false);
+
   const [activeDialog, setActiveDialog] = React.useState<"dead" | "removed" | "delete" | null>(null);
   const [logToDelete, setLogToDelete] = React.useState<any>(null);
   const [isAddingLog, setIsAddingLog] = React.useState(false);
@@ -117,8 +126,22 @@ export default function PlantDetail() {
   React.useEffect(() => {
     if (actionData?.success) {
       setIsAddingLog(false);
+      if (actionData.message) {
+        success(actionData.message);
+      }
+    } else if (actionData?.error) {
+      error(actionData.error);
     }
-  }, [actionData]);
+  }, [actionData, success, error]);
+
+  React.useEffect(() => {
+    if (notifiedRef.current) return;
+    const successType = searchParams.get("success");
+    if (successType === "plant-updated") {
+      success("Plant updated");
+      notifiedRef.current = true;
+    }
+  }, [searchParams, success]);
 
   React.useEffect(() => {
     if (!isAddingLog && formRef.current) {
