@@ -11,8 +11,10 @@ import { useEffect, useRef } from "react";
 
 const API_URL = API_BASE_URL;
 
-export async function loader({}: Route.LoaderArgs) {
-  const response = await fetch(`${API_URL}/species`);
+export async function loader({ request }: Route.LoaderArgs) {
+  const url = new URL(request.url);
+  const showInactive = url.searchParams.get("showInactive") === "true";
+  const response = await fetch(`${API_URL}/species?showInactive=${showInactive}`);
   if (!response.ok) {
     throw new Error("Could not fetch species");
   }
@@ -25,7 +27,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function SpeciesList() {
   const species = useLoaderData() as any[];
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { success } = useToast();
   const notifiedRef = useRef(false);
 
@@ -44,16 +46,62 @@ export default function SpeciesList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-2xl font-bold tracking-tight text-neutral-900">
           Species Library
         </h2>
-        <Link
-          to="/species/new"
-          className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 transition-colors"
-        >
-          Add New Species
-        </Link>
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
+            <button
+              type="button"
+              id="show-inactive-switch"
+              role="switch"
+              aria-checked={searchParams.get("showInactive") === "true"}
+              onClick={() => {
+                const current = searchParams.get("showInactive") === "true";
+                const newParams = new URLSearchParams(searchParams);
+                if (!current) {
+                  newParams.set("showInactive", "true");
+                } else {
+                  newParams.delete("showInactive");
+                }
+                setSearchParams(newParams);
+              }}
+              className={`${
+                searchParams.get("showInactive") === "true" ? "bg-green-600" : "bg-neutral-200"
+              } relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-green-600 focus:ring-offset-2 outline-none shadow-sm`}
+            >
+              <span
+                aria-hidden="true"
+                className={`${
+                  searchParams.get("showInactive") === "true" ? "translate-x-5" : "translate-x-0"
+                } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out`}
+              />
+            </button>
+            <label
+              htmlFor="show-inactive-switch"
+              className="text-sm font-medium text-neutral-700 cursor-pointer"
+              onClick={() => {
+                const current = searchParams.get("showInactive") === "true";
+                const newParams = new URLSearchParams(searchParams);
+                if (!current) {
+                  newParams.set("showInactive", "true");
+                } else {
+                  newParams.delete("showInactive");
+                }
+                setSearchParams(newParams);
+              }}
+            >
+              Show inactive
+            </label>
+          </div>
+          <Link
+            to="/species/new"
+            className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 transition-colors"
+          >
+            Add New Species
+          </Link>
+        </div>
       </div>
 
       {species.length === 0 ? (

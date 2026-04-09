@@ -37,8 +37,10 @@ export class PlantService {
     return this.plantRepository.save(plant);
   }
 
-  async findAll(): Promise<Plant[]> {
+  async findAll(showInactive = false): Promise<Plant[]> {
+    const where = showInactive ? {} : { status: PlantStatus.ACTIVE };
     return this.plantRepository.find({
+      where,
       relations: ['species'],
       order: { nickname: 'ASC' },
     });

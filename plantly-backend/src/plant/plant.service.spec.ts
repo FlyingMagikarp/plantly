@@ -69,11 +69,23 @@ describe('PlantService', () => {
   });
 
   describe('findAll', () => {
-    it('should return all plants', async () => {
+    it('should show all plants when showInactive is true', async () => {
+      plantRepository.find.mockResolvedValue([]);
+      const result = await service.findAll(true);
+      expect(result).toEqual([]);
+      expect(plantRepository.find).toHaveBeenCalledWith({
+        where: {},
+        relations: ['species'],
+        order: { nickname: 'ASC' },
+      });
+    });
+
+    it('should filter active plants by default when showInactive is false', async () => {
       plantRepository.find.mockResolvedValue([]);
       const result = await service.findAll();
       expect(result).toEqual([]);
       expect(plantRepository.find).toHaveBeenCalledWith({
+        where: { status: PlantStatus.ACTIVE },
         relations: ['species'],
         order: { nickname: 'ASC' },
       });

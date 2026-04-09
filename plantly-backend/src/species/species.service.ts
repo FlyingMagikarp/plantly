@@ -21,9 +21,9 @@ export class SpeciesService {
     return await this.speciesRepository.save(species);
   }
 
-  async findAll(onlyActive = false): Promise<Species[]> {
+  async findAll(showInactive = false): Promise<Species[]> {
     return await this.speciesRepository.find({
-      where: onlyActive ? { isActive: true } : {},
+      where: showInactive ? {} : { isActive: true },
       relations: { seasonalTasks: true },
       order: { commonName: 'ASC' },
     });

@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DashboardService } from './dashboard.service';
+import { PlantAttentionService } from '../plant/plant-attention.service';
 import { Plant } from '../plant/entities/plant.entity';
 import { CareLog } from '../care-log/entities/care-log.entity';
 import { PlantStatus } from '../plant/enums/plant-status.enum';
@@ -11,6 +12,7 @@ describe('DashboardService', () => {
   let service: DashboardService;
   let plantRepository: any;
   let careLogRepository: any;
+  let plantAttentionService: any;
 
   beforeEach(async () => {
     plantRepository = {
@@ -19,6 +21,9 @@ describe('DashboardService', () => {
     };
     careLogRepository = {
       find: jest.fn(),
+    };
+    plantAttentionService = {
+      needsAttention: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -31,6 +36,10 @@ describe('DashboardService', () => {
         {
           provide: getRepositoryToken(CareLog),
           useValue: careLogRepository,
+        },
+        {
+          provide: PlantAttentionService,
+          useValue: plantAttentionService,
         },
       ],
     }).compile();
@@ -86,6 +95,7 @@ describe('DashboardService', () => {
         },
       ]);
     });
+    plantAttentionService.needsAttention.mockReturnValue(true);
 
     const result = await service.getDashboardData();
 
@@ -127,6 +137,7 @@ describe('DashboardService', () => {
         careLogs: [{ type: CareLogType.WATERING, date: eightDaysAgo }],
       },
     ]);
+    plantAttentionService.needsAttention.mockReturnValue(true);
 
     const result = await service.getDashboardData();
     expect(result.counts.pendingTasks).toBe(1);

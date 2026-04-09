@@ -70,20 +70,20 @@ describe('SpeciesService', () => {
   });
 
   describe('findAll', () => {
-    it('should filter active species when onlyActive is true', async () => {
+    it('should show all species when showInactive is true', async () => {
       await service.findAll(true);
       expect(repository.find).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { isActive: true },
+          where: {},
         }),
       );
     });
 
-    it('should not filter when onlyActive is false', async () => {
+    it('should filter active species when showInactive is false (default)', async () => {
       await service.findAll(false);
       expect(repository.find).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: {},
+          where: { isActive: true },
         }),
       );
     });

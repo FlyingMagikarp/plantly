@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { PlantService } from './plant.service';
 import { CreatePlantDto } from './dto/create-plant.dto';
@@ -22,8 +23,10 @@ export class PlantController {
   }
 
   @Get()
-  async findAll(): Promise<Plant[]> {
-    return this.plantService.findAll();
+  async findAll(
+    @Query('showInactive') showInactive?: string,
+  ): Promise<Plant[]> {
+    return this.plantService.findAll(showInactive === 'true');
   }
 
   @Get(':id')
