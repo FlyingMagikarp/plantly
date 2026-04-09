@@ -170,22 +170,22 @@ export default function PlantDetail() {
   };
 
   const careTypeIcons: Record<string, React.ReactNode> = {
-    WATERING: (
+    WATER: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4a2 2 0 012-2m16 0h-2M4 13h2m7 4h.01m-4 0h.01m8 0h.01M12 4v16" />
       </svg>
     ),
-    FERTILIZING: (
+    FERTILIZE: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m12 14a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
       </svg>
     ),
-    PRUNING: (
+    PRUNE: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758L5 19m0-14l4.121 4.121" />
       </svg>
     ),
-    REPOTTING: (
+    REPOT: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
       </svg>
@@ -193,6 +193,21 @@ export default function PlantDetail() {
     CHECK: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+    MOVE_INSIDE: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+    ),
+    MOVE_OUTSIDE: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+      </svg>
+    ),
+    PEST_TREATMENT: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751A11.959 11.959 0 0112 2.714z" />
       </svg>
     ),
   };
@@ -277,11 +292,11 @@ export default function PlantDetail() {
                 <button
                   type="submit"
                   name="type"
-                  value="WATERING"
+                  value="WATER"
                   className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700 border border-blue-100 hover:bg-blue-100 transition-all shadow-sm active:transform active:scale-95"
                 >
-                  <span className="text-blue-500">{careTypeIcons.WATERING}</span>
-                  Watering
+                  <span className="text-blue-500">{careTypeIcons.WATER}</span>
+                  Water
                 </button>
                 <button
                   type="submit"
@@ -295,29 +310,56 @@ export default function PlantDetail() {
                 <button
                   type="submit"
                   name="type"
-                  value="FERTILIZING"
+                  value="FERTILIZE"
                   className="inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-4 py-2 text-sm font-bold text-orange-700 border border-orange-100 hover:bg-orange-100 transition-all shadow-sm active:transform active:scale-95"
                 >
-                  <span className="text-orange-500">{careTypeIcons.FERTILIZING}</span>
-                  Fertilizing
+                  <span className="text-orange-500">{careTypeIcons.FERTILIZE}</span>
+                  Fertilize
                 </button>
                 <button
                   type="submit"
                   name="type"
-                  value="PRUNING"
+                  value="PRUNE"
                   className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 px-4 py-2 text-sm font-bold text-purple-700 border border-purple-100 hover:bg-purple-100 transition-all shadow-sm active:transform active:scale-95"
                 >
-                  <span className="text-purple-500">{careTypeIcons.PRUNING}</span>
-                  Pruning
+                  <span className="text-purple-500">{careTypeIcons.PRUNE}</span>
+                  Prune
                 </button>
                 <button
                   type="submit"
                   name="type"
-                  value="REPOTTING"
+                  value="REPOT"
                   className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-4 py-2 text-sm font-bold text-amber-700 border border-amber-100 hover:bg-amber-100 transition-all shadow-sm active:transform active:scale-95"
                 >
-                  <span className="text-amber-500">{careTypeIcons.REPOTTING}</span>
-                  Repotting
+                  <span className="text-amber-500">{careTypeIcons.REPOT}</span>
+                  Repot
+                </button>
+                <button
+                  type="submit"
+                  name="type"
+                  value="MOVE_INSIDE"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-4 py-2 text-sm font-bold text-indigo-700 border border-indigo-100 hover:bg-indigo-100 transition-all shadow-sm active:transform active:scale-95"
+                >
+                  <span className="text-indigo-500">{careTypeIcons.MOVE_INSIDE}</span>
+                  In
+                </button>
+                <button
+                  type="submit"
+                  name="type"
+                  value="MOVE_OUTSIDE"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-yellow-50 px-4 py-2 text-sm font-bold text-yellow-700 border border-yellow-100 hover:bg-yellow-100 transition-all shadow-sm active:transform active:scale-95"
+                >
+                  <span className="text-yellow-500">{careTypeIcons.MOVE_OUTSIDE}</span>
+                  Out
+                </button>
+                <button
+                  type="submit"
+                  name="type"
+                  value="PEST_TREATMENT"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-4 py-2 text-sm font-bold text-red-700 border border-red-100 hover:bg-red-100 transition-all shadow-sm active:transform active:scale-95"
+                >
+                  <span className="text-red-500">{careTypeIcons.PEST_TREATMENT}</span>
+                  Pest
                 </button>
               </Form>
             </div>
@@ -562,10 +604,13 @@ export default function PlantDetail() {
                           <div className="relative flex items-start space-x-4">
                             <div className="relative">
                               <span className={`h-10 w-10 rounded-xl flex items-center justify-center ring-4 ring-white shadow-sm border ${
-                                log.type === 'WATERING' ? 'bg-blue-50 text-blue-600 border-blue-100' :
-                                log.type === 'FERTILIZING' ? 'bg-orange-50 text-orange-600 border-orange-100' :
-                                log.type === 'PRUNING' ? 'bg-purple-50 text-purple-600 border-purple-100' :
-                                log.type === 'REPOTTING' ? 'bg-amber-50 text-amber-600 border-amber-100' :
+                                log.type === 'WATER' ? 'bg-blue-50 text-blue-600 border-blue-100' :
+                                log.type === 'FERTILIZE' ? 'bg-orange-50 text-orange-600 border-orange-100' :
+                                log.type === 'PRUNE' ? 'bg-purple-50 text-purple-600 border-purple-100' :
+                                log.type === 'REPOT' ? 'bg-amber-50 text-amber-600 border-amber-100' :
+                                log.type === 'MOVE_INSIDE' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' :
+                                log.type === 'MOVE_OUTSIDE' ? 'bg-yellow-50 text-yellow-600 border-yellow-100' :
+                                log.type === 'PEST_TREATMENT' ? 'bg-red-50 text-red-600 border-red-100' :
                                 'bg-green-50 text-green-600 border-green-100'
                               }`}>
                                 {careTypeIcons[log.type] || careTypeIcons.CHECK}

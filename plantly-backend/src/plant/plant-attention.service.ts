@@ -21,10 +21,10 @@ export class PlantAttentionService {
     const lastLog = sortedLogs[0];
 
     const waitDays = this.getWaitDays(lastLog.type, plant);
-    
+
     const attentionDate = new Date(lastLog.date);
     attentionDate.setDate(attentionDate.getDate() + waitDays);
-    
+
     return attentionDate;
   }
 

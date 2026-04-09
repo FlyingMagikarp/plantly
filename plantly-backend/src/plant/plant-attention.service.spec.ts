@@ -68,40 +68,42 @@ describe('PlantAttentionService', () => {
       const lastDate = new Date();
       lastDate.setDate(lastDate.getDate() - 2);
       const plant = {
-        careLogs: [{ type: CareLogType.PEST_TREATMENT, date: lastDate } as CareLog],
+        careLogs: [
+          { type: CareLogType.PEST_TREATMENT, date: lastDate } as CareLog,
+        ],
       } as unknown as Plant;
       expect(service.needsAttention(plant)).toBe(true);
     });
 
     it('should use base attention timer (7 days) for unknown types or fallbacks', () => {
-        const lastDate = new Date();
-        lastDate.setDate(lastDate.getDate() - 6);
-        const plant = {
-          careLogs: [{ type: 'UNKNOWN_TYPE' as any, date: lastDate } as CareLog],
-        } as unknown as Plant;
-        expect(service.needsAttention(plant)).toBe(false);
+      const lastDate = new Date();
+      lastDate.setDate(lastDate.getDate() - 6);
+      const plant = {
+        careLogs: [{ type: 'UNKNOWN_TYPE' as any, date: lastDate } as CareLog],
+      } as unknown as Plant;
+      expect(service.needsAttention(plant)).toBe(false);
 
-        lastDate.setDate(lastDate.getDate() - 2); // 8 days ago
-        expect(service.needsAttention(plant)).toBe(true);
+      lastDate.setDate(lastDate.getDate() - 2); // 8 days ago
+      expect(service.needsAttention(plant)).toBe(true);
     });
 
     it('should count FERTILIZE same as WATER', () => {
-        const lastDate = new Date();
-        lastDate.setDate(lastDate.getDate() - 5);
-        const plant = {
-          species: { wateringGrowingMinDays: 4 },
-          careLogs: [{ type: CareLogType.FERTILIZE, date: lastDate } as CareLog],
-        } as unknown as Plant;
-        expect(service.needsAttention(plant)).toBe(true);
+      const lastDate = new Date();
+      lastDate.setDate(lastDate.getDate() - 5);
+      const plant = {
+        species: { wateringGrowingMinDays: 4 },
+        careLogs: [{ type: CareLogType.FERTILIZE, date: lastDate } as CareLog],
+      } as unknown as Plant;
+      expect(service.needsAttention(plant)).toBe(true);
     });
 
     it('should count PRUNE same as CHECK', () => {
-        const lastDate = new Date();
-        lastDate.setDate(lastDate.getDate() - 4);
-        const plant = {
-          careLogs: [{ type: CareLogType.PRUNE, date: lastDate } as CareLog],
-        } as unknown as Plant;
-        expect(service.needsAttention(plant)).toBe(true);
+      const lastDate = new Date();
+      lastDate.setDate(lastDate.getDate() - 4);
+      const plant = {
+        careLogs: [{ type: CareLogType.PRUNE, date: lastDate } as CareLog],
+      } as unknown as Plant;
+      expect(service.needsAttention(plant)).toBe(true);
     });
   });
 });
