@@ -22,8 +22,11 @@ export class SpeciesController {
   }
 
   @Get()
-  findAll(@Query('showInactive') showInactive?: string) {
-    return this.speciesService.findAll(showInactive === 'true');
+  findAll(
+    @Query('showInactive') showInactive?: string,
+    @Query('search') search?: string,
+  ) {
+    return this.speciesService.findAll(showInactive === 'true', search);
   }
 
   @Get(':id')

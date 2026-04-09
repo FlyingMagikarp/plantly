@@ -13,6 +13,8 @@ import { CreatePlantDto } from './dto/create-plant.dto';
 import { UpdatePlantDto } from './dto/update-plant.dto';
 import { Plant } from './entities/plant.entity';
 
+import { PlantStatus } from './enums/plant-status.enum';
+
 @Controller('plants')
 export class PlantController {
   constructor(private readonly plantService: PlantService) {}
@@ -25,8 +27,16 @@ export class PlantController {
   @Get()
   async findAll(
     @Query('showInactive') showInactive?: string,
+    @Query('search') search?: string,
+    @Query('status') status?: PlantStatus,
+    @Query('speciesId') speciesId?: string,
   ): Promise<Plant[]> {
-    return this.plantService.findAll(showInactive === 'true');
+    return this.plantService.findAll(
+      showInactive === 'true',
+      search,
+      status,
+      speciesId,
+    );
   }
 
   @Get(':id')

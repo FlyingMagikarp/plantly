@@ -37,13 +37,34 @@ export class PlantService {
     return this.plantRepository.save(plant);
   }
 
-  async findAll(showInactive = false): Promise<Plant[]> {
-    const where = showInactive ? {} : { status: PlantStatus.ACTIVE };
-    return this.plantRepository.find({
-      where,
-      relations: ['species'],
-      order: { nickname: 'ASC' },
-    });
+  async findAll(
+    showInactive = false,
+    search?: string,
+    status?: PlantStatus,
+    speciesId?: string,
+  ): Promise<Plant[]> {
+    const query = this.plantRepository
+      .createQueryBuilder('plant')
+      .leftJoinAndSelect('plant.species', 'species');
+
+    if (status) {
+      query.andWhere('plant.status = :status', { status });
+    } else if (!showInactive) {
+      query.andWhere('plant.status = :status', { status: PlantStatus.ACTIVE });
+    }
+
+    if (speciesId) {
+      query.andWhere('plant.speciesId = :speciesId', { speciesId });
+    }
+
+    if (search) {
+      query.andWhere(
+        '(LOWER(plant.nickname) LIKE LOWER(:search) OR LOWER(species.commonName) LIKE LOWER(:search) OR LOWER(species.scientificName) LIKE LOWER(:search))',
+        { search: `%${search}%` },
+      );
+    }
+
+    return query.orderBy('plant.nickname', 'ASC').getMany();
   }
 
   async findOne(id: string): Promise<Plant> {

@@ -21,12 +21,23 @@ export class SpeciesService {
     return await this.speciesRepository.save(species);
   }
 
-  async findAll(showInactive = false): Promise<Species[]> {
-    return await this.speciesRepository.find({
-      where: showInactive ? {} : { isActive: true },
-      relations: { seasonalTasks: true },
-      order: { commonName: 'ASC' },
-    });
+  async findAll(showInactive = false, search?: string): Promise<Species[]> {
+    const query = this.speciesRepository
+      .createQueryBuilder('species')
+      .leftJoinAndSelect('species.seasonalTasks', 'seasonalTasks');
+
+    if (!showInactive) {
+      query.andWhere('species.isActive = :isActive', { isActive: true });
+    }
+
+    if (search) {
+      query.andWhere(
+        '(LOWER(species.commonName) LIKE LOWER(:search) OR LOWER(species.scientificName) LIKE LOWER(:search))',
+        { search: `%${search}%` },
+      );
+    }
+
+    return await query.orderBy('species.commonName', 'ASC').getMany();
   }
 
   async findOne(id: string): Promise<Species> {

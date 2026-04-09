@@ -12,7 +12,16 @@ describe('PlantService', () => {
   let plantRepository: any;
   let speciesRepository: any;
 
+  let queryBuilder: any;
+
   beforeEach(async () => {
+    queryBuilder = {
+      leftJoinAndSelect: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue([]),
+    };
+
     plantRepository = {
       create: jest.fn().mockImplementation((dto) => dto),
       save: jest
@@ -20,6 +29,7 @@ describe('PlantService', () => {
         .mockImplementation((plant) => Promise.resolve({ id: '1', ...plant })),
       find: jest.fn(),
       findOne: jest.fn(),
+      createQueryBuilder: jest.fn().mockReturnValue(queryBuilder),
     };
 
     speciesRepository = {
@@ -70,25 +80,51 @@ describe('PlantService', () => {
 
   describe('findAll', () => {
     it('should show all plants when showInactive is true', async () => {
-      plantRepository.find.mockResolvedValue([]);
       const result = await service.findAll(true);
       expect(result).toEqual([]);
-      expect(plantRepository.find).toHaveBeenCalledWith({
-        where: {},
-        relations: ['species'],
-        order: { nickname: 'ASC' },
-      });
+      expect(plantRepository.createQueryBuilder).toHaveBeenCalledWith('plant');
+      expect(queryBuilder.leftJoinAndSelect).toHaveBeenCalledWith(
+        'plant.species',
+        'species',
+      );
+      // No status filter should be applied when showInactive is true
+      expect(queryBuilder.andWhere).not.toHaveBeenCalledWith(
+        'plant.status = :status',
+        expect.anything(),
+      );
     });
 
     it('should filter active plants by default when showInactive is false', async () => {
-      plantRepository.find.mockResolvedValue([]);
       const result = await service.findAll();
       expect(result).toEqual([]);
-      expect(plantRepository.find).toHaveBeenCalledWith({
-        where: { status: PlantStatus.ACTIVE },
-        relations: ['species'],
-        order: { nickname: 'ASC' },
-      });
+      expect(queryBuilder.andWhere).toHaveBeenCalledWith(
+        'plant.status = :status',
+        { status: PlantStatus.ACTIVE },
+      );
+    });
+
+    it('should filter by search term', async () => {
+      await service.findAll(false, 'pothos');
+      expect(queryBuilder.andWhere).toHaveBeenCalledWith(
+        expect.stringContaining('LIKE LOWER(:search)'),
+        { search: '%pothos%' },
+      );
+    });
+
+    it('should filter by specific status', async () => {
+      await service.findAll(false, undefined, PlantStatus.DEAD);
+      expect(queryBuilder.andWhere).toHaveBeenCalledWith(
+        'plant.status = :status',
+        { status: PlantStatus.DEAD },
+      );
+    });
+
+    it('should filter by speciesId', async () => {
+      await service.findAll(false, undefined, undefined, 'spec-123');
+      expect(queryBuilder.andWhere).toHaveBeenCalledWith(
+        'plant.speciesId = :speciesId',
+        { speciesId: 'spec-123' },
+      );
     });
   });
 

@@ -8,13 +8,23 @@ describe('SpeciesService', () => {
   let service: SpeciesService;
   let repository: any;
 
+  let queryBuilder: any;
+
   beforeEach(async () => {
+    queryBuilder = {
+      leftJoinAndSelect: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue([]),
+    };
+
     repository = {
       create: jest.fn(),
       save: jest.fn(),
       find: jest.fn(),
       findOne: jest.fn(),
       remove: jest.fn(),
+      createQueryBuilder: jest.fn().mockReturnValue(queryBuilder),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -72,19 +82,31 @@ describe('SpeciesService', () => {
   describe('findAll', () => {
     it('should show all species when showInactive is true', async () => {
       await service.findAll(true);
-      expect(repository.find).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: {},
-        }),
+      expect(repository.createQueryBuilder).toHaveBeenCalledWith('species');
+      expect(queryBuilder.leftJoinAndSelect).toHaveBeenCalledWith(
+        'species.seasonalTasks',
+        'seasonalTasks',
+      );
+      // No isActive filter should be applied when showInactive is true
+      expect(queryBuilder.andWhere).not.toHaveBeenCalledWith(
+        'species.isActive = :isActive',
+        expect.anything(),
       );
     });
 
     it('should filter active species when showInactive is false (default)', async () => {
       await service.findAll(false);
-      expect(repository.find).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { isActive: true },
-        }),
+      expect(queryBuilder.andWhere).toHaveBeenCalledWith(
+        'species.isActive = :isActive',
+        { isActive: true },
+      );
+    });
+
+    it('should filter by search term', async () => {
+      await service.findAll(false, 'fern');
+      expect(queryBuilder.andWhere).toHaveBeenCalledWith(
+        expect.stringContaining('LIKE LOWER(:search)'),
+        { search: '%fern%' },
       );
     });
   });
