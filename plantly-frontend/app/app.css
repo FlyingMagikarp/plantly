@@ -1,131 +1,22 @@
 @import "tailwindcss";
-@import "@radix-ui/themes/styles.css";
 
-/* Define your theme variables */
 @theme {
-    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-    --color-bg: #f5f3ef;
-    --color-fg: #2f2f2f;
-    --color-muted: #7c7c7c;
-    --color-border: #e2dfd7;
-    --color-card: #ffffff;
-    --color-accent: #5c8a64;
-    --color-accent-hover: #4b7353;
-    --color-secondary-bg: #f0efeb;
-    --color-button-secondary: #e3e3e0;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  --color-primary: #15803d;
+  --color-secondary: #86efac;
+  --color-background: #ffffff;
 }
 
-/* Dark mode overrides */
-@layer base {
-    .dark {
-        --color-bg: #1c1d1a;
-        --color-fg: #eae9e3;
-        --color-muted: #9ca3af;
-        --color-border: #2f312c;
-        --color-card: #2a2b26;
-        --color-accent: #8bc48a;
-        --color-accent-hover: #6fa06d;
-        --color-secondary-bg: #242621;
-        --color-button-secondary: #3b3c37;
-    }
-}
+html,
+body {
+  background-color: var(--color-background);
+  @apply bg-background text-gray-900 antialiased;
 
-/* Base styles */
-@layer base {
-    html,
-    body {
-        background-color: var(--color-bg);
-        color: var(--color-fg);
-        font-family: var(--font-sans);
-    }
-}
-
-/* Define custom components */
-@layer components {
-    /* Buttons */
-    .btn-primary {
-        @apply px-4 py-2 rounded-md font-medium bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-hover)] transition;
-    }
-
-    .btn-secondary {
-        @apply px-4 py-2 rounded-md font-medium bg-[var(--color-button-secondary)] text-[var(--color-fg)] hover:bg-[var(--color-accent-hover)] transition;
-    }
-
-    .btn-delete {
-        @apply px-4 py-2 rounded-md font-medium bg-red-500 text-white hover:bg-red-400 transition;
-    }
-
-    .btn-link {
-        @apply underline text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition;
-    }
-
-    /* Inputs */
-    .input-field {
-        @apply w-full px-3 py-2 rounded-md border outline-none transition-colors;
-        @apply bg-[var(--color-base)] text-[var(--color-fg)] border-gray-400;
-
-        /* Dark mode override */
-        @apply dark:bg-[var(--color-accent-dark)] dark:text-[var(--color-fg)] dark:border-gray-600;
-
-        /* Optional focus style */
-        @apply focus:ring-2 focus:ring-[var(--color-accent)] focus:border-[var(--color-accent)];
-    }
-
-
-    /* Cards */
-    .card {
-        @apply p-6 rounded-xl border bg-[var(--color-card)] border-[var(--color-border)] text-[var(--color-fg)] shadow-sm;
-    }
-
-    /* Navbar item */
-    .nav-item {
-        @apply px-3 py-2 rounded-md text-[var(--color-fg)] hover:bg-[var(--color-border)] dark:hover:bg-[var(--color-button-secondary)] transition;
-    }
-
-    .heading-xl {
-        @apply text-4xl font-bold text-[var(--color-fg)] mb-4;
-    }
-
-    .heading-lg {
-        @apply text-2xl font-semibold text-[var(--color-fg)] mb-2;
-    }
-
-    .subheading {
-        @apply text-lg font-medium text-[var(--color-accent-secondary)] mb-2;
-    }
-
-    .body-text {
-        @apply text-base text-[var(--color-fg)] leading-relaxed;
-    }
-
-    .info-text {
-        @apply text-sm text-[var(--color-accent-dark)];
-    }
-
-    .caption {
-        @apply text-xs text-[var(--color-accent-dark)] italic;
-    }
-
-    .caption-large {
-        @apply text-sm text-[var(--color-accent-dark)] italic;
-    }
-
-    .link-text {
-        @apply text-base text-[var(--color-accent)] hover:underline hover:text-[var(--color-accent-hover)] transition-colors;
-    }
-}
-
-@layer utilities {
-    .bg-theme {
-        background-color: var(--color-bg);
-    }
-    .text-theme {
-        color: var(--color-fg);
-    }
-    .text-muted {
-        color: var(--color-muted);
-    }
-    .border-theme {
-        border-color: var(--color-border);
-    }
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+    --color-background: #030712;
+    @apply text-gray-50;
+  }
 }

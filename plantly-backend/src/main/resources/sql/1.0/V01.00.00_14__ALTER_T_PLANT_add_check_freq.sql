@@ -1,2 +1,0 @@
-ALTER TABLE t_plant
-    ADD COLUMN check_freq INTEGER NOT NULL DEFAULT 7;
