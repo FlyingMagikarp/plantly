@@ -1,4 +1,5 @@
 import { CareLogType } from '../../care-log/enums/care-log-type.enum';
+import { WeatherDataDto } from '../../weather/dto/weather-data.dto';
 
 export enum ActivityType {
   CARE_LOG = 'CARE_LOG',
@@ -29,6 +30,7 @@ export class DashboardDto {
     total: number;
     pendingTasks: number;
   };
-  recentLogs!: RecentActivityDto[]; // Keeping name for compatibility or renaming?
+  recentLogs!: RecentActivityDto[];
   needsCheck!: NeedsCheckPlantDto[];
+  weather?: WeatherDataDto;
 }
