@@ -12,6 +12,7 @@ import {
 } from './dto/dashboard.dto';
 
 import { PlantAttentionService } from '../plant/plant-attention.service';
+import { WeatherService } from '../weather/weather.service';
 
 @Injectable()
 export class DashboardService {
@@ -21,6 +22,7 @@ export class DashboardService {
     @InjectRepository(CareLog)
     private readonly careLogRepository: Repository<CareLog>,
     private readonly plantAttentionService: PlantAttentionService,
+    private readonly weatherService: WeatherService,
   ) {}
 
   async getDashboardData(): Promise<DashboardDto> {
@@ -122,13 +124,16 @@ export class DashboardService {
       }
     }
 
+    const weatherData = await this.weatherService.getWeatherData();
+
     return {
       counts: {
         total: totalPlants,
         pendingTasks: needsCheck.length,
       },
       recentLogs: finalRecentLogs,
-      needsCheck: needsCheck.slice(0, 10), // Limit to 10 for dashboard simplicity
+      needsCheck: needsCheck.slice(0, 10),
+      weather: weatherData,
     };
   }
 }
