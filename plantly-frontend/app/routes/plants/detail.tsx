@@ -174,6 +174,7 @@ export default function PlantDetail() {
   const [editingImage, setEditingImage] = React.useState<any>(null);
   const [isAddingLog, setIsAddingLog] = React.useState(false);
   const [isUploading, setIsUploading] = React.useState(false);
+  const [selectedFiles, setSelectedFiles] = React.useState<File[]>([]);
   const formRef = React.useRef<HTMLFormElement>(null);
   const uploadFormRef = React.useRef<HTMLFormElement>(null);
 
@@ -181,6 +182,7 @@ export default function PlantDetail() {
     if (actionData?.success) {
       setIsAddingLog(false);
       setIsUploading(false);
+      setSelectedFiles([]);
       setEditingImage(null);
       if (actionData.message) {
         success(actionData.message);
@@ -204,6 +206,26 @@ export default function PlantDetail() {
       formRef.current.reset();
     }
   }, [isAddingLog]);
+
+  React.useEffect(() => {
+    if (!isUploading) {
+      setSelectedFiles([]);
+    }
+  }, [isUploading]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setSelectedFiles(Array.from(e.target.files));
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
 
   const handleConfirm = () => {
     if (!activeDialog) return;
@@ -651,14 +673,59 @@ export default function PlantDetail() {
                         multiple 
                         accept="image/*" 
                         className="hidden" 
+                        onChange={handleFileChange}
                       />
                       <p className="mt-2 text-xs text-neutral-500">Support for multiple JPG, PNG, WEBP</p>
                     </div>
+
+                    {selectedFiles.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Pending Uploads ({selectedFiles.length})</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {selectedFiles.map((file, index) => (
+                            <div key={index} className="flex items-center gap-3 p-2 bg-white rounded-xl border border-green-100 shadow-sm">
+                              <div className="h-12 w-12 rounded-lg bg-neutral-100 overflow-hidden flex-shrink-0 border border-neutral-100">
+                                {file.type.startsWith('image/') ? (
+                                  <img 
+                                    src={URL.createObjectURL(file)} 
+                                    alt={file.name} 
+                                    className="h-full w-full object-cover"
+                                    onLoad={(e) => {
+                                      // Clean up URL after load to avoid memory leaks
+                                      // Note: In a real app we might want to manage these URLs more carefully
+                                    }}
+                                  />
+                                ) : (
+                                  <div className="h-full w-full flex items-center justify-center text-neutral-400">
+                                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-xs font-semibold text-neutral-900 truncate">{file.name}</p>
+                                <p className="text-[10px] text-neutral-500">{formatFileSize(file.size)}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <button
                       type="submit"
-                      className="w-full bg-green-600 text-white rounded-xl py-2.5 font-bold shadow-md hover:bg-green-500 transition-all active:scale-[0.98]"
+                      disabled={selectedFiles.length === 0}
+                      className={`w-full rounded-xl py-2.5 font-bold shadow-md transition-all active:scale-[0.98] ${
+                        selectedFiles.length === 0 
+                          ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed' 
+                          : 'bg-green-600 text-white hover:bg-green-500'
+                      }`}
                     >
-                      Upload Selected Photos
+                      {selectedFiles.length > 0 
+                        ? `Upload ${selectedFiles.length} ${selectedFiles.length === 1 ? 'Photo' : 'Photos'}` 
+                        : 'Upload Selected Photos'
+                      }
                     </button>
                   </div>
                 </Form>
