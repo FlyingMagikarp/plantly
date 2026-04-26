@@ -41,37 +41,6 @@ export class PlantService {
     return this.plantRepository.save(plant);
   }
 
-  async findAll(
-    showInactive = false,
-    search?: string,
-    status?: PlantStatus,
-    speciesId?: string,
-  ): Promise<Plant[]> {
-    const query = this.plantRepository
-      .createQueryBuilder('plant')
-      .leftJoinAndSelect('plant.species', 'species')
-      .leftJoinAndSelect('plant.images', 'images');
-
-    if (status) {
-      query.andWhere('plant.status = :status', { status });
-    } else if (!showInactive) {
-      query.andWhere('plant.status = :status', { status: PlantStatus.ACTIVE });
-    }
-
-    if (speciesId) {
-      query.andWhere('plant.speciesId = :speciesId', { speciesId });
-    }
-
-    if (search) {
-      query.andWhere(
-        '(LOWER(plant.nickname) LIKE LOWER(:search) OR LOWER(species.commonName) LIKE LOWER(:search) OR LOWER(species.scientificName) LIKE LOWER(:search))',
-        { search: `%${search}%` },
-      );
-    }
-
-    return query.orderBy('plant.nickname', 'ASC').getMany();
-  }
-
   async findOne(id: string): Promise<Plant> {
     const plant = await this.plantRepository.findOne({
       where: { id },
@@ -93,6 +62,42 @@ export class PlantService {
     });
 
     return plant;
+  }
+
+  async findAll(
+    showInactive = false,
+    search?: string,
+    status?: PlantStatus,
+    speciesId?: string,
+  ): Promise<Plant[]> {
+    const query = this.plantRepository
+      .createQueryBuilder('plant')
+      .leftJoinAndSelect('plant.species', 'species')
+      .leftJoinAndSelect(
+        'plant.images',
+        'images',
+        'images.isPrimary = :isPrimary',
+        { isPrimary: true },
+      );
+
+    if (status) {
+      query.andWhere('plant.status = :status', { status });
+    } else if (!showInactive) {
+      query.andWhere('plant.status = :status', { status: PlantStatus.ACTIVE });
+    }
+
+    if (speciesId) {
+      query.andWhere('plant.speciesId = :speciesId', { speciesId });
+    }
+
+    if (search) {
+      query.andWhere(
+        '(LOWER(plant.nickname) LIKE LOWER(:search) OR LOWER(species.commonName) LIKE LOWER(:search) OR LOWER(species.scientificName) LIKE LOWER(:search))',
+        { search: `%${search}%` },
+      );
+    }
+
+    return query.orderBy('plant.nickname', 'ASC').getMany();
   }
 
   async update(id: string, updatePlantDto: UpdatePlantDto): Promise<Plant> {
@@ -147,7 +152,11 @@ export class PlantService {
   }
 
   async getImage(imageId: string): Promise<PlantImage> {
-    const image = await this.plantImageRepository.findOneBy({ id: imageId });
+    const image = await this.plantImageRepository
+      .createQueryBuilder('image')
+      .addSelect('image.data')
+      .where('image.id = :imageId', { imageId })
+      .getOne();
     if (!image) {
       throw new NotFoundException(`Image with ID ${imageId} not found`);
     }

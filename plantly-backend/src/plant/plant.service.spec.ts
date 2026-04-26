@@ -95,6 +95,8 @@ describe('PlantService', () => {
       expect(queryBuilder.leftJoinAndSelect).toHaveBeenCalledWith(
         'plant.images',
         'images',
+        'images.isPrimary = :isPrimary',
+        { isPrimary: true },
       );
       // No status filter should be applied when showInactive is true
       expect(queryBuilder.andWhere).not.toHaveBeenCalledWith(

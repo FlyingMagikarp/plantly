@@ -21,7 +21,7 @@ export class PlantImage {
   @JoinColumn({ name: 'plant_id' })
   plant!: Plant;
 
-  @Column({ name: 'data', type: 'bytea' })
+  @Column({ name: 'data', type: 'bytea', select: false })
   data!: Buffer;
 
   @Column({ name: 'mime_type', type: 'varchar', length: 50 })
