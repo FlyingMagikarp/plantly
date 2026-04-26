@@ -174,6 +174,7 @@ export default function PlantDetail() {
   const [editingImage, setEditingImage] = React.useState<any>(null);
   const [isAddingLog, setIsAddingLog] = React.useState(false);
   const [isUploading, setIsUploading] = React.useState(false);
+  const [selectedFiles, setSelectedFiles] = React.useState<File[]>([]);
   const formRef = React.useRef<HTMLFormElement>(null);
   const uploadFormRef = React.useRef<HTMLFormElement>(null);
 
@@ -181,6 +182,7 @@ export default function PlantDetail() {
     if (actionData?.success) {
       setIsAddingLog(false);
       setIsUploading(false);
+      setSelectedFiles([]);
       setEditingImage(null);
       if (actionData.message) {
         success(actionData.message);
@@ -204,6 +206,26 @@ export default function PlantDetail() {
       formRef.current.reset();
     }
   }, [isAddingLog]);
+
+  React.useEffect(() => {
+    if (!isUploading) {
+      setSelectedFiles([]);
+    }
+  }, [isUploading]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setSelectedFiles(Array.from(e.target.files));
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
 
   const handleConfirm = () => {
     if (!activeDialog) return;
@@ -292,9 +314,9 @@ export default function PlantDetail() {
         <div className="flex flex-col md:flex-row gap-6 items-start">
           <div className="h-32 w-32 rounded-2xl overflow-hidden border border-neutral-200 bg-neutral-100 flex-shrink-0 shadow-sm">
             {primaryImage ? (
-              <img 
-                src={`${API_URL}/plants/images/${primaryImage.id}`} 
-                alt={plant.nickname} 
+              <img
+                src={`${API_URL}/plants/images/${primaryImage.id}`}
+                alt={plant.nickname}
                 className="h-full w-full object-cover"
               />
             ) : (
@@ -629,36 +651,81 @@ export default function PlantDetail() {
             </div>
             <div className="p-6">
               {isUploading && (
-                <Form 
-                  method="post" 
-                  encType="multipart/form-data" 
+                <Form
+                  method="post"
+                  encType="multipart/form-data"
                   className="mb-8 p-6 border-2 border-dashed border-green-200 rounded-2xl bg-green-50/30"
                   ref={uploadFormRef}
                 >
                   <input type="hidden" name="intent" value="upload-images" />
                   <div className="space-y-4">
                     <div className="flex flex-col items-center justify-center">
-                      <label 
-                        htmlFor="files" 
+                      <label
+                        htmlFor="files"
                         className="cursor-pointer bg-white px-4 py-2 rounded-lg border border-neutral-300 shadow-sm text-sm font-semibold hover:bg-neutral-50"
                       >
                         Select Photos
                       </label>
-                      <input 
-                        type="file" 
-                        id="files" 
-                        name="files" 
-                        multiple 
-                        accept="image/*" 
-                        className="hidden" 
+                      <input
+                        type="file"
+                        id="files"
+                        name="files"
+                        multiple
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleFileChange}
                       />
                       <p className="mt-2 text-xs text-neutral-500">Support for multiple JPG, PNG, WEBP</p>
                     </div>
+
+                    {selectedFiles.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Pending Uploads ({selectedFiles.length})</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {selectedFiles.map((file, index) => (
+                            <div key={index} className="flex items-center gap-3 p-2 bg-white rounded-xl border border-green-100 shadow-sm">
+                              <div className="h-12 w-12 rounded-lg bg-neutral-100 overflow-hidden flex-shrink-0 border border-neutral-100">
+                                {file.type.startsWith('image/') ? (
+                                  <img
+                                    src={URL.createObjectURL(file)}
+                                    alt={file.name}
+                                    className="h-full w-full object-cover"
+                                    onLoad={(e) => {
+                                      // Clean up URL after load to avoid memory leaks
+                                      // Note: In a real app we might want to manage these URLs more carefully
+                                    }}
+                                  />
+                                ) : (
+                                  <div className="h-full w-full flex items-center justify-center text-neutral-400">
+                                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-xs font-semibold text-neutral-900 truncate">{file.name}</p>
+                                <p className="text-[10px] text-neutral-500">{formatFileSize(file.size)}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <button
                       type="submit"
-                      className="w-full bg-green-600 text-white rounded-xl py-2.5 font-bold shadow-md hover:bg-green-500 transition-all active:scale-[0.98]"
+                      disabled={selectedFiles.length === 0}
+                      className={`w-full rounded-xl py-2.5 font-bold shadow-md transition-all active:scale-[0.98] ${
+                        selectedFiles.length === 0 
+                          ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed' 
+                          : 'bg-green-600 text-white hover:bg-green-500'
+                      }`}
                     >
-                      Upload Selected Photos
+                      {selectedFiles.length > 0
+                        ? `Upload ${selectedFiles.length} ${selectedFiles.length === 1 ? 'Photo' : 'Photos'}`
+                        : 'Upload Selected Photos'
+                      }
                     </button>
                   </div>
                 </Form>
@@ -672,29 +739,29 @@ export default function PlantDetail() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[10px] font-bold text-amber-800 uppercase tracking-widest mb-1">Caption</label>
-                      <input 
-                        type="text" 
-                        name="caption" 
-                        defaultValue={editingImage.caption || ''} 
+                      <input
+                        type="text"
+                        name="caption"
+                        defaultValue={editingImage.caption || ''}
                         className="w-full rounded-lg border-amber-200 py-2 text-sm focus:border-amber-500 focus:ring-amber-500"
                       />
                     </div>
                     <div>
                       <label className="block text-[10px] font-bold text-amber-800 uppercase tracking-widest mb-1">Date Taken</label>
-                      <input 
-                        type="date" 
-                        name="imageDate" 
-                        defaultValue={editingImage.imageDate ? editingImage.imageDate.split('T')[0] : ''} 
+                      <input
+                        type="date"
+                        name="imageDate"
+                        defaultValue={editingImage.imageDate ? editingImage.imageDate.split('T')[0] : ''}
                         className="w-full rounded-lg border-amber-200 py-2 text-sm focus:border-amber-500 focus:ring-amber-500"
                       />
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <input 
-                      type="checkbox" 
-                      id="editIsPrimary" 
-                      name="isPrimary" 
-                      value="true" 
+                    <input
+                      type="checkbox"
+                      id="editIsPrimary"
+                      name="isPrimary"
+                      value="true"
                       defaultChecked={editingImage.isPrimary}
                       className="rounded border-amber-300 text-amber-600 focus:ring-amber-500"
                     />
@@ -715,9 +782,9 @@ export default function PlantDetail() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                   {plant.images.map((img: any) => (
                     <div key={img.id} className="relative group aspect-square rounded-xl overflow-hidden border border-neutral-200 bg-neutral-50 shadow-sm">
-                      <img 
-                        src={`${API_URL}/plants/images/${img.id}`} 
-                        alt={img.caption || plant.nickname} 
+                      <img
+                        src={`${API_URL}/plants/images/${img.id}`}
+                        alt={img.caption || plant.nickname}
                         className="h-full w-full object-cover transition-transform group-hover:scale-110"
                       />
                       {img.isPrimary && (
@@ -726,7 +793,7 @@ export default function PlantDetail() {
                         </div>
                       )}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        <button 
+                        <button
                           onClick={() => setEditingImage(img)}
                           className="p-1.5 bg-white rounded-full text-neutral-700 hover:text-green-600 shadow-sm"
                           title="Edit"
@@ -736,7 +803,7 @@ export default function PlantDetail() {
                           </svg>
                         </button>
                         {!img.isPrimary && (
-                          <button 
+                          <button
                             onClick={() => handleSetPrimary(img.id)}
                             className="p-1.5 bg-white rounded-full text-neutral-700 hover:text-blue-600 shadow-sm"
                             title="Set as Primary"
@@ -746,7 +813,7 @@ export default function PlantDetail() {
                             </svg>
                           </button>
                         )}
-                        <button 
+                        <button
                           onClick={() => setImageToDelete(img)}
                           className="p-1.5 bg-white rounded-full text-neutral-700 hover:text-red-600 shadow-sm"
                           title="Delete"

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DashboardService } from './dashboard.service';
 import { PlantAttentionService } from '../plant/plant-attention.service';
+import { WeatherService } from '../weather/weather.service';
 import { Plant } from '../plant/entities/plant.entity';
 import { CareLog } from '../care-log/entities/care-log.entity';
 import { PlantStatus } from '../plant/enums/plant-status.enum';
@@ -13,6 +14,7 @@ describe('DashboardService', () => {
   let plantRepository: any;
   let careLogRepository: any;
   let plantAttentionService: any;
+  let weatherService: any;
 
   beforeEach(async () => {
     plantRepository = {
@@ -24,6 +26,13 @@ describe('DashboardService', () => {
     };
     plantAttentionService = {
       needsAttention: jest.fn(),
+    };
+    weatherService = {
+      getWeatherData: jest.fn().mockResolvedValue({
+        current: { temp: 20, windSpeed: 10, precipitation: 0, weatherCode: 1 },
+        forecast: [],
+        messages: [],
+      }),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -40,6 +49,10 @@ describe('DashboardService', () => {
         {
           provide: PlantAttentionService,
           useValue: plantAttentionService,
+        },
+        {
+          provide: WeatherService,
+          useValue: weatherService,
         },
       ],
     }).compile();

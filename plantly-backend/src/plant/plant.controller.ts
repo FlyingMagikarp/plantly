@@ -80,6 +80,8 @@ export class PlantController {
   ): Promise<void> {
     const image = await this.plantService.getImage(imageId);
     res.setHeader('Content-Type', image.mimeType);
+    // Add Cache-Control header to prevent aggressive or stale caching in PWA standalone mode
+    res.setHeader('Cache-Control', 'public, max-age=3600');
     res.send(image.data);
   }
 
