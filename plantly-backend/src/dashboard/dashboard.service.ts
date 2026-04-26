@@ -26,7 +26,9 @@ export class DashboardService {
   ) {}
 
   async getDashboardData(): Promise<DashboardDto> {
-    const totalPlants = await this.plantRepository.count();
+    const totalPlants = await this.plantRepository.count({
+      where: { status: PlantStatus.ACTIVE },
+    });
 
     const recentLogs = await this.careLogRepository.find({
       relations: ['plant'],

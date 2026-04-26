@@ -61,7 +61,12 @@ describe('DashboardService', () => {
   });
 
   it('should return dashboard data including various activities', async () => {
-    plantRepository.count.mockResolvedValueOnce(10); // total
+    plantRepository.count.mockImplementation((options: any) => {
+      if (options?.where?.status === PlantStatus.ACTIVE) {
+        return Promise.resolve(10);
+      }
+      return Promise.resolve(0);
+    });
 
     careLogRepository.find.mockResolvedValue([
       {
@@ -134,7 +139,12 @@ describe('DashboardService', () => {
   });
 
   it('should include plant in needsCheck if last log (any type) is old', async () => {
-    plantRepository.count.mockResolvedValue(0);
+    plantRepository.count.mockImplementation((options: any) => {
+      if (options?.where?.status === PlantStatus.ACTIVE) {
+        return Promise.resolve(1);
+      }
+      return Promise.resolve(0);
+    });
     careLogRepository.find.mockResolvedValue([]);
 
     const eightDaysAgo = new Date();
