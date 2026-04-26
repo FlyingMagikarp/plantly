@@ -95,6 +95,55 @@ export async function action({ params, request }: Route.ActionArgs) {
     return { success: true, message: "Plant marked as removed" };
   }
 
+  if (intent === "upload-images") {
+    const files = formData.getAll("files") as File[];
+    const uploadFormData = new FormData();
+    files.forEach((file) => uploadFormData.append("files", file));
+
+    const response = await fetch(`${API_URL}/plants/${params.id}/images`, {
+      method: "POST",
+      body: uploadFormData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return { error: errorData.message || "Could not upload images" };
+    }
+    return { success: true, message: "Images uploaded" };
+  }
+
+  if (intent === "update-image") {
+    const imageId = formData.get("imageId");
+    const caption = formData.get("caption");
+    const imageDate = formData.get("imageDate");
+    const isPrimary = formData.get("isPrimary") === "true";
+
+    const response = await fetch(`${API_URL}/plants/images/${imageId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ caption, imageDate, isPrimary }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return { error: errorData.message || "Could not update image" };
+    }
+    return { success: true, message: "Image updated" };
+  }
+
+  if (intent === "delete-image") {
+    const imageId = formData.get("imageId");
+    const response = await fetch(`${API_URL}/plants/images/${imageId}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return { error: errorData.message || "Could not delete image" };
+    }
+    return { success: true, message: "Image deleted" };
+  }
+
   if (request.method === "DELETE" || intent === "delete") {
     const response = await fetch(`${API_URL}/plants/${params.id}`, {
       method: "DELETE",
@@ -121,12 +170,18 @@ export default function PlantDetail() {
 
   const [activeDialog, setActiveDialog] = React.useState<"dead" | "removed" | "delete" | null>(null);
   const [logToDelete, setLogToDelete] = React.useState<any>(null);
+  const [imageToDelete, setImageToDelete] = React.useState<any>(null);
+  const [editingImage, setEditingImage] = React.useState<any>(null);
   const [isAddingLog, setIsAddingLog] = React.useState(false);
+  const [isUploading, setIsUploading] = React.useState(false);
   const formRef = React.useRef<HTMLFormElement>(null);
+  const uploadFormRef = React.useRef<HTMLFormElement>(null);
 
   React.useEffect(() => {
     if (actionData?.success) {
       setIsAddingLog(false);
+      setIsUploading(false);
+      setEditingImage(null);
       if (actionData.message) {
         success(actionData.message);
       }
@@ -167,6 +222,22 @@ export default function PlantDetail() {
       { method: "post" }
     );
     setLogToDelete(null);
+  };
+
+  const handleDeleteImage = () => {
+    if (!imageToDelete) return;
+    submit(
+      { intent: "delete-image", imageId: imageToDelete.id },
+      { method: "post" }
+    );
+    setImageToDelete(null);
+  };
+
+  const handleSetPrimary = (imageId: string) => {
+    submit(
+      { intent: "update-image", imageId, isPrimary: "true" },
+      { method: "post" }
+    );
   };
 
   const careTypeIcons: Record<string, React.ReactNode> = {
@@ -212,26 +283,45 @@ export default function PlantDetail() {
     ),
   };
 
+  const primaryImage = plant.images?.find((img: any) => img.isPrimary) || plant.images?.[0];
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header Section */}
       <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between border-b border-neutral-200 pb-8">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <h2 className="text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl">
-              {plant.nickname}
-            </h2>
-            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${
-              plant.status === 'active' ? 'bg-green-50 text-green-700 ring-green-600/20' : 
-              plant.status === 'dead' ? 'bg-red-50 text-red-700 ring-red-600/20' :
-              'bg-neutral-50 text-neutral-700 ring-neutral-600/20'
-            }`}>
-              {formatEnum(plant.status, PLANT_STATUS_LABELS)}
-            </span>
+        <div className="flex flex-col md:flex-row gap-6 items-start">
+          <div className="h-32 w-32 rounded-2xl overflow-hidden border border-neutral-200 bg-neutral-100 flex-shrink-0 shadow-sm">
+            {primaryImage ? (
+              <img 
+                src={`${API_URL}/plants/images/${primaryImage.id}`} 
+                alt={plant.nickname} 
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="h-full w-full flex items-center justify-center text-neutral-400">
+                <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            )}
           </div>
-          <p className="text-xl text-neutral-500 font-medium">
-            {plant.species?.commonName} <span className="text-neutral-400 font-normal italic ml-1">({plant.species?.scientificName})</span>
-          </p>
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <h2 className="text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl">
+                {plant.nickname}
+              </h2>
+              <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${
+                plant.status === 'active' ? 'bg-green-50 text-green-700 ring-green-600/20' : 
+                plant.status === 'dead' ? 'bg-red-50 text-red-700 ring-red-600/20' :
+                'bg-neutral-50 text-neutral-700 ring-neutral-600/20'
+              }`}>
+                {formatEnum(plant.status, PLANT_STATUS_LABELS)}
+              </span>
+            </div>
+            <p className="text-xl text-neutral-500 font-medium">
+              {plant.species?.commonName} <span className="text-neutral-400 font-normal italic ml-1">({plant.species?.scientificName})</span>
+            </p>
+          </div>
         </div>
         
         <div className="flex flex-wrap gap-3">
@@ -407,6 +497,16 @@ export default function PlantDetail() {
         type="danger"
       />
 
+      <ConfirmationDialog
+        isOpen={!!imageToDelete}
+        onClose={() => setImageToDelete(null)}
+        onConfirm={handleDeleteImage}
+        title="Delete Image"
+        message="Are you sure you want to delete this image? This action cannot be undone."
+        confirmText="Delete Image"
+        type="danger"
+      />
+
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* Left Column: Info and Species */}
         <div className="lg:col-span-2 space-y-8">
@@ -499,6 +599,170 @@ export default function PlantDetail() {
                   <p className="text-sm text-neutral-600 line-clamp-3 leading-relaxed">
                     {plant.species.description}
                   </p>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* Plant Gallery Section */}
+          <section className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-neutral-100 bg-neutral-50/50 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-neutral-900">Plant Gallery</h3>
+              <button
+                type="button"
+                onClick={() => setIsUploading(!isUploading)}
+                className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold transition-colors ${
+                  isUploading 
+                    ? 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300' 
+                    : 'bg-green-100 text-green-700 hover:bg-green-200'
+                }`}
+              >
+                {isUploading ? 'Cancel' : (
+                  <>
+                    <svg className="mr-1 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Photos
+                  </>
+                )}
+              </button>
+            </div>
+            <div className="p-6">
+              {isUploading && (
+                <Form 
+                  method="post" 
+                  encType="multipart/form-data" 
+                  className="mb-8 p-6 border-2 border-dashed border-green-200 rounded-2xl bg-green-50/30"
+                  ref={uploadFormRef}
+                >
+                  <input type="hidden" name="intent" value="upload-images" />
+                  <div className="space-y-4">
+                    <div className="flex flex-col items-center justify-center">
+                      <label 
+                        htmlFor="files" 
+                        className="cursor-pointer bg-white px-4 py-2 rounded-lg border border-neutral-300 shadow-sm text-sm font-semibold hover:bg-neutral-50"
+                      >
+                        Select Photos
+                      </label>
+                      <input 
+                        type="file" 
+                        id="files" 
+                        name="files" 
+                        multiple 
+                        accept="image/*" 
+                        className="hidden" 
+                      />
+                      <p className="mt-2 text-xs text-neutral-500">Support for multiple JPG, PNG, WEBP</p>
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full bg-green-600 text-white rounded-xl py-2.5 font-bold shadow-md hover:bg-green-500 transition-all active:scale-[0.98]"
+                    >
+                      Upload Selected Photos
+                    </button>
+                  </div>
+                </Form>
+              )}
+
+              {editingImage && (
+                <Form method="post" className="mb-8 p-6 border border-amber-200 rounded-2xl bg-amber-50/30 space-y-4">
+                  <input type="hidden" name="intent" value="update-image" />
+                  <input type="hidden" name="imageId" value={editingImage.id} />
+                  <h4 className="font-bold text-amber-900 text-sm">Edit Image Details</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-bold text-amber-800 uppercase tracking-widest mb-1">Caption</label>
+                      <input 
+                        type="text" 
+                        name="caption" 
+                        defaultValue={editingImage.caption || ''} 
+                        className="w-full rounded-lg border-amber-200 py-2 text-sm focus:border-amber-500 focus:ring-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-amber-800 uppercase tracking-widest mb-1">Date Taken</label>
+                      <input 
+                        type="date" 
+                        name="imageDate" 
+                        defaultValue={editingImage.imageDate ? editingImage.imageDate.split('T')[0] : ''} 
+                        className="w-full rounded-lg border-amber-200 py-2 text-sm focus:border-amber-500 focus:ring-amber-500"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="checkbox" 
+                      id="editIsPrimary" 
+                      name="isPrimary" 
+                      value="true" 
+                      defaultChecked={editingImage.isPrimary}
+                      className="rounded border-amber-300 text-amber-600 focus:ring-amber-500"
+                    />
+                    <label htmlFor="editIsPrimary" className="text-sm font-medium text-amber-900">Make Primary Image</label>
+                  </div>
+                  <div className="flex gap-2">
+                    <button type="submit" className="flex-1 bg-amber-600 text-white rounded-lg py-2 text-sm font-bold">Save Changes</button>
+                    <button type="button" onClick={() => setEditingImage(null)} className="flex-1 bg-white border border-amber-200 rounded-lg py-2 text-sm font-bold text-amber-900">Cancel</button>
+                  </div>
+                </Form>
+              )}
+
+              {!plant.images || plant.images.length === 0 ? (
+                <div className="text-center py-12 border-2 border-dashed border-neutral-100 rounded-2xl">
+                  <p className="text-sm text-neutral-400">No photos yet. Add some to track growth!</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {plant.images.map((img: any) => (
+                    <div key={img.id} className="relative group aspect-square rounded-xl overflow-hidden border border-neutral-200 bg-neutral-50 shadow-sm">
+                      <img 
+                        src={`${API_URL}/plants/images/${img.id}`} 
+                        alt={img.caption || plant.nickname} 
+                        className="h-full w-full object-cover transition-transform group-hover:scale-110"
+                      />
+                      {img.isPrimary && (
+                        <div className="absolute top-2 left-2 bg-green-500 text-white px-1.5 py-0.5 rounded text-[10px] font-bold shadow-sm">
+                          PRIMARY
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                        <button 
+                          onClick={() => setEditingImage(img)}
+                          className="p-1.5 bg-white rounded-full text-neutral-700 hover:text-green-600 shadow-sm"
+                          title="Edit"
+                        >
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                        </button>
+                        {!img.isPrimary && (
+                          <button 
+                            onClick={() => handleSetPrimary(img.id)}
+                            className="p-1.5 bg-white rounded-full text-neutral-700 hover:text-blue-600 shadow-sm"
+                            title="Set as Primary"
+                          >
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </button>
+                        )}
+                        <button 
+                          onClick={() => setImageToDelete(img)}
+                          className="p-1.5 bg-white rounded-full text-neutral-700 hover:text-red-600 shadow-sm"
+                          title="Delete"
+                        >
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+                      {img.caption && (
+                        <div className="absolute bottom-0 inset-x-0 bg-black/60 text-white p-1 text-[10px] truncate">
+                          {img.caption}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

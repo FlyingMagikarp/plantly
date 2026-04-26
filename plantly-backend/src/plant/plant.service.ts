@@ -2,8 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Plant } from './entities/plant.entity';
+import { PlantImage } from './entities/plant-image.entity';
 import { CreatePlantDto } from './dto/create-plant.dto';
 import { UpdatePlantDto } from './dto/update-plant.dto';
+import { UpdatePlantImageDto } from './dto/update-plant-image.dto';
 import { Species } from '../species/entities/species.entity';
 
 import { PlantStatus } from './enums/plant-status.enum';
@@ -13,6 +15,8 @@ export class PlantService {
   constructor(
     @InjectRepository(Plant)
     private readonly plantRepository: Repository<Plant>,
+    @InjectRepository(PlantImage)
+    private readonly plantImageRepository: Repository<PlantImage>,
     @InjectRepository(Species)
     private readonly speciesRepository: Repository<Species>,
   ) {}
@@ -45,7 +49,8 @@ export class PlantService {
   ): Promise<Plant[]> {
     const query = this.plantRepository
       .createQueryBuilder('plant')
-      .leftJoinAndSelect('plant.species', 'species');
+      .leftJoinAndSelect('plant.species', 'species')
+      .leftJoinAndSelect('plant.images', 'images');
 
     if (status) {
       query.andWhere('plant.status = :status', { status });
@@ -70,12 +75,22 @@ export class PlantService {
   async findOne(id: string): Promise<Plant> {
     const plant = await this.plantRepository.findOne({
       where: { id },
-      relations: ['species'],
+      relations: ['species', 'images'],
     });
 
     if (!plant) {
       throw new NotFoundException(`Plant with ID ${id} not found`);
     }
+
+    // Sort images: primary first, then by date (newest first)
+    plant.images.sort((a, b) => {
+      if (a.isPrimary) return -1;
+      if (b.isPrimary) return 1;
+      return (
+        new Date(b.imageDate || b.createdAt).getTime() -
+        new Date(a.imageDate || a.createdAt).getTime()
+      );
+    });
 
     return plant;
   }
@@ -108,5 +123,63 @@ export class PlantService {
     const plant = await this.findOne(id);
     plant.status = PlantStatus.REMOVED;
     await this.plantRepository.save(plant);
+  }
+
+  async uploadImages(id: string, files: Array<any>): Promise<PlantImage[]> {
+    const plant = await this.findOne(id);
+    const images = files.map((file) => {
+      return this.plantImageRepository.create({
+        plantId: plant.id,
+        data: file.buffer as Buffer,
+        mimeType: file.mimetype as string,
+        originalFilename: file.originalname as string,
+        isPrimary: false,
+      });
+    });
+
+    // If plant has no primary image, set the first one uploaded as primary
+    const existingPrimary = plant.images.find((img) => img.isPrimary);
+    if (!existingPrimary && images.length > 0) {
+      images[0].isPrimary = true;
+    }
+
+    return this.plantImageRepository.save(images);
+  }
+
+  async getImage(imageId: string): Promise<PlantImage> {
+    const image = await this.plantImageRepository.findOneBy({ id: imageId });
+    if (!image) {
+      throw new NotFoundException(`Image with ID ${imageId} not found`);
+    }
+    return image;
+  }
+
+  async updateImage(
+    imageId: string,
+    updateImageDto: UpdatePlantImageDto,
+  ): Promise<PlantImage> {
+    const image = await this.getImage(imageId);
+
+    if (updateImageDto.isPrimary === true) {
+      // Unset other primary images for this plant
+      await this.plantImageRepository.update(
+        { plantId: image.plantId, isPrimary: true },
+        { isPrimary: false },
+      );
+    }
+
+    const updatedImage = this.plantImageRepository.merge(image, {
+      ...updateImageDto,
+      imageDate: updateImageDto.imageDate
+        ? new Date(updateImageDto.imageDate)
+        : (image.imageDate as Date),
+    });
+
+    return this.plantImageRepository.save(updatedImage);
+  }
+
+  async removeImage(imageId: string): Promise<void> {
+    const image = await this.getImage(imageId);
+    await this.plantImageRepository.remove(image);
   }
 }

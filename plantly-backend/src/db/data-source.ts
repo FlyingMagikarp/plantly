@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import { Species } from '../species/entities/species.entity';
 import { SpeciesSeasonalTask } from '../species/entities/species-seasonal-task.entity';
 import { Plant } from '../plant/entities/plant.entity';
+import { PlantImage } from '../plant/entities/plant-image.entity';
 import { CareLog } from '../care-log/entities/care-log.entity';
 
 const AppDataSource = new DataSource({
@@ -16,7 +17,7 @@ const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 
-  entities: [Species, SpeciesSeasonalTask, Plant, CareLog],
+  entities: [Species, SpeciesSeasonalTask, Plant, PlantImage, CareLog],
 
   migrations: [
     process.env.NODE_ENV === 'production'
