@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { PlantService } from './plant.service';
 import { Plant } from './entities/plant.entity';
+import { PlantImage } from './entities/plant-image.entity';
 import { Species } from '../species/entities/species.entity';
 import { NotFoundException } from '@nestjs/common';
 
@@ -42,6 +43,10 @@ describe('PlantService', () => {
         {
           provide: getRepositoryToken(Plant),
           useValue: plantRepository,
+        },
+        {
+          provide: getRepositoryToken(PlantImage),
+          useValue: {},
         },
         {
           provide: getRepositoryToken(Species),
@@ -87,6 +92,10 @@ describe('PlantService', () => {
         'plant.species',
         'species',
       );
+      expect(queryBuilder.leftJoinAndSelect).toHaveBeenCalledWith(
+        'plant.images',
+        'images',
+      );
       // No status filter should be applied when showInactive is true
       expect(queryBuilder.andWhere).not.toHaveBeenCalledWith(
         'plant.status = :status',
@@ -130,7 +139,7 @@ describe('PlantService', () => {
 
   describe('findOne', () => {
     it('should return a single plant', async () => {
-      const plant = { id: '1', nickname: 'Pothos' };
+      const plant = { id: '1', nickname: 'Pothos', images: [] };
       plantRepository.findOne.mockResolvedValue(plant);
       const result = await service.findOne('1');
       expect(result).toEqual(plant);
@@ -143,7 +152,7 @@ describe('PlantService', () => {
   });
   describe('remove', () => {
     it('should set plant status to REMOVED instead of deleting', async () => {
-      const plant = { id: '1', nickname: 'Pothos', status: PlantStatus.ACTIVE };
+      const plant = { id: '1', nickname: 'Pothos', status: PlantStatus.ACTIVE, images: [] };
       plantRepository.findOne.mockResolvedValue(plant);
 
       await service.remove('1');
