@@ -49,6 +49,8 @@ services:
     environment:
       PORT: 3000
       VITE_API_URL: http://backend:8081
+      # Optional: Explicitly provide an external API URL if the fallback in config.ts is not enough
+      # VITE_EXTERNAL_API_URL: http://192.168.1.XX:8081
     ports:
       - "3000:3000"
     depends_on:
