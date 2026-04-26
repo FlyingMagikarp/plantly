@@ -11,6 +11,7 @@ import {
 import { Species } from '../../species/entities/species.entity';
 import { CareLog } from '../../care-log/entities/care-log.entity';
 import { PlantStatus } from '../enums/plant-status.enum';
+import { PlantImage } from './plant-image.entity';
 
 @Entity({ name: 'plants' })
 export class Plant {
@@ -29,6 +30,9 @@ export class Plant {
 
   @OneToMany(() => CareLog, (careLog) => careLog.plant)
   careLogs!: CareLog[];
+
+  @OneToMany(() => PlantImage, (plantImage) => plantImage.plant)
+  images!: PlantImage[];
 
   @Column({ name: 'acquired_at', type: 'timestamptz', nullable: true })
   acquiredAt?: Date | null;

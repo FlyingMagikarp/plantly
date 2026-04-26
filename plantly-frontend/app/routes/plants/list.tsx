@@ -230,28 +230,48 @@ export default function PlantList() {
               to={`/plants/${p.id}`}
               className="group overflow-hidden rounded-xl border border-neutral-200 bg-white transition-all hover:border-green-300 hover:shadow-md"
             >
-              <div className="p-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-neutral-900 group-hover:text-green-700">
+                <div className="flex flex-col items-center justify-center p-6 border-b border-neutral-100 bg-neutral-50/30">
+                  <div className="h-24 w-24 rounded-2xl overflow-hidden border border-neutral-200 bg-white shadow-inner mb-3">
+                    {p.images?.find((img: any) => img.isPrimary) ? (
+                      <img 
+                        src={`${API_URL}/plants/images/${p.images.find((img: any) => img.isPrimary).id}`} 
+                        alt={p.nickname} 
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-neutral-300">
+                        <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="text-lg font-bold text-neutral-900 group-hover:text-green-700 transition-colors">
                     {p.nickname}
                   </h3>
-                  <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                    p.status === 'active' ? 'bg-green-50 text-green-700 ring-green-600/20' : 
-                    p.status === 'dead' ? 'bg-red-50 text-red-700 ring-red-600/20' :
-                    'bg-gray-50 text-gray-700 ring-gray-600/20'
-                  }`}>
-                    {formatEnum(p.status, PLANT_STATUS_LABELS)}
-                  </span>
                 </div>
-                <p className="text-sm font-medium italic text-neutral-500">
-                  {p.species?.commonName} ({p.species?.scientificName})
-                </p>
-                {p.acquiredAt && (
-                  <p className="mt-2 text-xs text-neutral-400">
-                    Acquired: {new Date(p.acquiredAt).toLocaleDateString()}
-                  </p>
-                )}
-              </div>
+                <div className="p-6 pt-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium italic text-neutral-500 truncate mr-2">
+                      {p.species?.commonName}
+                    </p>
+                    <span className={`inline-flex items-center rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-wider ring-1 ring-inset ${
+                      p.status === 'active' ? 'bg-green-50 text-green-700 ring-green-600/20' : 
+                      p.status === 'dead' ? 'bg-red-50 text-red-700 ring-red-600/20' :
+                      'bg-gray-50 text-gray-700 ring-gray-600/20'
+                    }`}>
+                      {formatEnum(p.status, PLANT_STATUS_LABELS)}
+                    </span>
+                  </div>
+                  {p.acquiredAt && (
+                    <p className="mt-2 text-xs text-neutral-400 flex items-center">
+                      <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      {new Date(p.acquiredAt).toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
             </Link>
           ))}
         </div>

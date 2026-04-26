@@ -44,11 +44,11 @@ services:
         # VITE_API_URL must point to the backend URL. 
         # For local browser access, 'localhost' is usually fine if not using a phone.
         # If using a phone, set LAN_IP to your machine's IP.
-        VITE_API_URL: http://${LAN_IP:-localhost}:8081
+        VITE_API_URL: http://backend:8081
     container_name: plantly-frontend
     environment:
       PORT: 3000
-      VITE_API_URL: http://${LAN_IP:-localhost}:8081
+      VITE_API_URL: http://backend:8081
     ports:
       - "3000:3000"
     depends_on:
