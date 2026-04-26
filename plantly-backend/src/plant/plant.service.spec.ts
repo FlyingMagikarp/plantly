@@ -152,7 +152,12 @@ describe('PlantService', () => {
   });
   describe('remove', () => {
     it('should set plant status to REMOVED instead of deleting', async () => {
-      const plant = { id: '1', nickname: 'Pothos', status: PlantStatus.ACTIVE, images: [] };
+      const plant = {
+        id: '1',
+        nickname: 'Pothos',
+        status: PlantStatus.ACTIVE,
+        images: [],
+      };
       plantRepository.findOne.mockResolvedValue(plant);
 
       await service.remove('1');

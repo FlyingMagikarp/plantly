@@ -8,5 +8,5 @@ const rawApiUrl = import.meta.env.VITE_API_URL || "http://localhost:8081";
 // If we are in the browser and the API URL is the internal one, we fallback to a known external address.
 // We also check for localhost to allow local development to work.
 export const API_BASE_URL = isBrowser && (rawApiUrl.includes("backend:8081") || rawApiUrl.includes("localhost:8081"))
-  ? `http://${window.location.hostname}:8081` 
+  ? `${window.location.protocol}//${window.location.hostname}:8081` 
   : rawApiUrl;
