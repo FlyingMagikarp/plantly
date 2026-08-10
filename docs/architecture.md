@@ -19,6 +19,7 @@ The architecture should remain simple and easy to run locally and deploy. Additi
 * React
 * React Router
 * TypeScript
+* Tailwind CSS
 
 ### Responsibilities
 
@@ -32,6 +33,14 @@ The frontend is responsible for:
 * communicating with the backend API
 
 Business rules and persistence logic must not depend on frontend behaviour.
+
+### Styling
+
+Tailwind CSS is the default styling approach for the frontend.
+
+Prefer Tailwind utilities and shared reusable components over introducing
+additional styling frameworks or ad-hoc styling systems.
+UI Design is defined under ui-design.md.
 
 ## Backend
 
