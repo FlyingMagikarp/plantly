@@ -20,7 +20,7 @@ Examples include a balcony, living room window, propagation cabinet, or shelf.
 ### CareEvent
 Represents something that happened to a plant.
 
-Examples include watering, fertilising, pruning, repotting, pest treatment, movement, or general observation.
+Examples include watering, pruning, repotting, pest treatment, movement, or general observation.
 
 Care events form the historical dataset of Plantly.
 
@@ -42,3 +42,4 @@ classDiagram
     Plant "1" --> "*" CareEvent : has
     Species "1" --> "*" SeasonalPhase : follows
     SeasonalPhase "0..1" --> "0..1" FertilizerRegime : recommends
+```

@@ -20,6 +20,8 @@ The application database will contain the runtime representation of species data
 
 Species Markdown files must be validated and imported through the application boundary before changes become active application data.
 
+Species knowledge is not maintained through the normal application UI. Markdown files are the authoritative maintenance interface for species knowledge.
+
 ## Consequences
 
 ### Positive

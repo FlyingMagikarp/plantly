@@ -8,11 +8,11 @@ Use cases may be added, removed, renamed, split, or superseded as requirements b
 
 ## Species
 
-* UC-001 — Create species
-* UC-002 — Update species
-* UC-003 — Remove species
-* UC-004 — View species
-* UC-005 — List species
+* UC-001 Validate species definition 
+* UC-002 Import new species 
+* UC-003 Update species from definition 
+* UC-004 View species 
+* UC-005 List species
 
 ## Plant Collection
 
@@ -55,17 +55,11 @@ Use cases may be added, removed, renamed, split, or superseded as requirements b
 * UC-030 — View current seasonal guidance
 * UC-031 — Define seasonal fertilizer guidance
 
-## Species Knowledge Import
-
-* UC-032 — Validate species Markdown
-* UC-033 — Import new species from Markdown
-* UC-034 — Update species from Markdown
-
 ## Care Round
 
-* UC-035 — Start plant care round
-* UC-036 — Record care during plant round
-* UC-037 — Complete plant care round
+* UC-032 — Start plant care round
+* UC-033 — Record care during plant round
+* UC-034 — Complete plant care round
 
 ## MVP Outcome
 

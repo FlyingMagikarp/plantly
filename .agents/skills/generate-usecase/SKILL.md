@@ -8,6 +8,7 @@ The generated use case must follow the project use-case template and conventions
 
 * `docs/usecases/README.md`
 * `docs/usecases/UC-000-template.md`
+* `docs/usecases/MVP-BACKLOG.md`
 
 The completed use case must be stored under `docs/usecases/`.
 
@@ -28,12 +29,15 @@ Before generating a use case, read:
 * `docs/architecture.md`
 * `docs/usecases/README.md`
 * `docs/usecases/UC-000-template.md`
+* `docs/usecases/MVP-BACKLOG.md`
 * relevant ADRs under `docs/decisions/`
 * existing use cases under `docs/usecases/`
 
 Use existing project terminology consistently.
 
 Do not duplicate or contradict existing product principles, domain definitions, business rules, architectural decisions, or use cases.
+
+The MVP backlog represents planned functionality only. It does not define application behavior and must not be treated as an authoritative specification.
 
 ## Process
 
@@ -176,6 +180,8 @@ Example:
 `UC-003-record-watering.md`
 
 Never reuse an existing identifier, including identifiers belonging to superseded use cases.
+
+When generating a use case that corresponds to an existing MVP backlog entry, preserve its assigned identifier unless that identifier already belongs to another generated use case.
 
 ### 8. Set Status
 
