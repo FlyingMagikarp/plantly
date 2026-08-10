@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Plantly TypeORM Migration"
+  short_description: "Create and verify safe Plantly schema migrations"
+  default_prompt: "Use $create-typeorm-migration to create and verify the TypeORM migration required by this schema change."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implement Plantly Use Case"
+  short_description: "Implement a ready Plantly use case end-to-end"
+  default_prompt: "Use $implement-usecase to implement the specified ready Plantly use case end-to-end."

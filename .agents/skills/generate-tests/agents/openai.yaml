@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generate Plantly Tests"
+  short_description: "Derive Plantly tests from use-case criteria"
+  default_prompt: "Use $generate-tests to derive, implement, and run tests for the specified Plantly use case."
