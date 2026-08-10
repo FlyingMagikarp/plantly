@@ -7,6 +7,10 @@ Represents general knowledge about a plant species.
 
 A species defines care preferences and seasonal behaviour shared by all individual plants of that species.
 
+Each species has a permanent numeric species identifier assigned by its authoritative Markdown definition. The identifier remains associated with that species for its lifetime and is not reused.
+
+A species is either active or archived. Archiving preserves the species and its associations with existing plants, but an archived species cannot be assigned to a new plant or selected as a replacement species. Restoring its authoritative definition makes the same species active again.
+
 ### Plant
 Represents a concrete plant in the user's collection.
 

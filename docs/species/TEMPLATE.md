@@ -1,23 +1,24 @@
-# Species Name
+# <SPECIES_NAME>
 
 ## Care
 
 Moisture: <dry | slightly-dry | moist | wet>
-Light: <LIGHT_REQUIREMENT>
+Light: <low | medium | bright-indirect | direct>
 Temperature: <MIN>-<MAX> °C
+Minimum Temperature: <MINIMUM> °C
 
 ## Seasons
 
-Growth: <SEASON_OR_PERIOD>
-Bloom: <SEASON_OR_PERIOD>
-Dormancy: <SEASON_OR_PERIOD>
+Growth: <MONTH>-<MONTH> | year-round | none | unknown
+Bloom: <MONTH>-<MONTH> | year-round | none | unknown
+Dormancy: <MONTH>-<MONTH> | none | unknown
 
 ## Fertilizer
 
-Growth: <FERTILIZER_GUIDANCE>
-Bloom: <FERTILIZER_GUIDANCE>
-Dormancy: <FERTILIZER_GUIDANCE>
+Growth: <none | balanced | foliage | bloom | species-specific>
+Bloom: <none | balanced | foliage | bloom | species-specific>
+Dormancy: <none | balanced | foliage | bloom | species-specific>
 
 ## Notes
 
-* <SPECIES_SPECIFIC_NOTE>
+* <OPTIONAL_SPECIES_SPECIFIC_NOTE>

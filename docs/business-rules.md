@@ -59,7 +59,9 @@ The exact vocabulary is defined by the domain model and may evolve as the applic
 
 ### BR-008 — Temperature
 
-Species may define a preferred temperature range and minimum tolerated temperature.
+A species must define a preferred temperature range and minimum tolerated temperature.
+
+The lower bound of the preferred temperature range must not exceed its upper bound.
 
 Temperature information is guidance rather than a guarantee of plant health or survival.
 
@@ -106,6 +108,24 @@ Invalid species data must not partially update the existing species record.
 ### BR-014 — Special Care Information
 
 Care requirements that do not fit the common structured species properties may be stored as free-form notes rather than expanding the core model.
+
+### BR-017 — Species Identifier
+
+Each species has a permanent numeric identifier supplied by its authoritative Markdown filename.
+
+An identifier must be unique and must not be reused for a different species, including after its species is archived.
+
+### BR-018 — Species Archival
+
+A species whose authoritative Markdown definition is removed is archived rather than deleted.
+
+An archived species remains associated with existing plants but cannot be assigned to a new plant or selected as a replacement species. Restoring a valid definition with the same identifier reactivates the existing species.
+
+### BR-019 — Species Synchronization Atomicity
+
+A species synchronization becomes active only as one complete result.
+
+If any definition is invalid or synchronization otherwise fails, no species creation, update, archival, or reactivation from that synchronization becomes active.
 
 ---
 

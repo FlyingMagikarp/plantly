@@ -335,7 +335,7 @@ Species detail provides concise reference information rather than an encyclopedi
 
 Species information should remain concise and structured.
 
-Species maintenance is not expected to be a common application UI workflow.
+Species knowledge cannot be maintained through the application UI. The UI may display species data, but authoritative species maintenance occurs only through the species Markdown definitions.
 
 ---
 

@@ -100,6 +100,8 @@ The PostgreSQL database is the runtime source used by the application.
 
 Species import must use the application's validation and business rules and must not bypass the backend through direct database manipulation.
 
+Synchronization is initiated through the backend REST API using `POST /admin/species/sync`. The backend reads the authoritative Markdown definitions, validates the complete synchronization, and applies the resulting species changes atomically.
+
 ## Deployment
 
 The entire application is deployed using a single Docker Compose configuration.
@@ -185,5 +187,4 @@ The following decisions should be made only when required by a concrete use case
 
 * analytics and reporting
 * background processing
-* exact species Markdown import mechanism
 * structure of optional care-event metadata
