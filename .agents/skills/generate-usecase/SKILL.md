@@ -1,3 +1,11 @@
+---
+name: generate-usecase
+description: >
+  Generate and refine Plantly behavioral use cases from natural-language
+  feature descriptions. Use when asked to create, generate, define, or
+  document a use case or UC under docs/usecases.
+---
+
 # Generate Use Case
 
 ## Purpose

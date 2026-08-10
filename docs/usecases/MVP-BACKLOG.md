@@ -8,58 +8,56 @@ Use cases may be added, removed, renamed, split, or superseded as requirements b
 
 ## Species
 
-* UC-001 Validate species definition 
-* UC-002 Import new species 
-* UC-003 Update species from definition 
-* UC-004 View species 
-* UC-005 List species
+* UC-001-sync-species-definitions
+* UC-002 View species
+* UC-003 List species
 
 ## Plant Collection
 
-* UC-006 — Add plant to collection
-* UC-007 — Update plant
-* UC-008 — Remove plant from collection
-* UC-009 — View plant
-* UC-010 — View plant collection
+* UC-004 — Add plant to collection
+* UC-005 — Update plant
+* UC-006 — Remove plant from collection
+* UC-007 — View plant
+* UC-008 — View plant collection
 
 ## Locations
 
-* UC-011 — Create location
-* UC-012 — Update location
-* UC-013 — Remove location
-* UC-014 — Assign plant to location
-* UC-015 — View plants by location
+* UC-009 — Create location
+* UC-010 — Update location
+* UC-011 — Remove location
+* UC-012 — Assign plant to location
+* UC-013 — View plants by location
 
 ## Care Events
 
-* UC-016 — Record watering
-* UC-017 — Record pruning
-* UC-018 — Record repotting
-* UC-019 — Record pest treatment
-* UC-020 — Record observation
-* UC-021 — View plant care history
-* UC-022 — Correct care event
-* UC-023 — Remove incorrect care event
+* UC-014 — Record watering
+* UC-015 — Record pruning
+* UC-016 — Record repotting
+* UC-017 — Record pest treatment
+* UC-018 — Record observation
+* UC-019 — View plant care history
+* UC-020 — Correct care event
+* UC-021 — Remove incorrect care event
 
 ## Images
 
-* UC-024 — Add plant image
-* UC-025 — Add image to care event
-* UC-026 — View plant images
-* UC-027 — Remove image
+* UC-022 — Add plant image
+* UC-023 — Add image to care event
+* UC-024 — View plant images
+* UC-025 — Remove image
 
 ## Seasonal Care
 
-* UC-028 — Define species seasonal phases
-* UC-029 — Determine current seasonal phase
-* UC-030 — View current seasonal guidance
-* UC-031 — Define seasonal fertilizer guidance
+* UC-026 — Define species seasonal phases
+* UC-027 — Determine current seasonal phase
+* UC-028 — View current seasonal guidance
+* UC-029 — Define seasonal fertilizer guidance
 
 ## Care Round
 
-* UC-032 — Start plant care round
-* UC-033 — Record care during plant round
-* UC-034 — Complete plant care round
+* UC-030 — Start plant care round
+* UC-031 — Record care during plant round
+* UC-032 — Complete plant care round
 
 ## MVP Outcome
 
