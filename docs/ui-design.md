@@ -366,6 +366,8 @@ Actions that permanently remove meaningful data should require deliberate confir
 
 The confirmation should clearly identify what will be removed.
 
+Changing a plant from active to dead or archived also requires confirmation, even though its historical data is preserved and the status can later be restored.
+
 ### Forms
 
 Forms should request only information required by the relevant use case.

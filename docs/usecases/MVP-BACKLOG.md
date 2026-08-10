@@ -14,11 +14,11 @@ Use cases may be added, removed, renamed, split, or superseded as requirements b
 
 ## Plant Collection
 
-* UC-004 — Add plant to collection
-* UC-005 — Update plant
-* UC-006 — Remove plant from collection
-* UC-007 — View plant
-* UC-008 — View plant collection
+* UC-004-add-plant-to-collection — Ready
+* UC-005-update-plant — Ready
+* UC-006-remove-plant-from-collection — Ready
+* UC-007-view-plant — Ready
+* UC-008-view-plant-collection — Ready
 
 ## Locations
 

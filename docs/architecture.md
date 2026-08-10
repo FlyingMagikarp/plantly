@@ -82,7 +82,7 @@ TypeORM is used for:
 ### Data Principles
 
 * All schema changes must be handled through TypeORM migrations.
-* Care-event history should be preserved.
+* Care-event history should be preserved except when the user deliberately permanently deletes a faulty plant record together with its dependent history.
 * Structured domain data should use explicit database fields where practical.
 * Flexible metadata may be used for optional event-specific information where appropriate.
 * The database should support future analytical queries without requiring analytics features in the application itself.
@@ -155,7 +155,7 @@ Species import processes must go through the application boundary rather than mo
 * Validate external data at application boundaries.
 * Use TypeORM migrations for schema evolution.
 * Do not allow agents or import tooling to manipulate PostgreSQL directly.
-* Preserve historical care data unless an explicit retention rule requires otherwise.
+* Preserve historical care data unless an explicit correction rule requires otherwise, such as permanent deletion of a faulty plant record.
 * Prefer understandable and maintainable code over speculative scalability.
 * Avoid abstractions that are not justified by current use cases.
 * Do not design for hypothetical multi-user support.

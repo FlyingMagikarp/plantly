@@ -14,7 +14,17 @@ A species is either active or archived. Archiving preserves the species and its 
 ### Plant
 Represents a concrete plant in the user's collection.
 
-A plant references one species and may currently be assigned to a location.
+A plant has a system-assigned sequential technical identifier, a user-provided nickname, an acquisition date, and optional notes. Nicknames identify plants for the user but are not required to be unique.
+
+A plant references one species and may currently be assigned to a location. Its acquisition date cannot be later than the current date.
+
+A plant has exactly one lifecycle status:
+
+* `active` — currently part of the user's collection;
+* `dead` — retained as a historical record after the plant has died; or
+* `archived` — retained after leaving the collection for another reason, such as being given away or sold.
+
+Dead and archived plants preserve their images and care events and may be restored to active when marked incorrectly. A faulty plant record may instead be permanently deleted, which also permanently deletes its images and care events.
 
 ### Location
 Represents a physical place where plants are kept.

@@ -12,6 +12,32 @@ A plant may have zero or one current location.
 
 A location may contain any number of plants.
 
+### BR-020 — Plant Identity
+
+Each plant has an immutable, system-assigned sequential technical identifier and a required user-provided nickname.
+
+Plant nicknames are not required to be unique.
+
+### BR-021 — Plant Acquisition Date
+
+Each plant has an acquisition date. The acquisition date may be the current date but must not be in the future.
+
+### BR-022 — Plant Lifecycle
+
+A plant has exactly one lifecycle status: `active`, `dead`, or `archived`.
+
+Marking a plant dead or archived preserves the plant, its care events, and its images. A dead or archived plant may be restored to active to correct an accidental status change.
+
+Only active plants may have their nickname, species, acquisition date, or notes changed.
+
+### BR-023 — Faulty Plant Record Deletion
+
+A faulty plant record may be permanently deleted regardless of its lifecycle status.
+
+Permanent deletion also permanently deletes all care events and images belonging to that plant. This deliberate correction of faulty data is an exception to the normal preservation of historical care data.
+
+Marking a plant dead, archiving a plant, and permanently deleting a plant each require confirmation before the change is applied.
+
 ---
 
 ## Care Events

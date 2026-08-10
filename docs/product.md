@@ -30,7 +30,7 @@ It does not attempt to predict watering schedules. Watering decisions are made t
   Additional measurements, notes, fertiliser amounts, moisture readings, photos, or observations may enrich the dataset, but they must never be required for routine logging.
 
 * **Preserve history.**
-  Historical care data has value even when there is no current user interface for analysing it. Data should be retained so it can later support reports, experiments, and data-analysis projects.
+  Historical care data has value even when there is no current user interface for analysing it. Data should be retained so it can later support reports, experiments, and data-analysis projects. Permanently deleting an explicitly identified faulty plant record is the exception and removes the history belonging to that faulty record.
 
 * **The application should support real behaviour rather than enforce ideal behaviour.**
   Plantly should adapt to how plants are actually cared for instead of requiring the user to follow rigid schedules simply because the software models them.
