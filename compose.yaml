@@ -1,0 +1,42 @@
+services:
+  database:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-plantlyv2}
+      POSTGRES_USER: ${POSTGRES_USER:-plantly}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-plantly}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - plantlyv2-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    environment:
+      PORT: 3000
+      DATABASE_HOST: database
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ${POSTGRES_DB:-plantlyv2}
+      DATABASE_USER: ${POSTGRES_USER:-plantly}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-plantly}
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    depends_on:
+      database:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_started
+
+volumes:
+  plantlyv2-data:

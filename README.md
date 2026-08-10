@@ -13,23 +13,78 @@ For detailed project documentation see:
 
 ## Development
 
-Commands will be added once the application has been scaffolded.
+### Prerequisites
+
+* Node.js 24 or newer
+* npm
+* Docker with Docker Compose
+
+Install the frontend and backend dependencies:
+
+```bash
+npm --prefix frontend install
+npm --prefix backend install
+```
+
+Copy `.env.example` to `.env` and `backend/.env.example` to `backend/.env`.
+The defaults reserve PostgreSQL host port `5433` for the clean `plantlyv2`
+database so an existing Plantly v1 database on port `5432` is not touched.
+
+Start PostgreSQL for local development:
+
+```bash
+docker compose up -d database
+docker compose stop frontend backend
+```
+
+The second command is safe when those services are not running. It prevents a
+previously started Compose backend from occupying port `3000` and masking the
+status of the local development process.
+
+Then start the applications in separate terminals:
+
+```bash
+npm run dev:backend
+npm run dev:frontend
+```
+
+The frontend is available at `http://localhost:5173` and proxies `/api`
+requests to the backend at `http://localhost:3000`.
 
 ## Deployment
 
 Plantly is deployed using Docker Compose.
 
 ```bash
-docker compose up -d
-docker compose down
+npm run docker:up
+npm run docker:down
 ```
 
-Additional deployment instructions will be added when required.
+The complete application is available at `http://localhost:8080`. The backend
+health endpoint is available directly at `http://localhost:3000/api/health`.
+PostgreSQL data is persisted in the `plantly_plantlyv2-data` Docker volume.
 
 ## Useful Commands
 
-Add frequently used development, database, migration, testing, and deployment commands here as they become available.
+Run commands from the repository root:
+
+| Task | Command |
+| --- | --- |
+| Build both applications | `npm run build` |
+| Run all tests | `npm test` |
+| Lint both applications | `npm run lint` |
+| Type-check both applications | `npm run typecheck` |
+| Run migrations | `npm run migration:run` |
+| Revert the latest migration | `npm run migration:revert` |
+| Create a migration | `npm run migration:create -- src/database/migrations/MigrationName` |
+| Generate a migration | `npm run migration:generate -- src/database/migrations/MigrationName` |
+| Start the Compose stack | `npm run docker:up` |
+| Stop the Compose stack | `npm run docker:down` |
+
+Migration paths are relative to `backend/`. Schema synchronization is disabled;
+all future schema changes must be represented by TypeORM migrations.
 
 ## Notes
 
-Quick project notes, reminders, and useful information can be kept here when they do not belong in the formal project documentation.
+The bootstrap contains only a placeholder route and health endpoint. Product
+behavior is added through the documented use-case workflow.

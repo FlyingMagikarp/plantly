@@ -16,6 +16,7 @@ The following documents define the project:
 * `docs/domain.md` — domain concepts and relationships
 * `docs/business-rules.md` — application business rules
 * `docs/architecture.md` — architecture and technical decisions
+* `docs/ui-design.md` — UI design principles and visual language
 
 Do not duplicate or contradict decisions defined in these documents.
 
