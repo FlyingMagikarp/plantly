@@ -9,8 +9,8 @@ Use cases may be added, removed, renamed, split, or superseded as requirements b
 ## Species
 
 * UC-001-sync-species-definitions — Ready
-* UC-002 View species
-* UC-003 List species
+* UC-002-view-species — Ready
+* UC-003-list-species — Ready
 
 ## Plant Collection
 
