@@ -12,6 +12,20 @@ A plant may have zero or one current location.
 
 A location may contain any number of plants.
 
+Only an active plant may be assigned to a location, moved between locations, or made unassigned. Dead and archived plants retain their current location assignment but it cannot be changed unless the plant is restored to active.
+
+### BR-024 — Location Identity
+
+Each location has an immutable, system-assigned technical identifier and a required user-provided name.
+
+Location names must be unique without regard to capitalization. Trailing whitespace is removed before a location name is validated or stored.
+
+### BR-025 — Location Deletion
+
+A location may be permanently deleted after confirmation.
+
+Deleting a location makes every plant assigned to it unassigned. It does not delete or otherwise change those plants or their historical data.
+
 ### BR-020 — Plant Identity
 
 Each plant has an immutable, system-assigned sequential technical identifier and a required user-provided nickname.

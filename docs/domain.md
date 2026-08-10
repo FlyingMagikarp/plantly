@@ -31,6 +31,10 @@ Represents a physical place where plants are kept.
 
 Examples include a balcony, living room window, propagation cabinet, or shelf.
 
+A location has an immutable system-assigned technical identifier and a required user-provided name. Location names are unique without regard to capitalization. Trailing whitespace is not part of a location name.
+
+Deleting a location removes the location itself. Plants assigned to it remain in the collection and become unassigned.
+
 ### CareEvent
 Represents something that happened to a plant.
 

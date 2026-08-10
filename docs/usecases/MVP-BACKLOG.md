@@ -22,11 +22,11 @@ Use cases may be added, removed, renamed, split, or superseded as requirements b
 
 ## Locations
 
-* UC-009 — Create location
-* UC-010 — Update location
-* UC-011 — Remove location
-* UC-012 — Assign plant to location
-* UC-013 — View plants by location
+* UC-009-create-location — Ready
+* UC-010-update-location — Ready
+* UC-011-remove-location — Ready
+* UC-012-assign-plant-to-location — Ready
+* UC-013-view-plants-by-location — Ready
 
 ## Care Events
 
