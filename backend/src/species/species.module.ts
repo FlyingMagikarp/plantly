@@ -5,6 +5,7 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { SpeciesController } from './species.controller';
 import { Species } from './species.entity';
+import { SpeciesQueryController } from './species-query.controller';
 import {
   SpeciesDefinitionsDirectory,
   SpeciesService,
@@ -12,7 +13,7 @@ import {
 
 @Module({
   imports: [TypeOrmModule.forFeature([Species])],
-  controllers: [SpeciesController],
+  controllers: [SpeciesController, SpeciesQueryController],
   providers: [
     SpeciesService,
     {
