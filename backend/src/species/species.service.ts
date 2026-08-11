@@ -57,12 +57,27 @@ export class SpeciesService {
     const species = await this.dataSource.getRepository(Species).find({
       order: { id: 'ASC' },
     });
+    const counts = (await this.hasPlantsTable())
+      ? await this.dataSource.query<
+          Array<{ speciesId: number; plantCount: string }>
+        >(`
+          SELECT "species_id" AS "speciesId", COUNT(*) AS "plantCount"
+          FROM "plants"
+          GROUP BY "species_id"
+        `)
+      : [];
+    const countBySpeciesId = new Map(
+      counts.map(({ speciesId, plantCount }) => [
+        Number(speciesId),
+        Number(plantCount),
+      ]),
+    );
 
     return species.map(({ id, name, archived }) => ({
       id,
       name,
       archived,
-      plantCount: 0,
+      plantCount: countBySpeciesId.get(id) ?? 0,
     }));
   }
 
@@ -71,6 +86,17 @@ export class SpeciesService {
     if (!species) {
       return null;
     }
+    const plants = (await this.hasPlantsTable())
+      ? await this.dataSource.query<SpeciesPlantSummary[]>(
+          `
+            SELECT "id", "nickname"
+            FROM "plants"
+            WHERE "species_id" = $1
+            ORDER BY "id" ASC
+          `,
+          [id],
+        )
+      : [];
 
     return {
       id: species.id,
@@ -88,8 +114,15 @@ export class SpeciesService {
       bloomFertilizer: species.bloomFertilizer,
       dormancyFertilizer: species.dormancyFertilizer,
       notes: species.notes,
-      plants: [],
+      plants,
     };
+  }
+
+  private async hasPlantsTable(): Promise<boolean> {
+    const rows = await this.dataSource.query<Array<{ tableName: string | null }>>(
+      `SELECT to_regclass('public.plants') AS "tableName"`,
+    );
+    return rows[0]?.tableName !== null;
   }
 
   async synchronize(): Promise<void> {
