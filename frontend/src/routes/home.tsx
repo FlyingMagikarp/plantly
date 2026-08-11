@@ -18,6 +18,12 @@ export function HomePage({ status }: HealthStatus) {
         >
           Backend: {status}
         </p>
+        <a
+          className="mt-8 block w-fit rounded-lg bg-emerald-700 px-4 py-3 font-medium text-white hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+          href="/species"
+        >
+          Browse species
+        </a>
       </section>
     </main>
   );

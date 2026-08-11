@@ -8,6 +8,37 @@ import { parseSpeciesDefinition } from './species-definition.parser';
 import { Species } from './species.entity';
 import type { SpeciesDefinition } from './species.types';
 
+export interface SpeciesOverviewItem {
+  id: number;
+  name: string;
+  archived: boolean;
+  plantCount: number;
+}
+
+export interface SpeciesPlantSummary {
+  id: number;
+  nickname: string;
+}
+
+export interface SpeciesDetail {
+  id: number;
+  name: string;
+  archived: boolean;
+  moisture: Species['moisture'];
+  light: Species['light'];
+  preferredTemperatureMin: number;
+  preferredTemperatureMax: number;
+  minimumTemperature: number;
+  growthPeriod: string;
+  bloomPeriod: string;
+  dormancyPeriod: string;
+  growthFertilizer: Species['growthFertilizer'];
+  bloomFertilizer: Species['bloomFertilizer'];
+  dormancyFertilizer: Species['dormancyFertilizer'];
+  notes: string[];
+  plants: SpeciesPlantSummary[];
+}
+
 const SUPPORTING_FILES = new Set(['README.md', 'TEMPLATE.md']);
 const SPECIES_FILENAME_PATTERN = /^SP-\d{3}-[a-z0-9]+(?:-[a-z0-9]+)*\.md$/;
 
@@ -21,6 +52,45 @@ export class SpeciesService {
     @InjectDataSource() private readonly dataSource: DataSource,
     private readonly definitionsDirectory: SpeciesDefinitionsDirectory,
   ) {}
+
+  async list(): Promise<SpeciesOverviewItem[]> {
+    const species = await this.dataSource.getRepository(Species).find({
+      order: { id: 'ASC' },
+    });
+
+    return species.map(({ id, name, archived }) => ({
+      id,
+      name,
+      archived,
+      plantCount: 0,
+    }));
+  }
+
+  async find(id: number): Promise<SpeciesDetail | null> {
+    const species = await this.dataSource.getRepository(Species).findOneBy({ id });
+    if (!species) {
+      return null;
+    }
+
+    return {
+      id: species.id,
+      name: species.name,
+      archived: species.archived,
+      moisture: species.moisture,
+      light: species.light,
+      preferredTemperatureMin: species.preferredTemperatureMin,
+      preferredTemperatureMax: species.preferredTemperatureMax,
+      minimumTemperature: species.minimumTemperature,
+      growthPeriod: species.growthPeriod,
+      bloomPeriod: species.bloomPeriod,
+      dormancyPeriod: species.dormancyPeriod,
+      growthFertilizer: species.growthFertilizer,
+      bloomFertilizer: species.bloomFertilizer,
+      dormancyFertilizer: species.dormancyFertilizer,
+      notes: species.notes,
+      plants: [],
+    };
+  }
 
   async synchronize(): Promise<void> {
     const definitions = await this.readDefinitions();
