@@ -4,6 +4,8 @@ This directory contains the behavioural use-case specifications for Plantly.
 
 Use cases describe what the application must do. They define expected behaviour and acceptance criteria without prescribing implementation details.
 
+The authoritative overview of assigned and planned use cases is `docs/business-requirements.md`.
+
 ## Naming Convention
 
 Use-case files follow this format:
@@ -32,6 +34,8 @@ Use-case identifiers must never be reused.
 Renaming the descriptive part of a filename is allowed when the intent becomes clearer, but the numeric identifier remains unchanged.
 
 ## Status
+
+The business-requirements overview may use `Planned` for an assigned identifier whose detailed specification has not been generated. `Planned` is a catalogue state, not a valid status inside a use-case specification.
 
 Each use case has one of the following statuses:
 
