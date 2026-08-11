@@ -1,6 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { HomeRoute } from './routes/home';
 import { homeLoader } from './routes/home-loader';
+import { locationsAction, locationsLoader } from './routes/locations-data';
+import { LocationsError, LocationsRoute } from './routes/locations';
 import {
   SpeciesDetailError,
   SpeciesDetailRoute,
@@ -14,6 +16,13 @@ export const router = createBrowserRouter([
     path: '/',
     element: <HomeRoute />,
     loader: homeLoader,
+  },
+  {
+    path: '/locations',
+    element: <LocationsRoute />,
+    loader: locationsLoader,
+    action: locationsAction,
+    errorElement: <LocationsError />,
   },
   {
     path: '/species',

@@ -22,7 +22,7 @@ Use cases may be added, removed, renamed, split, or superseded as requirements b
 
 ## Locations
 
-* UC-009-create-location — Ready
+* UC-009-create-location — Implemented
 * UC-010-update-location — Ready
 * UC-011-remove-location — Ready
 * UC-012-assign-plant-to-location — Ready

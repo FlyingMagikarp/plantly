@@ -18,12 +18,20 @@ export function HomePage({ status }: HealthStatus) {
         >
           Backend: {status}
         </p>
-        <a
-          className="mt-8 block w-fit rounded-lg bg-emerald-700 px-4 py-3 font-medium text-white hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
-          href="/species"
-        >
-          Browse species
-        </a>
+        <nav className="mt-8 flex flex-wrap gap-3" aria-label="Application areas">
+          <a
+            className="block w-fit rounded-lg bg-emerald-700 px-4 py-3 font-medium text-white hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+            href="/species"
+          >
+            Browse species
+          </a>
+          <a
+            className="block w-fit rounded-lg border border-stone-300 bg-white px-4 py-3 font-medium hover:border-emerald-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+            href="/locations"
+          >
+            Manage locations
+          </a>
+        </nav>
       </section>
     </main>
   );
