@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { databaseOptions } from './database/database-options';
 import { HealthController } from './health/health.controller';
 import { HealthService } from './health/health.service';
+import { SpeciesModule } from './species/species.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { HealthService } from './health/health.service';
       inject: [ConfigService],
       useFactory: databaseOptions,
     }),
+    SpeciesModule,
   ],
   controllers: [HealthController],
   providers: [HealthService],
