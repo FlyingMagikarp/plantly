@@ -8,25 +8,25 @@ Use cases may be added, removed, renamed, split, or superseded as requirements b
 
 ## Species
 
-* UC-001-sync-species-definitions — Ready
-* UC-002-view-species — Ready
-* UC-003-list-species — Ready
+* UC-001-sync-species-definitions — Implemented
+* UC-002-view-species — Implemented
+* UC-003-list-species — Implemented
 
 ## Plant Collection
 
-* UC-004-add-plant-to-collection — Ready
-* UC-005-update-plant — Ready
+* UC-004-add-plant-to-collection — Implemented
+* UC-005-update-plant — Implemented
 * UC-006-remove-plant-from-collection — Ready
-* UC-007-view-plant — Ready
-* UC-008-view-plant-collection — Ready
+* UC-007-view-plant — Implemented
+* UC-008-view-plant-collection — Implemented
 
 ## Locations
 
 * UC-009-create-location — Implemented
-* UC-010-update-location — Ready
-* UC-011-remove-location — Ready
-* UC-012-assign-plant-to-location — Ready
-* UC-013-view-plants-by-location — Ready
+* UC-010-update-location — Implemented
+* UC-011-remove-location — Implemented
+* UC-012-assign-plant-to-location — Implemented
+* UC-013-view-plants-by-location — Implemented
 
 ## Care Events
 
