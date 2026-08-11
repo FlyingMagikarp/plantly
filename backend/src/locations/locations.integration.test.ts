@@ -11,7 +11,11 @@ import {
 } from 'testcontainers';
 import { DataSource, Repository } from 'typeorm';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { CreateSpecies1786449600000 } from '../database/migrations/1786449600000-CreateSpecies';
 import { CreateLocations1786453200000 } from '../database/migrations/1786453200000-CreateLocations';
+import { CreatePlants1786454626591 } from '../database/migrations/1786454626591-CreatePlants';
+import { Plant, type PlantStatus } from '../plants/plant.entity';
+import { Species } from '../species/species.entity';
 import { Location } from './location.entity';
 import { LocationsModule } from './locations.module';
 
@@ -25,6 +29,8 @@ describe('Location API', () => {
   let app: INestApplication;
   let dataSource: DataSource;
   let repository: Repository<Location>;
+  let plants: Repository<Plant>;
+  let species: Repository<Species>;
 
   beforeAll(async () => {
     container = await new GenericContainer('postgres:18-alpine')
@@ -50,8 +56,12 @@ describe('Location API', () => {
     };
     const migrationDataSource = new DataSource({
       ...connection,
-      entities: [Location],
-      migrations: [CreateLocations1786453200000],
+      entities: [Species, Location, Plant],
+      migrations: [
+        CreateSpecies1786449600000,
+        CreateLocations1786453200000,
+        CreatePlants1786454626591,
+      ],
       synchronize: false,
     });
     await migrationDataSource.initialize();
@@ -63,7 +73,7 @@ describe('Location API', () => {
         ConfigModule.forRoot({ isGlobal: true }),
         TypeOrmModule.forRoot({
           ...connection,
-          entities: [Location],
+          entities: [Species, Location, Plant],
           synchronize: false,
         }),
         LocationsModule,
@@ -76,10 +86,14 @@ describe('Location API', () => {
     await app.init();
     dataSource = app.get(DataSource);
     repository = dataSource.getRepository(Location);
+    plants = dataSource.getRepository(Plant);
+    species = dataSource.getRepository(Species);
   }, 120_000);
 
   beforeEach(async () => {
-    await repository.clear();
+    await plants.createQueryBuilder().delete().execute();
+    await repository.createQueryBuilder().delete().execute();
+    await species.createQueryBuilder().delete().execute();
   });
 
   afterAll(async () => {
@@ -175,6 +189,8 @@ describe('Location API', () => {
   describe('UC-010: Update Location', () => {
     it('renames a location while retaining its technical identifier', async () => {
       const location = await saveLocation('Balcony');
+      const speciesRecord = await saveSpecies();
+      const plant = await savePlant(speciesRecord.id, location.id, 'active');
 
       const response = await updateLocation(location.id, 'Sunroom');
 
@@ -183,6 +199,9 @@ describe('Location API', () => {
       await expect(repository.find()).resolves.toMatchObject([
         { id: location.id, name: 'Sunroom' },
       ]);
+      await expect(plants.findOneByOrFail({ id: plant.id })).resolves.toMatchObject({
+        locationId: location.id,
+      });
     });
 
     it('removes trailing whitespace before storing a renamed location', async () => {
@@ -276,6 +295,27 @@ describe('Location API', () => {
       await expect(repository.count()).resolves.toBe(0);
     });
 
+    it.each(['active', 'dead', 'archived'] as PlantStatus[])(
+      'unassigns a %s plant without changing its lifecycle or other data',
+      async (status) => {
+        const location = await saveLocation('Balcony');
+        const speciesRecord = await saveSpecies();
+        const plant = await savePlant(speciesRecord.id, location.id, status);
+
+        const response = await removeLocation(location.id);
+
+        expect(response.status).toBe(204);
+        await expect(plants.findOneByOrFail({ id: plant.id })).resolves.toMatchObject({
+          nickname: 'Preserved plant',
+          speciesId: speciesRecord.id,
+          acquisitionDate: '2024-04-05',
+          notes: 'Preserved notes',
+          status,
+          locationId: null,
+        });
+      },
+    );
+
     it('reports a missing location without deleting another location', async () => {
       const existing = await saveLocation('Kitchen');
       const before = await orderedLocations();
@@ -344,5 +384,46 @@ describe('Location API', () => {
 
   function orderedLocations(): Promise<Location[]> {
     return repository.find({ order: { id: 'ASC' } });
+  }
+
+  function saveSpecies(): Promise<Species> {
+    return species.save(
+      species.create({
+        id: 1,
+        definitionSlug: 'test-species',
+        name: 'Test Species',
+        moisture: 'moist',
+        light: 'bright-indirect',
+        preferredTemperatureMin: 18,
+        preferredTemperatureMax: 28,
+        minimumTemperature: 12,
+        growthPeriod: 'March-October',
+        bloomPeriod: 'unknown',
+        dormancyPeriod: 'November-February',
+        growthFertilizer: 'balanced',
+        bloomFertilizer: 'species-specific',
+        dormancyFertilizer: 'none',
+        notes: [],
+        archived: false,
+        sourceHash: '1'.padEnd(64, '0'),
+      }),
+    );
+  }
+
+  function savePlant(
+    speciesId: number,
+    locationId: number,
+    status: PlantStatus,
+  ): Promise<Plant> {
+    return plants.save(
+      plants.create({
+        nickname: 'Preserved plant',
+        speciesId,
+        acquisitionDate: '2024-04-05',
+        notes: 'Preserved notes',
+        status,
+        locationId,
+      }),
+    );
   }
 });

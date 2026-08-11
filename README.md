@@ -82,9 +82,6 @@ Run commands from the repository root:
 | Stop the Compose stack | `npm run docker:down` |
 
 Migration paths are relative to `backend/`. Schema synchronization is disabled;
-all future schema changes must be represented by TypeORM migrations.
-
-## Notes
-
-The bootstrap contains only a placeholder route and health endpoint. Product
-behavior is added through the documented use-case workflow.
+all future schema changes must be represented by TypeORM migrations. The backend
+runs pending migrations during startup, including when the Compose stack starts
+against a new or existing Plantly v2 database.

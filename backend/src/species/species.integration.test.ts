@@ -15,6 +15,10 @@ import {
 import { DataSource, Repository } from 'typeorm';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { CreateSpecies1786449600000 } from '../database/migrations/1786449600000-CreateSpecies';
+import { CreateLocations1786453200000 } from '../database/migrations/1786453200000-CreateLocations';
+import { CreatePlants1786454626591 } from '../database/migrations/1786454626591-CreatePlants';
+import { Location } from '../locations/location.entity';
+import { Plant } from '../plants/plant.entity';
 import { Species } from './species.entity';
 import { SpeciesModule } from './species.module';
 import { SpeciesDefinitionsDirectory } from './species.service';
@@ -45,6 +49,7 @@ describe('UC-001: Synchronize Species Definitions', () => {
   let app: INestApplication;
   let dataSource: DataSource;
   let repository: Repository<Species>;
+  let plants: Repository<Plant>;
 
   beforeAll(async () => {
     definitionsDirectory = join(
@@ -79,8 +84,12 @@ describe('UC-001: Synchronize Species Definitions', () => {
     };
     const migrationDataSource = new DataSource({
       ...connection,
-      entities: [Species],
-      migrations: [CreateSpecies1786449600000],
+      entities: [Species, Location, Plant],
+      migrations: [
+        CreateSpecies1786449600000,
+        CreateLocations1786453200000,
+        CreatePlants1786454626591,
+      ],
       synchronize: false,
     });
     await migrationDataSource.initialize();
@@ -92,7 +101,7 @@ describe('UC-001: Synchronize Species Definitions', () => {
         ConfigModule.forRoot({ isGlobal: true }),
         TypeOrmModule.forRoot({
           ...connection,
-          entities: [Species],
+          entities: [Species, Location, Plant],
           synchronize: false,
         }),
         SpeciesModule,
@@ -108,10 +117,12 @@ describe('UC-001: Synchronize Species Definitions', () => {
     await app.init();
     dataSource = app.get(DataSource);
     repository = dataSource.getRepository(Species);
+    plants = dataSource.getRepository(Plant);
   }, 120_000);
 
   beforeEach(async () => {
-    await repository.clear();
+    await plants.createQueryBuilder().delete().execute();
+    await repository.createQueryBuilder().delete().execute();
     await clearDefinitions(definitionsDirectory);
   });
 
@@ -311,11 +322,24 @@ describe('UC-001: Synchronize Species Definitions', () => {
       definition({ name: 'Restorable Species', moisture: 'dry' }),
     );
     expect((await synchronize(app)).status).toBe(204);
+    const associatedPlant = await plants.save(
+      plants.create({
+        nickname: 'Existing plant',
+        speciesId: 40,
+        acquisitionDate: '2024-04-05',
+        notes: null,
+        status: 'active',
+        locationId: null,
+      }),
+    );
 
     await unlink(join(definitionsDirectory, filename));
     expect((await synchronize(app)).status).toBe(204);
     await expect(repository.findOneByOrFail({ id: 40 })).resolves.toMatchObject({
       archived: true,
+    });
+    await expect(plants.findOneByOrFail({ id: associatedPlant.id })).resolves.toMatchObject({
+      speciesId: 40,
     });
 
     await writeDefinition(

@@ -12,6 +12,10 @@ import {
 import { DataSource, Repository } from 'typeorm';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { CreateSpecies1786449600000 } from '../database/migrations/1786449600000-CreateSpecies';
+import { CreateLocations1786453200000 } from '../database/migrations/1786453200000-CreateLocations';
+import { CreatePlants1786454626591 } from '../database/migrations/1786454626591-CreatePlants';
+import { Location } from '../locations/location.entity';
+import { Plant } from '../plants/plant.entity';
 import { Species } from './species.entity';
 import { SpeciesModule } from './species.module';
 
@@ -24,6 +28,7 @@ describe('Species query API', () => {
   let container: StartedTestContainer;
   let app: INestApplication;
   let repository: Repository<Species>;
+  let plants: Repository<Plant>;
 
   beforeAll(async () => {
     container = await new GenericContainer('postgres:18-alpine')
@@ -49,8 +54,12 @@ describe('Species query API', () => {
     };
     const migrationDataSource = new DataSource({
       ...connection,
-      entities: [Species],
-      migrations: [CreateSpecies1786449600000],
+      entities: [Species, Location, Plant],
+      migrations: [
+        CreateSpecies1786449600000,
+        CreateLocations1786453200000,
+        CreatePlants1786454626591,
+      ],
       synchronize: false,
     });
     await migrationDataSource.initialize();
@@ -62,7 +71,7 @@ describe('Species query API', () => {
         ConfigModule.forRoot({ isGlobal: true }),
         TypeOrmModule.forRoot({
           ...connection,
-          entities: [Species],
+          entities: [Species, Location, Plant],
           synchronize: false,
         }),
         SpeciesModule,
@@ -73,11 +82,14 @@ describe('Species query API', () => {
     app.setGlobalPrefix('api');
     app.useLogger(false);
     await app.init();
-    repository = app.get(DataSource).getRepository(Species);
+    const dataSource = app.get(DataSource);
+    repository = dataSource.getRepository(Species);
+    plants = dataSource.getRepository(Plant);
   }, 120_000);
 
   beforeEach(async () => {
-    await repository.clear();
+    await plants.createQueryBuilder().delete().execute();
+    await repository.createQueryBuilder().delete().execute();
   });
 
   afterAll(async () => {
@@ -110,6 +122,28 @@ describe('Species query API', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual([]);
+    });
+
+    it('returns the recorded plant count for each species, including inactive plants', async () => {
+      await repository.save([
+        speciesFixture({ id: 1, name: 'Hoya' }),
+        speciesFixture({ id: 2, name: 'Fern' }),
+      ]);
+      await plants.save([
+        plantFixture({ nickname: 'Active Hoya', speciesId: 1 }),
+        plantFixture({ nickname: 'Archived Hoya', speciesId: 1, status: 'archived' }),
+        plantFixture({ nickname: 'Dead Fern', speciesId: 2, status: 'dead' }),
+      ]);
+
+      const response = await request(app.getHttpServer() as Server).get(
+        '/api/species',
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual([
+        { id: 1, name: 'Hoya', archived: false, plantCount: 2 },
+        { id: 2, name: 'Fern', archived: false, plantCount: 1 },
+      ]);
     });
 
     it('does not modify species data while retrieving the overview', async () => {
@@ -185,6 +219,32 @@ describe('Species query API', () => {
       expect((response.body as { notes: unknown }).notes).toEqual([]);
     });
 
+    it('lists every recorded plant associated with the species in identifier order', async () => {
+      await repository.save([
+        speciesFixture({ id: 1, name: 'Selected Species' }),
+        speciesFixture({ id: 2, name: 'Other Species' }),
+      ]);
+      const first = await plants.save(
+        plantFixture({ nickname: 'First plant', speciesId: 1 }),
+      );
+      const second = await plants.save(
+        plantFixture({ nickname: 'Inactive plant', speciesId: 1, status: 'dead' }),
+      );
+      await plants.save(plantFixture({ nickname: 'Other plant', speciesId: 2 }));
+
+      const response = await request(app.getHttpServer() as Server).get(
+        '/api/species/1',
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({
+        plants: [
+          { id: first.id, nickname: 'First plant' },
+          { id: second.id, nickname: 'Inactive plant' },
+        ],
+      });
+    });
+
     it('returns 404 without another species data when the requested species is missing', async () => {
       await repository.save(speciesFixture({ id: 10, name: 'Existing' }));
 
@@ -234,4 +294,16 @@ function speciesFixture(overrides: Partial<Species> = {}): Species {
 
 function repositoryEntity(values: Species): Species {
   return values;
+}
+
+function plantFixture(overrides: Partial<Plant> = {}): Plant {
+  return {
+    nickname: 'Test plant',
+    speciesId: 1,
+    acquisitionDate: '2024-04-05',
+    notes: null,
+    status: 'active',
+    locationId: null,
+    ...overrides,
+  } as Plant;
 }
