@@ -31,13 +31,13 @@ Detailed behavioural requirements and acceptance criteria remain in the individu
 | [UC-011](usecases/UC-011-remove-location.md) | **Remove Location** — Permanently remove a location while preserving its plants as unassigned. | Implemented |
 | [UC-012](usecases/UC-012-assign-plant-to-location.md) | **Assign Plant to Location** — Assign, move, or unassign an active plant from its detail view. | Implemented |
 | [UC-013](usecases/UC-013-view-plants-by-location.md) | **View Plants by Location** — Display active plants grouped by their current location, including unassigned plants. | Implemented |
-| UC-014 | **Record Watering** — Record a watering care event. | Planned |
-| UC-015 | **Record Pruning** — Record a pruning care event. | Planned |
-| UC-016 | **Record Repotting** — Record a repotting care event. | Planned |
-| UC-017 | **Record Pest Treatment** — Record a pest-treatment care event. | Planned |
-| UC-018 | **Record Observation** — Record a general plant observation. | Planned |
-| UC-019 | **View Plant Care History** — Review the recorded care-event history for a plant. | Planned |
-| UC-020 | **Correct Care Event** — Correct an inaccurate recorded care event. | Planned |
+| [UC-014](usecases/UC-014-record-watering.md) | **Record Watering** — Record a watering care event. | Ready |
+| [UC-015](usecases/UC-015-record-pruning.md) | **Record Pruning** — Record a pruning care event. | Ready |
+| [UC-016](usecases/UC-016-record-repotting.md) | **Record Repotting** — Record a repotting care event. | Ready |
+| [UC-017](usecases/UC-017-record-pest-treatment.md) | **Record Pest Treatment** — Record a pest-treatment care event. | Ready |
+| [UC-018](usecases/UC-018-record-observation.md) | **Record Observation** — Record a general plant observation. | Ready |
+| [UC-019](usecases/UC-019-view-plant-care-history.md) | **View Plant Care History** — Review the recorded care-event history for a plant. | Ready |
+| [UC-020](usecases/UC-020-correct-care-event.md) | **Correct Care Event** — Correct an inaccurate recorded care event. | Ready |
 | UC-021 | **Remove Incorrect Care Event** — Remove a care event that was recorded incorrectly. | Planned |
 | UC-022 | **Add Plant Image** — Attach an image to a plant. | Planned |
 | UC-023 | **Add Image to Care Event** — Attach an image to a recorded care event. | Planned |
