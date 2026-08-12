@@ -1,13 +1,7 @@
-export interface HealthStatus {
-  status: string;
-}
+import { plantCollectionLoader, type PlantCollectionData } from './plants-data';
 
-export async function homeLoader(): Promise<HealthStatus> {
-  const response = await fetch('/api/health');
+export type HomeData = PlantCollectionData;
 
-  if (!response.ok) {
-    throw new Response('Backend health check failed', { status: response.status });
-  }
-
-  return response.json() as Promise<HealthStatus>;
+export async function homeLoader(): Promise<HomeData> {
+  return plantCollectionLoader();
 }

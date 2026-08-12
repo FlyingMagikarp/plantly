@@ -6,6 +6,7 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import type { SpeciesOverviewItem } from './species-list-loader';
+import { EmptyState, ErrorState, Page, PageHeader } from '../components/ui';
 
 type SortField = 'id' | 'name' | 'plantCount';
 type SortDirection = 'asc' | 'desc';
@@ -21,28 +22,18 @@ export function SpeciesListRoute() {
     .sort((left, right) => compareSpecies(left, right, sort, direction));
 
   return (
-    <main className="min-h-screen bg-stone-50 px-4 py-8 text-stone-900 sm:px-6">
-      <section className="mx-auto max-w-3xl">
-        <a className="text-sm font-medium text-emerald-700 hover:underline" href="/">
-          Plantly
-        </a>
-        <div className="mt-4 sm:flex sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold tracking-wide text-emerald-700 uppercase">
-              Species knowledge
-            </p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight">Species</h1>
-          </div>
-        </div>
+    <Page>
+      <section className="mx-auto max-w-5xl">
+        <PageHeader eyebrow="Species knowledge" title="Species" description="Concise care reference for the species in your collection." />
 
         <Form
-          className="mt-6 grid gap-4 rounded-xl border border-stone-200 bg-white p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
+          className="panel mt-6 grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
           method="get"
         >
           <label className="grid gap-1 text-sm font-medium">
             Sort by
             <select
-              className="min-h-11 rounded-lg border border-stone-300 bg-white px-3"
+              className="form-control"
               defaultValue={sort}
               name="sort"
             >
@@ -54,7 +45,7 @@ export function SpeciesListRoute() {
           <label className="grid gap-1 text-sm font-medium">
             Direction
             <select
-              className="min-h-11 rounded-lg border border-stone-300 bg-white px-3"
+              className="form-control"
               defaultValue={direction}
               name="direction"
             >
@@ -63,7 +54,7 @@ export function SpeciesListRoute() {
             </select>
           </label>
           <button
-            className="min-h-11 rounded-lg bg-emerald-700 px-4 font-medium text-white hover:bg-emerald-800"
+            className="btn-primary"
             type="submit"
           >
             Apply
@@ -81,22 +72,19 @@ export function SpeciesListRoute() {
         </Form>
 
         {visibleSpecies.length === 0 ? (
-          <div className="mt-6 rounded-xl border border-dashed border-stone-300 p-8 text-center">
-            <h2 className="font-semibold">
-              {excludeArchived ? 'No active species' : 'No species yet'}
-            </h2>
-            <p className="mt-2 text-sm text-stone-600">
-              {excludeArchived
+          <EmptyState title={
+              excludeArchived ? 'No active species' : 'No species yet'
+            } description={
+              excludeArchived
                 ? 'Disable the archived-species filter to see archived entries.'
-                : 'Synchronize species definitions to populate this overview.'}
-            </p>
-          </div>
+                : 'Synchronize species definitions to populate this overview.'
+            } />
         ) : (
           <ul className="mt-6 grid gap-3">
             {visibleSpecies.map((item) => (
               <li key={item.id}>
                 <Link
-                  className="flex min-h-20 items-center justify-between gap-4 rounded-xl border border-stone-200 bg-white p-4 hover:border-emerald-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                  className="interactive-card flex min-h-24 items-center justify-between gap-4 p-4 sm:p-5"
                   to={`/species/${item.id}`}
                 >
                   <span>
@@ -118,7 +106,7 @@ export function SpeciesListRoute() {
           </ul>
         )}
       </section>
-    </main>
+    </Page>
   );
 }
 
@@ -126,22 +114,14 @@ export function SpeciesListError() {
   const revalidator = useRevalidator();
 
   return (
-    <main className="grid min-h-screen place-items-center bg-stone-50 px-6 text-stone-900">
-      <section className="max-w-md text-center">
-        <h1 className="text-2xl font-semibold">Species could not be loaded</h1>
-        <p className="mt-3 text-stone-600">
-          The species overview is unavailable. Please try again.
-        </p>
-        <button
-          className="mt-6 min-h-11 rounded-lg bg-emerald-700 px-4 font-medium text-white hover:bg-emerald-800"
+    <ErrorState title="Species could not be loaded" description="The species overview is unavailable. Please try again." action={<button
+          className="btn-primary"
           disabled={revalidator.state !== 'idle'}
           onClick={() => revalidator.revalidate()}
           type="button"
         >
           {revalidator.state === 'idle' ? 'Try again' : 'Trying again…'}
-        </button>
-      </section>
-    </main>
+        </button>} />
   );
 }
 

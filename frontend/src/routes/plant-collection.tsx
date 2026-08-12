@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link, useLoaderData } from 'react-router-dom';
 import type { PlantCollectionData, PlantItem, PlantStatus } from './plants-data';
 import { PlantPageHeader } from './plants-common';
+import { EmptyState, PageHeader } from '../components/ui';
 
 type SortField = 'nickname' | 'species' | 'location';
 type SortDirection = 'asc' | 'desc';
@@ -28,23 +29,16 @@ export function PlantCollectionRoute() {
 
   return (
     <PlantPageHeader>
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold tracking-wide text-emerald-700 uppercase">Plant collection</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">My plants</h1>
-          <Link className="mt-2 inline-block text-sm font-medium text-emerald-700 hover:underline" to="/plants/by-location">View by location</Link>
-        </div>
-        <Link className="grid min-h-11 place-items-center rounded-lg bg-emerald-700 px-4 font-medium text-white hover:bg-emerald-800" to="/plants/new">Add plant</Link>
-      </header>
+      <PageHeader eyebrow="Plant collection" title="My Plants" description="Search, filter, and maintain every plant in your collection." action={<Link className="btn-primary w-full sm:w-auto" to="/plants/new">Add plant</Link>} />
 
       {data.plants.length === 0 ? (
         <EmptyCollection />
       ) : (
         <>
-          <section aria-label="Collection controls" className="mt-6 grid gap-3 rounded-xl border border-stone-200 bg-white p-4">
+          <section aria-label="Collection controls" className="panel mt-6 grid gap-4">
             <label className="grid gap-1 text-sm font-medium" htmlFor="plant-search">
               Search nickname or species
-              <input className="min-h-11 rounded-lg border border-stone-300 px-3" id="plant-search" onChange={(event) => setSearch(event.target.value)} type="search" value={search} />
+              <input className="form-control" id="plant-search" onChange={(event) => setSearch(event.target.value)} type="search" value={search} />
             </label>
             <div className="grid gap-3 sm:grid-cols-3">
               <CheckboxMenu label="Status">
@@ -60,12 +54,12 @@ export function PlantCollectionRoute() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="grid gap-1 text-sm font-medium">Sort by
-                <select className="min-h-11 rounded-lg border border-stone-300 bg-white px-3" onChange={(event) => setSortField(event.target.value as SortField)} value={sortField}>
+                <select className="form-control" onChange={(event) => setSortField(event.target.value as SortField)} value={sortField}>
                   <option value="nickname">Nickname</option><option value="species">Species name</option><option value="location">Location name</option>
                 </select>
               </label>
               <label className="grid gap-1 text-sm font-medium">Direction
-                <select className="min-h-11 rounded-lg border border-stone-300 bg-white px-3" onChange={(event) => setSortDirection(event.target.value as SortDirection)} value={sortDirection}>
+                <select className="form-control" onChange={(event) => setSortDirection(event.target.value as SortDirection)} value={sortDirection}>
                   <option value="asc">Ascending</option><option value="desc">Descending</option>
                 </select>
               </label>
@@ -73,12 +67,9 @@ export function PlantCollectionRoute() {
           </section>
 
           {displayed.length === 0 ? (
-            <section className="mt-6 rounded-xl border border-dashed border-stone-300 p-8 text-center">
-              <h2 className="font-semibold">No plants match these filters</h2>
-              <p className="mt-2 text-sm text-stone-600">Change a status, species, location, or search selection to see plants.</p>
-            </section>
+            <EmptyState title="No plants match these filters" description="Change a status, species, location, or search selection to see plants." />
           ) : (
-            <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+            <ul className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {displayed.map((plant) => <PlantCard key={plant.id} plant={plant} />)}
             </ul>
           )}
@@ -89,15 +80,15 @@ export function PlantCollectionRoute() {
 }
 
 function PlantCard({ plant }: { plant: PlantItem }) {
-  return <li><Link className="block min-h-28 rounded-xl border border-stone-200 bg-white p-4 hover:border-emerald-400 focus-visible:outline-2 focus-visible:outline-emerald-700" to={`/plants/${plant.id}`}><div className="flex items-start justify-between gap-3"><h2 className="font-semibold">{plant.nickname}</h2>{plant.status !== 'active' && <span className="rounded-full bg-stone-200 px-2 py-1 text-xs font-semibold">{capitalize(plant.status)}</span>}</div><p className="mt-2 text-sm text-stone-700">{plant.species.name}</p><p className="mt-1 text-sm text-stone-500">{plant.location?.name ?? 'No location'}</p></Link></li>;
+  return <li><Link className="interactive-card min-h-32 p-4 sm:p-5" to={`/plants/${plant.id}`}><div className="flex items-start justify-between gap-3"><h2 className="text-lg font-bold text-neutral-900">{plant.nickname}</h2>{plant.status !== 'active' && <span className="badge badge-neutral">{capitalize(plant.status)}</span>}</div><p className="mt-2 text-sm text-neutral-700">{plant.species.name}</p><p className="mt-4 text-sm text-neutral-500">{plant.location?.name ?? 'No location'}</p></Link></li>;
 }
 
 function EmptyCollection() {
-  return <section className="mt-6 rounded-xl border border-dashed border-stone-300 p-8 text-center"><h2 className="font-semibold">Your collection is empty</h2><p className="mt-2 text-sm text-stone-600">Add your first plant to start the collection.</p><Link className="mt-5 inline-grid min-h-11 place-items-center rounded-lg bg-emerald-700 px-4 font-medium text-white" to="/plants/new">Add first plant</Link></section>;
+  return <EmptyState title="Your collection is empty" description="Add your first plant to start the collection." action={<Link className="btn-primary" to="/plants/new">Add first plant</Link>} />;
 }
 
 function CheckboxMenu({ children, label }: { children: React.ReactNode; label: string }) {
-  return <details className="rounded-lg border border-stone-300"><summary className="min-h-11 cursor-pointer px-3 py-3 text-sm font-medium">{label}</summary><div className="grid gap-2 border-t border-stone-200 p-3">{children}</div></details>;
+  return <details className="rounded-lg border border-neutral-300"><summary className="min-h-11 cursor-pointer px-3 py-3 text-sm font-semibold text-neutral-800">{label}</summary><div className="grid gap-2 border-t border-neutral-200 p-3">{children}</div></details>;
 }
 
 function Checkbox({ checked, label, onChange }: { checked: boolean; label: string; onChange: () => void }) {

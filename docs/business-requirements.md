@@ -50,15 +50,17 @@ Detailed behavioural requirements and acceptance criteria remain in the individu
 | UC-030 | **Start Plant Care Round** — Begin a location-oriented plant-care round. | Planned |
 | UC-031 | **Record Care During Plant Round** — Record care efficiently while progressing through a care round. | Planned |
 | UC-032 | **Complete Plant Care Round** — Finish an active care round. | Planned |
-| [UC-033](usecases/UC-033-navigate-application.md) | **Navigate Application** — Provide consistent desktop sidebar and collapsible mobile navigation between implemented application areas. | Draft |
-| [UC-034](usecases/UC-034-view-home-plant-overview.md) | **View Home Plant Overview** — Show active plants by location on Home with nickname, species, and latest care-event date. | Draft |
+| [UC-033](usecases/UC-033-navigate-application.md) | **Navigate Application** — Provide consistent desktop sidebar and collapsible mobile navigation between implemented application areas. | Implemented |
+| [UC-034](usecases/UC-034-view-home-plant-overview.md) | **View Home Plant Overview** — Show active plants by location on Home with nickname and species. | Implemented |
+| [UC-035](usecases/UC-035-view-latest-care-on-home.md) | **View Latest Care on Home** — Add the latest recorded care date, or the absence of recorded care, to each Home plant card. | Draft |
 
 ## Known Dependencies
 
 * UC-001 provides the authoritative runtime species data used by species and plant workflows.
 * UC-009 through UC-011 establish location maintenance used by UC-012, UC-013, and UC-034.
-* UC-014 through UC-018 establish the care events surfaced by UC-019 and the latest-care date required by UC-034.
+* UC-014 through UC-018 establish the care events surfaced by UC-019 and the latest-care information added to Home by UC-035.
 * UC-034 defines the Home destination required by UC-033.
+* UC-035 enriches the Home overview defined by UC-034 after care-event recording is available.
 
 ## Requirements Awaiting Use Cases
 

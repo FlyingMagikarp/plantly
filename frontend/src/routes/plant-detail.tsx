@@ -6,6 +6,7 @@ import type {
   PlantStatus,
 } from './plants-data';
 import { PlantPageHeader } from './plants-common';
+import { BackLink } from '../components/ui';
 
 export function PlantDetailRoute() {
   const { plant, locations } = useLoaderData<PlantDetailData>();
@@ -15,7 +16,7 @@ export function PlantDetailRoute() {
   return (
     <PlantPageHeader>
       <div className="flex items-start justify-between gap-4">
-        <Link className="text-sm font-medium text-emerald-700 hover:underline" to="/plants">← My plants</Link>
+        <BackLink to="/plants">My Plants</BackLink>
         <details className="relative">
           <summary aria-label="Additional plant actions" className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-lg border border-stone-300 bg-white text-xl">⋯</summary>
           <div className="absolute right-0 z-10 mt-2 w-48 rounded-lg border border-stone-200 bg-white p-2 shadow-lg">
@@ -25,7 +26,7 @@ export function PlantDetailRoute() {
       </div>
 
       <header className="mt-5">
-        <div className="flex flex-wrap items-center gap-3"><h1 className="text-3xl font-semibold tracking-tight">{plant.nickname}</h1><StatusBadge status={plant.status} /></div>
+        <div className="flex flex-wrap items-center gap-3"><h1 className="page-title">{plant.nickname}</h1><StatusBadge status={plant.status} /></div>
         <p className="mt-2 text-sm text-stone-500">Plant {plant.id}</p>
       </header>
 

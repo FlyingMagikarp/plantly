@@ -1,0 +1,12 @@
+**/node_modules
+**/dist
+**/.npm-cache
+**/*.tsbuildinfo
+**/.env
+**/*.log
+
+.git
+.idea
+coverage
+playwright-report
+test-results

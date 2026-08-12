@@ -6,19 +6,18 @@ import {
   useRouteError,
 } from 'react-router-dom';
 import type { SpeciesDetail } from './species-detail-loader';
+import { BackLink, ErrorState, Page } from '../components/ui';
 
 export function SpeciesDetailRoute() {
   const species = useLoaderData<SpeciesDetail>();
 
   return (
-    <main className="min-h-screen bg-stone-50 px-4 py-8 text-stone-900 sm:px-6">
-      <article className="mx-auto max-w-3xl">
-        <Link className="text-sm font-medium text-emerald-700 hover:underline" to="/species">
-          ← Species
-        </Link>
+    <Page width="reading">
+      <article>
+        <BackLink to="/species">Species</BackLink>
         <header className="mt-5">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-3xl font-semibold tracking-tight">{species.name}</h1>
+            <h1 className="page-title">{species.name}</h1>
             {species.archived && (
               <span className="rounded-full bg-stone-200 px-3 py-1 text-xs font-semibold text-stone-700">
                 Archived
@@ -83,7 +82,7 @@ export function SpeciesDetailRoute() {
           </section>
         )}
       </article>
-    </main>
+    </Page>
   );
 }
 
@@ -93,32 +92,22 @@ export function SpeciesDetailError() {
   const notFound = isRouteErrorResponse(error) && error.status === 404;
 
   return (
-    <main className="grid min-h-screen place-items-center bg-stone-50 px-6 text-stone-900">
-      <section className="max-w-md text-center">
-        <h1 className="text-2xl font-semibold">
-          {notFound ? 'Species not found' : 'Species could not be loaded'}
-        </h1>
-        <p className="mt-3 text-stone-600">
-          {notFound
+    <ErrorState title={notFound ? 'Species not found' : 'Species could not be loaded'} description={notFound
             ? 'This species is no longer available.'
-            : 'The species detail is unavailable. Please try again.'}
-        </p>
-        {notFound ? (
-          <Link className="mt-6 inline-block font-medium text-emerald-700 hover:underline" to="/species">
+            : 'The species detail is unavailable. Please try again.'} action={notFound ? (
+          <Link className="text-link" to="/species">
             Return to species
           </Link>
         ) : (
           <button
-            className="mt-6 min-h-11 rounded-lg bg-emerald-700 px-4 font-medium text-white hover:bg-emerald-800"
+            className="btn-primary"
             disabled={revalidator.state !== 'idle'}
             onClick={() => revalidator.revalidate()}
             type="button"
           >
             {revalidator.state === 'idle' ? 'Try again' : 'Trying again…'}
           </button>
-        )}
-      </section>
-    </main>
+        )} />
   );
 }
 
@@ -132,7 +121,7 @@ function DetailSection({
   return (
     <section className="mt-8">
       <h2 className="text-xl font-semibold">{title}</h2>
-      <dl className="mt-3 divide-y divide-stone-200 rounded-xl border border-stone-200 bg-white px-4">
+      <dl className="card mt-3 divide-y divide-neutral-200 px-4 sm:px-5">
         {children}
       </dl>
     </section>

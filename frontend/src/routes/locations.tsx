@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import {
-  Link,
   useFetcher,
   useLoaderData,
   useRevalidator,
 } from 'react-router-dom';
 import type { LocationActionData, LocationItem } from './locations-data';
+import { EmptyState, ErrorState, Page, PageHeader } from '../components/ui';
 
 export function LocationsRoute() {
   const locations = useLoaderData<LocationItem[]>();
@@ -13,23 +13,12 @@ export function LocationsRoute() {
   const createError = create.data?.intent === 'create' && !create.data.ok;
 
   return (
-    <main className="min-h-screen bg-stone-50 px-4 py-8 text-stone-900 sm:px-6">
-      <section className="mx-auto max-w-2xl">
-        <Link className="text-sm font-medium text-emerald-700 hover:underline" to="/">
-          ← Plantly
-        </Link>
-        <header className="mt-5">
-          <p className="text-sm font-semibold tracking-wide text-emerald-700 uppercase">
-            Plant organization
-          </p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">Locations</h1>
-          <p className="mt-2 text-stone-600">
-            Manage the physical places where your plants are kept.
-          </p>
-        </header>
+    <Page width="reading">
+      <section>
+        <PageHeader eyebrow="Plant organisation" title="Locations" description="Manage the physical places where your plants are kept." />
 
         <create.Form
-          className="mt-6 rounded-xl border border-stone-200 bg-white p-4"
+          className="panel mt-6"
           method="post"
         >
           <input name="intent" type="hidden" value="create" />
@@ -40,14 +29,14 @@ export function LocationsRoute() {
             <input
               aria-describedby={createError ? 'create-location-error' : undefined}
               aria-invalid={createError || undefined}
-              className="min-h-11 rounded-lg border border-stone-300 bg-white px-3"
+              className="form-control"
               id="new-location-name"
               name="name"
               required
               type="text"
             />
             <button
-              className="min-h-11 rounded-lg bg-emerald-700 px-4 font-medium text-white hover:bg-emerald-800 disabled:cursor-wait disabled:bg-emerald-500"
+              className="btn-primary w-full sm:w-auto"
               disabled={create.state !== 'idle'}
               type="submit"
             >
@@ -62,12 +51,7 @@ export function LocationsRoute() {
         </create.Form>
 
         {locations.length === 0 ? (
-          <div className="mt-6 rounded-xl border border-dashed border-stone-300 p-8 text-center">
-            <h2 className="font-semibold">No locations yet</h2>
-            <p className="mt-2 text-sm text-stone-600">
-              Add the first place where you keep plants.
-            </p>
-          </div>
+          <EmptyState title="No locations yet" description="Add the first place where you keep plants." />
         ) : (
           <ul className="mt-6 grid gap-3">
             {locations.map((location) => (
@@ -78,7 +62,7 @@ export function LocationsRoute() {
           </ul>
         )}
       </section>
-    </main>
+    </Page>
   );
 }
 
@@ -90,7 +74,7 @@ function LocationRow({ location }: { location: LocationItem }) {
     !update.data.ok;
 
   return (
-    <article className="rounded-xl border border-stone-200 bg-white p-4">
+    <article className="panel">
       <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="font-semibold">{location.name}</h2>
@@ -160,10 +144,10 @@ function DeleteLocation({ location }: { location: LocationItem }) {
     <div
       aria-labelledby={`remove-title-${location.id}`}
       aria-modal="true"
-      className="fixed inset-0 z-10 grid place-items-center bg-stone-950/40 p-4"
+        className="dialog-backdrop"
       role="dialog"
     >
-      <section className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+      <section className="dialog">
         <h2 className="text-xl font-semibold" id={`remove-title-${location.id}`}>
           Remove {location.name}?
         </h2>
@@ -206,21 +190,13 @@ export function LocationsError() {
   const revalidator = useRevalidator();
 
   return (
-    <main className="grid min-h-screen place-items-center bg-stone-50 px-6 text-stone-900">
-      <section className="max-w-md text-center">
-        <h1 className="text-2xl font-semibold">Locations could not be loaded</h1>
-        <p className="mt-3 text-stone-600">
-          Location management is unavailable. Please try again.
-        </p>
-        <button
-          className="mt-6 min-h-11 rounded-lg bg-emerald-700 px-4 font-medium text-white hover:bg-emerald-800"
+    <ErrorState title="Locations could not be loaded" description="Location management is unavailable. Please try again." action={<button
+          className="btn-primary"
           disabled={revalidator.state !== 'idle'}
           onClick={() => revalidator.revalidate()}
           type="button"
         >
           {revalidator.state === 'idle' ? 'Try again' : 'Trying again…'}
-        </button>
-      </section>
-    </main>
+        </button>} />
   );
 }

@@ -377,14 +377,3 @@ When implementing a use case with meaningful UI:
 If a use case introduces a reusable UI/UX principle, update this document. Implementation-specific React patterns belong in agent engineering guidance rather than here.
 
 Do not redesign unrelated screens while implementing a focused use case unless the existing design prevents the required behaviour.
-
-
-
-### UI PROMPT
-
-Rework the Plantly frontend styling according to docs/ui-design.md.
-Introduce the shared application shell defined by UC-033 and apply the documented visual language consistently across every currently implemented frontend screen.
-Reuse Tailwind and shared components for page headers, buttons, forms, cards, badges, dialogs, navigation, empty states, loading states, and errors.
-Preserve all behavior defined by existing use cases. Do not add speculative features or change backend/domain behavior.
-Optimize mobile layouts for quick care and note entry, and desktop layouts for overview, organisation, and detailed information. Where the existing UCs do not yet provide care actions or additional data, style only what currently exists.
-Visually inspect representative mobile and desktop viewports, then run frontend tests, linting, type checking, and build validation.
