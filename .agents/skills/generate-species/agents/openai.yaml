@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generate Species"
+  short_description: "Research and draft Plantly species definitions"
+  default_prompt: "Use $generate-species to research and add a Plantly species definition for Monstera deliciosa."

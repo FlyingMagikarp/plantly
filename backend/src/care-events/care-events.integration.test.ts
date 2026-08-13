@@ -15,13 +15,13 @@ import { Location } from '../locations/location.entity';
 import { Plant, type PlantStatus } from '../plants/plant.entity';
 import { Species } from '../species/species.entity';
 import { CareEvent } from './care-event.entity';
-import { CareEventClock } from './care-events.service';
+import { CareEventClock, type CareEventView } from './care-events.service';
 import { CareEventsModule } from './care-events.module';
 
 const databaseName = 'plantly_care_events_tests';
 const now = new Date('2026-08-13T10:00:00.000Z');
 
-describe('UC-018: Record Observation', () => {
+describe('UC-014 through UC-021: Care Events', () => {
   let container: StartedTestContainer;
   let app: INestApplication;
   let dataSource: DataSource;
@@ -200,12 +200,165 @@ describe('UC-018: Record Observation', () => {
     await expect(events.count()).resolves.toBe(1);
   });
 
+  describe('UC-014 through UC-017: Record Typed Care Events', () => {
+    it.each([
+      ['watering', { fertilizerIncluded: false }],
+      ['pruning', {}],
+      ['repotting', {}],
+      ['pest-treatment', {}],
+    ])('records exactly one %s event without optional detail', async (type, extra) => {
+      const plant = await savePlant();
+      const response = await postEvent(plant.id, { type, timestamp: '2026-08-13T09:30:00.000Z', ...extra });
+      expect(response.status).toBe(201);
+      expect(response.body).toMatchObject({ plantId: plant.id, type, notes: null });
+      await expect(events.countBy({ plantId: plant.id })).resolves.toBe(1);
+    });
+
+    it('keeps fertilisation on its watering event and stores optional notes', async () => {
+      const plant = await savePlant();
+      await postEvent(plant.id, { type: 'watering', timestamp: '2026-08-13T09:00:00.000Z', notes: 'Half strength', fertilizerIncluded: true }).expect(201);
+      await expect(events.findOneByOrFail({ plantId: plant.id })).resolves.toMatchObject({ type: 'watering', notes: 'Half strength', fertilizerIncluded: true });
+      await expect(events.count()).resolves.toBe(1);
+    });
+
+    it.each(['watering', 'pruning', 'repotting', 'pest-treatment'])(
+      'rejects future and invalid data for %s without creating a partial event',
+      async (type) => {
+        const plant = await savePlant();
+        await postEvent(plant.id, { type, timestamp: '2026-08-13T10:00:00.001Z' }).expect(400);
+        await postEvent(plant.id, { type, timestamp: 'invalid', notes: 12 }).expect(400);
+        await expect(events.count()).resolves.toBe(0);
+      },
+    );
+
+    it('rejects fertilizer data on non-watering events', async () => {
+      const plant = await savePlant();
+      const response = await postEvent(plant.id, { type: 'pruning', timestamp: '2026-08-13T09:30:00.000Z', fertilizerIncluded: true });
+      expect(response.status).toBe(400);
+      expect(errorMessage(response)).toBe('Fertilizer information only belongs to watering events');
+      await expect(events.count()).resolves.toBe(0);
+    });
+  });
+
+  describe('UC-019: View Plant Care History', () => {
+    it('returns only the selected plant events ordered by timestamp then descending identifier', async () => {
+      const plant = await savePlant();
+      const other = await savePlant();
+      const older = await saveEvent(plant.id, 'pruning', '2026-08-10T08:00:00.000Z');
+      const tiedLow = await saveEvent(plant.id, 'observation', '2026-08-12T08:00:00.000Z');
+      const tiedHigh = await saveEvent(plant.id, 'watering', '2026-08-12T08:00:00.000Z', { fertilizerIncluded: true, notes: 'Fed' });
+      await saveEvent(other.id, 'repotting', '2026-08-13T08:00:00.000Z');
+      const response = await request(server()).get(`/api/plants/${plant.id}/care-events`).expect(200);
+      expect((response.body as { items: CareEventView[] }).items.map((event) => event.id)).toEqual([tiedHigh.id, tiedLow.id, older.id]);
+      expect((response.body as { items: CareEventView[] }).items[0]).toMatchObject({ fertilizerIncluded: true, notes: 'Fed' });
+    });
+
+    it('paginates by 10 and clamps an emptied or excessive page to the nearest available page', async () => {
+      const plant = await savePlant();
+      for (let index = 0; index < 11; index += 1) await saveEvent(plant.id, 'observation', `2026-08-${String(index + 1).padStart(2, '0')}T08:00:00.000Z`);
+      const first = await request(server()).get(`/api/plants/${plant.id}/care-events?page=1`).expect(200);
+      expect(first.body).toMatchObject({ page: 1, pageSize: 10, total: 11, totalPages: 2 });
+      expect((first.body as { items: unknown[] }).items).toHaveLength(10);
+      const last = await request(server()).get(`/api/plants/${plant.id}/care-events?page=99`).expect(200);
+      expect(last.body).toMatchObject({ page: 2 });
+      expect((last.body as { items: unknown[] }).items).toHaveLength(1);
+    });
+
+    it.each(['dead', 'archived'] as PlantStatus[])('retains history for a %s plant', async (status) => {
+      const plant = await savePlant(status);
+      await saveEvent(plant.id, 'observation', '2026-08-10T08:00:00.000Z');
+      const response = await request(server()).get(`/api/plants/${plant.id}/care-events`).expect(200);
+      expect((response.body as { items: unknown[] }).items).toHaveLength(1);
+    });
+
+    it('reports a missing plant and rejects invalid pages', async () => {
+      await request(server()).get('/api/plants/999/care-events').expect(404);
+      const plant = await savePlant();
+      await request(server()).get(`/api/plants/${plant.id}/care-events?page=0`).expect(400);
+    });
+  });
+
+  describe('UC-020: Correct Care Event', () => {
+    it('corrects the same event without changing its type or plant or creating another event', async () => {
+      const plant = await savePlant();
+      const event = await saveEvent(plant.id, 'pruning', '2026-08-10T08:00:00.000Z', { notes: 'Old' });
+      const response = await request(server()).patch(`/api/plants/${plant.id}/care-events/${event.id}`).send({ timestamp: '2026-08-11T08:00:00.000Z', notes: 'Corrected' }).expect(200);
+      expect(response.body).toMatchObject({ id: event.id, plantId: plant.id, type: 'pruning', notes: 'Corrected' });
+      await expect(events.count()).resolves.toBe(1);
+    });
+
+    it('accepts no changes without creating an event', async () => {
+      const plant = await savePlant();
+      const event = await saveEvent(plant.id, 'observation', '2026-08-10T08:00:00.000Z');
+      await request(server()).patch(`/api/plants/${plant.id}/care-events/${event.id}`).send({ timestamp: '2026-08-10T08:00:00.000Z', notes: null }).expect(200);
+      await expect(events.count()).resolves.toBe(1);
+    });
+
+    it.each(['dead', 'archived'] as PlantStatus[])('does not correct an event for a %s plant', async (status) => {
+      const plant = await savePlant(status);
+      const event = await saveEvent(plant.id, 'observation', '2026-08-10T08:00:00.000Z');
+      await request(server()).patch(`/api/plants/${plant.id}/care-events/${event.id}`).send({ timestamp: '2026-08-09T08:00:00.000Z', notes: 'Changed' }).expect(409);
+      await expect(events.findOneByOrFail({ id: event.id })).resolves.toMatchObject({ notes: null });
+    });
+
+    it('leaves stored values unchanged for invalid, missing, or wrong-plant corrections', async () => {
+      const plant = await savePlant();
+      const other = await savePlant();
+      const event = await saveEvent(plant.id, 'observation', '2026-08-10T08:00:00.000Z', { notes: 'Original' });
+      await request(server()).patch(`/api/plants/${plant.id}/care-events/${event.id}`).send({ timestamp: '2026-08-13T10:00:00.001Z', notes: 'Changed' }).expect(400);
+      await request(server()).patch(`/api/plants/${other.id}/care-events/${event.id}`).send({ timestamp: '2026-08-09T08:00:00.000Z', notes: 'Changed' }).expect(404);
+      await request(server()).patch(`/api/plants/999/care-events/${event.id}`).send({ timestamp: '2026-08-09T08:00:00.000Z', notes: 'Changed' }).expect(404);
+      await expect(events.findOneByOrFail({ id: event.id })).resolves.toMatchObject({ notes: 'Original' });
+    });
+  });
+
+  describe('UC-021: Remove Incorrect Care Event', () => {
+    it('removes only the selected event from an active plant', async () => {
+      const plant = await savePlant();
+      const removed = await saveEvent(plant.id, 'observation', '2026-08-10T08:00:00.000Z');
+      const retained = await saveEvent(plant.id, 'pruning', '2026-08-11T08:00:00.000Z');
+      await request(server()).delete(`/api/plants/${plant.id}/care-events/${removed.id}`).expect(200, { removedEventId: removed.id });
+      await expect(events.findOneBy({ id: removed.id })).resolves.toBeNull();
+      await expect(events.findOneBy({ id: retained.id })).resolves.toBeTruthy();
+    });
+
+    it.each(['dead', 'archived'] as PlantStatus[])('does not remove an event for a %s plant', async (status) => {
+      const plant = await savePlant(status);
+      const event = await saveEvent(plant.id, 'observation', '2026-08-10T08:00:00.000Z');
+      await request(server()).delete(`/api/plants/${plant.id}/care-events/${event.id}`).expect(409);
+      await expect(events.findOneBy({ id: event.id })).resolves.toBeTruthy();
+    });
+
+    it('removes nothing for a missing plant, event, or wrong plant association', async () => {
+      const plant = await savePlant();
+      const other = await savePlant();
+      const event = await saveEvent(plant.id, 'observation', '2026-08-10T08:00:00.000Z');
+      await request(server()).delete(`/api/plants/${other.id}/care-events/${event.id}`).expect(404);
+      await request(server()).delete(`/api/plants/999/care-events/${event.id}`).expect(404);
+      await request(server()).delete(`/api/plants/${plant.id}/care-events/999`).expect(404);
+      await expect(events.count()).resolves.toBe(1);
+    });
+  });
+
   function server(): Server {
     return app.getHttpServer() as Server;
   }
 
   function postObservation(plantId: number, body: object): request.Test {
     return request(server()).post(`/api/plants/${plantId}/care-events`).send(body);
+  }
+
+  function postEvent(plantId: number, body: object): request.Test {
+    return request(server()).post(`/api/plants/${plantId}/care-events`).send(body);
+  }
+
+  function saveEvent(
+    plantId: number,
+    type: CareEvent['type'],
+    timestamp: string,
+    overrides: Partial<CareEvent> = {},
+  ): Promise<CareEvent> {
+    return events.save(events.create({ plantId, type, timestamp: new Date(timestamp), notes: null, fertilizerIncluded: type === 'watering' ? false : null, ...overrides }));
   }
 
   function errorMessage(response: request.Response): string {

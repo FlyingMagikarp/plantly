@@ -20,6 +20,7 @@ import { PlantsByLocationRoute } from './plants-by-location';
 import { PlantsError } from './plants-common';
 import {
   type LocationOption,
+  type CareEventItem,
   type PlantItem,
   type SpeciesOption,
   plantCollectionLoader,
@@ -195,100 +196,107 @@ describe('UC-007: View Plant', () => {
   });
 });
 
-describe('UC-018: Record Observation', () => {
-  it('records an observation with optional notes and shows unobtrusive confirmation', async () => {
+describe('UC-014 through UC-018: Record Care Events', () => {
+  it.each([
+    ['watering', 'Watering'], ['pruning', 'Pruning'], ['repotting', 'Repotting'],
+    ['pest-treatment', 'Pest treatment'], ['observation', 'Observation'],
+  ] as const)('records one %s event with optional notes and unobtrusive confirmation', async (type, label) => {
     const state = apiState({ plants: [plantFixture()] });
     serveApi(state);
     renderPlantsApp('/plants/1');
     await screen.findByRole('heading', { name: 'Record observation' });
-    fireEvent.change(screen.getByLabelText('Observed at'), { target: { value: '2026-08-12T09:30' } });
-    fireEvent.change(screen.getByLabelText(/Notes.*optional/), { target: { value: 'A new leaf is unfurling.' } });
+    fireEvent.change(screen.getByLabelText('Care type'), { target: { value: type } });
+    fireEvent.change(screen.getByLabelText('Happened at'), { target: { value: '2026-08-12T09:30' } });
+    fireEvent.change(screen.getByLabelText(/Notes/), { target: { value: 'Useful detail.' } });
+    if (type === 'watering') fireEvent.click(screen.getByLabelText('Fertilizer was included'));
 
-    fireEvent.click(screen.getByRole('button', { name: 'Record observation' }));
+    fireEvent.click(screen.getByRole('button', { name: `Record ${type === 'pest-treatment' ? 'pest treatment' : type}` }));
 
-    expect(await screen.findByRole('status')).toHaveTextContent('Observation recorded.');
+    expect(await screen.findByRole('status')).toHaveTextContent(`${label} recorded.`);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    expect(state.observations).toEqual([
-      expect.objectContaining({
-        plantId: 1,
-        type: 'observation',
-        timestamp: '2026-08-12T07:30:00.000Z',
-        notes: 'A new leaf is unfurling.',
-      }),
-    ]);
+    expect(state.careEvents).toEqual([expect.objectContaining({ type, notes: 'Useful detail.', fertilizerIncluded: type === 'watering' ? true : null })]);
   });
 
-  it('allows an observation without notes', async () => {
-    const state = apiState({ plants: [plantFixture()] });
-    serveApi(state);
+  it.each(['dead', 'archived'] as PlantItem['status'][])('does not offer care recording for a %s plant', async (status) => {
+    serveApi(apiState({ plants: [plantFixture({ status })] }));
     renderPlantsApp('/plants/1');
-    await screen.findByLabelText('Observed at');
-    fireEvent.change(screen.getByLabelText('Observed at'), { target: { value: '2026-08-12T09:30' } });
-
-    fireEvent.click(screen.getByRole('button', { name: 'Record observation' }));
-
-    expect(await screen.findByRole('status')).toBeInTheDocument();
-    expect(state.observations).toHaveLength(1);
-    expect(state.observations[0].notes).toBeNull();
+    await screen.findByRole('heading', { name: 'Restore plant' });
+    expect(screen.queryByLabelText('Care type')).not.toBeInTheDocument();
   });
 
-  it.each(['dead', 'archived'] as PlantItem['status'][])(
-    'does not offer observation recording for a %s plant',
-    async (status) => {
-      serveApi(apiState({ plants: [plantFixture({ status })] }));
-      renderPlantsApp('/plants/1');
-
-      await screen.findByRole('heading', { name: 'Restore plant' });
-      expect(screen.queryByRole('heading', { name: 'Record observation' })).not.toBeInTheDocument();
-    },
-  );
-
-  it.each([
-    [400, 'Choose the current time or an earlier valid time'],
-    [404, 'This plant could not be found'],
-    [409, 'Observations can only be recorded for active plants'],
-  ])('identifies API error %s and preserves entered observation data', async (status, message) => {
-    const state = apiState({ plants: [plantFixture()] });
-    serveApi(state, { observation: () => new HttpResponse(null, { status }) });
-    renderPlantsApp('/plants/1');
-    await screen.findByLabelText('Observed at');
-    fireEvent.change(screen.getByLabelText('Observed at'), { target: { value: '2026-08-12T09:30' } });
-    fireEvent.change(screen.getByLabelText(/Notes.*optional/), { target: { value: 'Keep this note' } });
-
-    fireEvent.click(screen.getByRole('button', { name: 'Record observation' }));
-
-    expect(await screen.findByRole('alert')).toHaveTextContent(message);
-    expect(screen.getByLabelText('Observed at')).toHaveValue('2026-08-12T09:30');
-    expect(screen.getByLabelText(/Notes.*optional/)).toHaveValue('Keep this note');
-    expect(state.observations).toEqual([]);
-  });
-
-  it('reports a recording failure, preserves input, and creates only one event after retry', async () => {
+  it('preserves entered data after invalid input and creates exactly one event after retry', async () => {
     const state = apiState({ plants: [plantFixture()] });
     let attempts = 0;
-    serveApi(state, {
-      observation: async ({ params, request }) => {
-        attempts += 1;
-        if (attempts === 1) return new HttpResponse(null, { status: 500 });
-        const body = (await request.json()) as { timestamp: string; notes: string };
-        const event = { id: 1, plantId: Number(params.id), type: 'observation' as const, timestamp: body.timestamp, notes: body.notes || null };
-        state.observations.push(event);
-        return HttpResponse.json(event, { status: 201 });
-      },
-    });
+    serveApi(state, { careEventCreate: async ({ params, request }) => {
+      attempts += 1;
+      if (attempts === 1) return new HttpResponse(null, { status: 400 });
+      const body = (await request.json()) as Omit<CareEventItem, 'id' | 'plantId'>;
+      const event = { ...body, id: 1, plantId: Number(params.id), fertilizerIncluded: null } as CareEventItem;
+      state.careEvents.push(event);
+      return HttpResponse.json(event, { status: 201 });
+    } });
     renderPlantsApp('/plants/1');
-    await screen.findByLabelText('Observed at');
-    fireEvent.change(screen.getByLabelText('Observed at'), { target: { value: '2026-08-12T09:30' } });
-    fireEvent.change(screen.getByLabelText(/Notes.*optional/), { target: { value: 'Retry this' } });
-
+    await screen.findByLabelText('Happened at');
+    fireEvent.change(screen.getByLabelText('Happened at'), { target: { value: '2026-08-12T09:30' } });
+    fireEvent.change(screen.getByLabelText(/Notes/), { target: { value: 'Retry this' } });
     fireEvent.click(screen.getByRole('button', { name: 'Record observation' }));
-    expect(await screen.findByRole('alert')).toHaveTextContent('Nothing was partially saved');
-    expect(screen.getByLabelText(/Notes.*optional/)).toHaveValue('Retry this');
+    expect(await screen.findByRole('alert')).toHaveTextContent('Choose the current time or an earlier valid time');
+    expect(screen.getByLabelText(/Notes/)).toHaveValue('Retry this');
     fireEvent.click(screen.getByRole('button', { name: 'Record observation' }));
-
     expect(await screen.findByRole('status')).toHaveTextContent('Observation recorded.');
-    expect(attempts).toBe(2);
-    expect(state.observations).toHaveLength(1);
+    expect(state.careEvents).toHaveLength(1);
+  });
+});
+
+describe('UC-019 and UC-020: View and Correct Care History', () => {
+  it('shows ordered history detail, pagination, and correction and removal actions', async () => {
+    const events = Array.from({ length: 11 }, (_, index): CareEventItem => ({ id: index + 1, plantId: 1, type: index === 10 ? 'watering' : 'observation', timestamp: `2026-08-${String(index + 1).padStart(2, '0')}T08:00:00.000Z`, notes: index === 10 ? 'Fed lightly.' : null, fertilizerIncluded: index === 10 }));
+    serveApi(apiState({ plants: [plantFixture()], careEvents: events }));
+    renderPlantsApp('/plants/1');
+    expect(await screen.findByRole('heading', { name: 'Care history' })).toBeInTheDocument();
+    expect(screen.getAllByText('Fed lightly.').length).toBeGreaterThan(0);
+    expect(screen.getByText('Fertilizer included')).toBeInTheDocument();
+    expect(screen.getAllByText('Correct')).toHaveLength(10);
+    expect(screen.getAllByRole('button', { name: 'Remove' })).toHaveLength(10);
+    expect(screen.getByText('Page 1 of 2')).toBeInTheDocument();
+    expect(screen.queryByLabelText(/filter/i)).not.toBeInTheDocument();
+  });
+
+  it('corrects timestamp and notes without exposing event type or plant as editable', async () => {
+    const event: CareEventItem = { id: 7, plantId: 1, type: 'pruning', timestamp: '2026-08-10T08:00:00.000Z', notes: 'Old', fertilizerIncluded: null };
+    const state = apiState({ plants: [plantFixture()], careEvents: [event] });
+    serveApi(state);
+    renderPlantsApp('/plants/1');
+    fireEvent.click(await screen.findByText('Correct'));
+    expect(screen.queryByLabelText('Care type')).toBeInTheDocument();
+    expect(within(screen.getByText('Pruning · event 7').parentElement!).queryByLabelText(/plant/i)).not.toBeInTheDocument();
+    const correction = screen.getAllByLabelText('Happened at')[1];
+    fireEvent.change(correction, { target: { value: '2026-08-09T09:00' } });
+    const notes = screen.getAllByLabelText(/Notes/)[1];
+    fireEvent.change(notes, { target: { value: 'Corrected' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save correction' }));
+    expect(await screen.findByRole('status')).toHaveTextContent('Care event corrected.');
+    expect(state.careEvents).toHaveLength(1);
+    expect(state.careEvents[0]).toMatchObject({ id: 7, type: 'pruning', notes: 'Corrected' });
+  });
+});
+
+describe('UC-021: Remove Incorrect Care Event', () => {
+  it('requires confirmation, supports cancellation, and removes only the identified event', async () => {
+    const first: CareEventItem = { id: 1, plantId: 1, type: 'observation', timestamp: '2026-08-10T08:00:00.000Z', notes: null, fertilizerIncluded: null };
+    const second = { ...first, id: 2, type: 'pruning' as const };
+    const state = apiState({ plants: [plantFixture()], careEvents: [first, second] });
+    serveApi(state);
+    renderPlantsApp('/plants/1');
+    const buttons = await screen.findAllByRole('button', { name: 'Remove' });
+    fireEvent.click(buttons[0]);
+    expect(screen.getByRole('dialog')).toHaveTextContent('permanently removed');
+    fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Cancel' }));
+    expect(state.careEvents).toHaveLength(2);
+    fireEvent.click((await screen.findAllByRole('button', { name: 'Remove' }))[0]);
+    fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Permanently remove event' }));
+    expect(await screen.findByRole('status')).toHaveTextContent('Care event permanently removed.');
+    expect(state.careEvents).toHaveLength(1);
   });
 });
 
@@ -346,7 +354,7 @@ describe('UC-012: Assign Plant to Location', () => {
     renderPlantsApp('/plants/1');
     fireEvent.click(await screen.findByText('Change location'));
 
-    expect(screen.getAllByRole('option')).toHaveLength(1);
+    expect(within(screen.getByLabelText('Location')).getAllByRole('option')).toHaveLength(1);
     expect(screen.getByRole('option', { name: 'No location' })).toBeInTheDocument();
   });
 
@@ -523,12 +531,12 @@ describe('UC-013: View Plants by Location', () => {
   });
 });
 
-interface ObservationFixture { id: number; plantId: number; type: 'observation'; timestamp: string; notes: string | null }
-interface ApiState { plants: PlantItem[]; species: SpeciesOption[]; locations: LocationOption[]; observations: ObservationFixture[] }
+interface ApiState { plants: PlantItem[]; species: SpeciesOption[]; locations: LocationOption[]; careEvents: CareEventItem[] }
 interface ApiHandlers {
   create?: Parameters<typeof http.post>[1]; update?: Parameters<typeof http.patch>[1]; status?: Parameters<typeof http.patch>[1];
   location?: Parameters<typeof http.patch>[1]; plantGet?: Parameters<typeof http.get>[1]; plantList?: Parameters<typeof http.get>[1];
-  observation?: Parameters<typeof http.post>[1];
+  careEventCreate?: Parameters<typeof http.post>[1]; careEventList?: Parameters<typeof http.get>[1];
+  careEventCorrect?: Parameters<typeof http.patch>[1]; careEventRemove?: Parameters<typeof http.delete>[1];
 }
 
 function renderPlantsApp(entry: string) {
@@ -556,12 +564,15 @@ function serveApi(state: ApiState, handlers: ApiHandlers = {}) {
     http.patch(`${apiOrigin}/api/plants/:id`, handlers.update ?? (async ({ params, request }) => { const plant = state.plants.find((item) => item.id === Number(params.id))!; const body = (await request.json()) as { nickname: string; speciesId: number; acquisitionDate: string; notes: string }; Object.assign(plant, { nickname: body.nickname, acquisitionDate: body.acquisitionDate, notes: body.notes || null, species: state.species.find((item) => item.id === body.speciesId)! }); return HttpResponse.json(plant); })),
     http.patch(`${apiOrigin}/api/plants/:id/status`, handlers.status ?? (async ({ params, request }) => { const plant = state.plants.find((item) => item.id === Number(params.id))!; const body = (await request.json()) as { status: PlantItem['status'] }; plant.status = body.status; return HttpResponse.json(plant); })),
     http.patch(`${apiOrigin}/api/plants/:id/location`, handlers.location ?? (async ({ params, request }) => { const plant = state.plants.find((item) => item.id === Number(params.id))!; const body = (await request.json()) as { locationId: number | null }; plant.location = state.locations.find((item) => item.id === body.locationId) ?? null; return HttpResponse.json(plant); })),
-    http.post(`${apiOrigin}/api/plants/:id/care-events`, handlers.observation ?? (async ({ params, request }) => { const body = (await request.json()) as { timestamp: string; notes: string }; const event: ObservationFixture = { id: state.observations.length + 1, plantId: Number(params.id), type: 'observation', timestamp: body.timestamp, notes: body.notes || null }; state.observations.push(event); return HttpResponse.json(event, { status: 201 }); })),
+    http.get(`${apiOrigin}/api/plants/:id/care-events`, handlers.careEventList ?? (({ params, request }) => { const page = Number(new URL(request.url).searchParams.get('page') ?? '1'); const items = state.careEvents.filter((event) => event.plantId === Number(params.id)).sort((left, right) => right.timestamp.localeCompare(left.timestamp) || right.id - left.id).slice((page - 1) * 10, page * 10); const total = state.careEvents.filter((event) => event.plantId === Number(params.id)).length; return HttpResponse.json({ items, page: Math.min(page, Math.max(Math.ceil(total / 10), 1)), pageSize: 10, total, totalPages: Math.ceil(total / 10) }); })),
+    http.post(`${apiOrigin}/api/plants/:id/care-events`, handlers.careEventCreate ?? (async ({ params, request }) => { const body = (await request.json()) as Omit<CareEventItem, 'id' | 'plantId'>; const event: CareEventItem = { id: state.careEvents.length + 1, plantId: Number(params.id), type: body.type, timestamp: body.timestamp, notes: body.notes || null, fertilizerIncluded: body.type === 'watering' ? body.fertilizerIncluded : null }; state.careEvents.push(event); return HttpResponse.json(event, { status: 201 }); })),
+    http.patch(`${apiOrigin}/api/plants/:id/care-events/:eventId`, handlers.careEventCorrect ?? (async ({ params, request }) => { const event = state.careEvents.find((item) => item.id === Number(params.eventId) && item.plantId === Number(params.id)); if (!event) return HttpResponse.json({ message: 'Care event not found' }, { status: 404 }); const body = (await request.json()) as Pick<CareEventItem, 'timestamp' | 'notes'>; Object.assign(event, body, { notes: body.notes || null }); return HttpResponse.json(event); })),
+    http.delete(`${apiOrigin}/api/plants/:id/care-events/:eventId`, handlers.careEventRemove ?? (({ params }) => { const index = state.careEvents.findIndex((item) => item.id === Number(params.eventId) && item.plantId === Number(params.id)); if (index < 0) return HttpResponse.json({ message: 'Care event not found' }, { status: 404 }); const [removed] = state.careEvents.splice(index, 1); return HttpResponse.json({ removedEventId: removed.id }); })),
     http.delete(`${apiOrigin}/api/plants/:id`, ({ params }) => { const index = state.plants.findIndex((item) => item.id === Number(params.id)); if (index < 0) return new HttpResponse(null, { status: 404 }); state.plants.splice(index, 1); return new HttpResponse(null, { status: 204 }); }),
   );
 }
 
-function apiState(overrides: Partial<ApiState> = {}): ApiState { return { plants: [], species: [speciesFixture()], locations: [], observations: [], ...overrides }; }
+function apiState(overrides: Partial<ApiState> = {}): ApiState { return { plants: [], species: [speciesFixture()], locations: [], careEvents: [], ...overrides }; }
 function speciesFixture(overrides: Partial<SpeciesOption> = {}): SpeciesOption { return { id: 1, name: 'Test Species', archived: false, ...overrides }; }
 function locationFixture(overrides: Partial<LocationOption> = {}): LocationOption { return { id: 1, name: 'Test location', ...overrides }; }
 function plantFixture(overrides: Partial<PlantItem> = {}): PlantItem { return { id: 1, nickname: 'Test Hoya', acquisitionDate: '2024-04-05', notes: null, status: 'active', species: speciesFixture(), location: null, ...overrides }; }
