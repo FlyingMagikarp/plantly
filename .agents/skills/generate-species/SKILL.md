@@ -38,6 +38,8 @@ Search the web and open the supporting pages. Prefer sources in this order:
 4. Specialist plant societies
 5. Reputable specialist growers or nurseries
 
+Unless specified otherwise, assume Northern Hemisphere and zone 7b.
+
 Use at least two independent sources where practical. Prefer primary care pages for the exact taxon and evidence that directly supports the mapped field. A search-result snippet is not evidence; open the page. Record the page title, publishing organization, direct URL, and access date.
 
 Do not use generic SEO care sites, social media, forums, AI-generated summaries, or retailer descriptions as the sole authority. Do not let many low-quality sources outweigh one strong horticultural authority.
