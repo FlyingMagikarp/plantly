@@ -4,6 +4,7 @@ import { databaseOptions } from './database-options';
 import { CreateSpecies1786449600000 } from './migrations/1786449600000-CreateSpecies';
 import { CreateLocations1786453200000 } from './migrations/1786453200000-CreateLocations';
 import { CreatePlants1786454626591 } from './migrations/1786454626591-CreatePlants';
+import { CreateCareEvents1786500000000 } from './migrations/1786500000000-CreateCareEvents';
 
 describe('database options', () => {
   it('uses migrations rather than schema synchronization and runs every current migration at startup', () => {
@@ -15,6 +16,7 @@ describe('database options', () => {
       CreateSpecies1786449600000,
       CreateLocations1786453200000,
       CreatePlants1786454626591,
+      CreateCareEvents1786500000000,
     ]);
   });
 });

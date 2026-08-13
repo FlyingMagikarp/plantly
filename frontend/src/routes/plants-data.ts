@@ -41,6 +41,26 @@ export interface PlantFormData {
 export interface PlantDetailData {
   plant: PlantItem;
   locations: LocationOption[];
+  history: CareEventPage;
+}
+
+export type CareEventType = 'watering' | 'pruning' | 'repotting' | 'pest-treatment' | 'observation';
+
+export interface CareEventItem {
+  id: number;
+  plantId: number;
+  type: CareEventType;
+  timestamp: string;
+  notes: string | null;
+  fertilizerIncluded: boolean | null;
+}
+
+export interface CareEventPage {
+  items: CareEventItem[];
+  page: number;
+  pageSize: 10;
+  total: number;
+  totalPages: number;
 }
 
 export interface PlantFormActionData {
@@ -54,11 +74,17 @@ export interface PlantFormActionData {
   ok: false;
 }
 
-export interface PlantDetailActionData {
+export type PlantDetailActionData = {
   intent: string;
   message: string;
   ok: false;
-}
+  fields?: { timestamp: string; notes: string; type?: string; fertilizerIncluded?: boolean; eventId?: string };
+} | {
+  intent: 'care-event' | 'correct-care-event' | 'remove-care-event';
+  message: string;
+  ok: true;
+  eventId: number;
+};
 
 export async function plantCollectionLoader(): Promise<PlantCollectionData> {
   const [plants, species, locations] = await Promise.all([
@@ -87,13 +113,21 @@ export async function plantFormLoader({
 }
 
 export async function plantDetailLoader({
+  request,
   params,
 }: LoaderFunctionArgs): Promise<PlantDetailData> {
-  const [plant, locations] = await Promise.all([
+  const page = new URL(request.url).searchParams.get('historyPage') ?? '1';
+  const plantId = params.plantId ?? '';
+  const [plant, locations, history] = await Promise.all([
     getPlant(params.plantId ?? ''),
     getJson<LocationOption[]>('/api/locations', 'Locations unavailable'),
+    getJson<CareEventPage>(
+      `/api/plants/${encodeURIComponent(plantId)}/care-events?page=${encodeURIComponent(page)}`,
+      'Care history unavailable',
+      'Plant not found',
+    ),
   ]);
-  return { plant, locations };
+  return { plant, locations, history };
 }
 
 export async function plantFormAction({
@@ -149,7 +183,32 @@ export async function plantDetailAction({
   let method = 'PATCH';
   let body: unknown;
 
-  if (intent === 'delete') {
+  if (intent === 'care-event') {
+    endpoint += '/care-events';
+    method = 'POST';
+    const timestamp = stringField(data, 'timestamp');
+    const notes = stringField(data, 'notes');
+    const parsedTimestamp = new Date(timestamp);
+    body = {
+      type: stringField(data, 'type'),
+      timestamp: Number.isNaN(parsedTimestamp.valueOf()) ? timestamp : parsedTimestamp.toISOString(),
+      notes,
+      ...(stringField(data, 'type') === 'watering'
+        ? { fertilizerIncluded: data.get('fertilizerIncluded') === 'on' }
+        : {}),
+    };
+  } else if (intent === 'correct-care-event') {
+    endpoint += `/care-events/${encodeURIComponent(stringField(data, 'eventId'))}`;
+    const timestamp = stringField(data, 'timestamp');
+    const parsedTimestamp = new Date(timestamp);
+    body = {
+      timestamp: Number.isNaN(parsedTimestamp.valueOf()) ? timestamp : parsedTimestamp.toISOString(),
+      notes: stringField(data, 'notes'),
+    };
+  } else if (intent === 'remove-care-event') {
+    endpoint += `/care-events/${encodeURIComponent(stringField(data, 'eventId'))}`;
+    method = 'DELETE';
+  } else if (intent === 'delete') {
     method = 'DELETE';
   } else if (intent === 'location') {
     endpoint += '/location';
@@ -170,13 +229,27 @@ export async function plantDetailAction({
       body: body === undefined ? undefined : JSON.stringify(body),
     });
   } catch {
-    return { intent, message: mutationErrorMessage(intent), ok: false };
+    return actionFailure(intent, data, mutationErrorMessage(intent));
   }
   if (!response.ok) {
+    let serverMessage = '';
+    try {
+      const error = (await response.json()) as { message?: unknown };
+      serverMessage = typeof error.message === 'string' ? error.message : '';
+    } catch {
+      // The status-specific fallback below remains usable for non-JSON failures.
+    }
+    return actionFailure(intent, data, mutationErrorMessage(intent, response.status, serverMessage));
+  }
+  if (intent === 'care-event' || intent === 'correct-care-event' || intent === 'remove-care-event') {
+    const result = (await response.json()) as { id?: number; removedEventId?: number };
     return {
       intent,
-      message: mutationErrorMessage(intent, response.status),
-      ok: false,
+      message: intent === 'care-event'
+        ? `${careEventName(stringField(data, 'type'))} recorded.`
+        : intent === 'correct-care-event' ? 'Care event corrected.' : 'Care event permanently removed.',
+      ok: true,
+      eventId: result.id ?? result.removedEventId ?? Number(stringField(data, 'eventId')),
     };
   }
   return redirect(intent === 'delete' ? '/plants' : `/plants/${plantId}`);
@@ -228,7 +301,36 @@ function formErrorMessage(status: number, editing: boolean): string {
     : 'The plant could not be added. Nothing was created; you can try again.';
 }
 
-function mutationErrorMessage(intent: string, status?: number): string {
+function mutationErrorMessage(intent: string, status?: number, serverMessage = ''): string {
+  if (intent === 'care-event' || intent === 'correct-care-event' || intent === 'remove-care-event') {
+    if (status === 400) {
+      return 'Choose the current time or an earlier valid time. Your information is still here.';
+    }
+    if (status === 404) {
+      if ((intent === 'correct-care-event' || intent === 'remove-care-event') && serverMessage === 'Care event not found') {
+        return 'The selected care event was not found. Nothing was changed.';
+      }
+      if (intent === 'remove-care-event') {
+        return 'This plant could not be found. No care event was removed.';
+      }
+      return intent === 'correct-care-event'
+        ? 'This plant could not be found. No care event was changed.'
+        : 'This plant could not be found. No care event was recorded.';
+    }
+    if (status === 409) {
+      if (intent === 'remove-care-event') {
+        return 'Care events can only be removed while the plant is active.';
+      }
+      return intent === 'correct-care-event'
+        ? 'Care events can only be corrected while the plant is active.'
+        : 'Care can only be recorded for active plants.';
+    }
+    return intent === 'correct-care-event'
+      ? 'The care event could not be corrected. Its previous values were kept; you can try again.'
+      : intent === 'remove-care-event'
+        ? 'The care event could not be removed. It remains in the history; you can try again.'
+        : 'The care event could not be recorded. Nothing was partially saved; you can try again.';
+  }
   if (status === 404) {
     return intent === 'location'
       ? 'The plant or selected location could not be found. The previous location was kept.'
@@ -244,4 +346,26 @@ function mutationErrorMessage(intent: string, status?: number): string {
     return 'The location could not be changed. The previous location was kept.';
   }
   return 'The plant status could not be changed. Nothing was changed.';
+}
+
+function careEventName(type: string): string {
+  if (type === 'pest-treatment') return 'Pest treatment';
+  return type.length > 0 ? `${type.charAt(0).toUpperCase()}${type.slice(1)}` : 'Care event';
+}
+
+function actionFailure(intent: string, data: FormData, message: string): PlantDetailActionData {
+  return {
+    intent,
+    message,
+    ok: false,
+    fields: intent === 'care-event' || intent === 'correct-care-event' || intent === 'remove-care-event'
+      ? {
+          timestamp: stringField(data, 'timestamp'),
+          notes: stringField(data, 'notes'),
+          type: stringField(data, 'type'),
+          fertilizerIncluded: data.get('fertilizerIncluded') === 'on',
+          eventId: stringField(data, 'eventId'),
+        }
+      : undefined,
+  };
 }

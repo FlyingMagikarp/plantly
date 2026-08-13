@@ -64,6 +64,30 @@ The complete application is available at `http://localhost:8080`. The backend
 health endpoint is available directly at `http://localhost:3000/api/health`.
 PostgreSQL data is persisted in the `plantly_plantlyv2-data` Docker volume.
 
+## Synchronizing Species Definitions
+
+Species definitions in `docs/species/` are synchronized on demand through the
+backend API. With the backend running, trigger a synchronization from the
+repository root:
+
+```bash
+curl -i -X POST http://localhost:3000/api/admin/species/sync
+```
+
+When running the application with Docker Compose, rebuild and restart the
+backend first so that changes under `docs/species/` are copied into its image:
+
+```bash
+docker compose up --build -d backend
+curl -i -X POST http://localhost:3000/api/admin/species/sync
+```
+
+A successful synchronization returns `204 No Content`. Invalid definitions
+return `422 Unprocessable Content`, and unexpected failures return `500
+Internal Server Error`. Failed synchronizations do not partially update species
+data. See [Species Definitions](docs/species/README.md) for the required file
+format and naming rules.
+
 ## Useful Commands
 
 Run commands from the repository root:

@@ -7,6 +7,7 @@ import { HealthService } from './health/health.service';
 import { LocationsModule } from './locations/locations.module';
 import { PlantsModule } from './plants/plants.module';
 import { SpeciesModule } from './species/species.module';
+import { CareEventsModule } from './care-events/care-events.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SpeciesModule } from './species/species.module';
     SpeciesModule,
     LocationsModule,
     PlantsModule,
+    CareEventsModule,
   ],
   controllers: [HealthController],
   providers: [HealthService],

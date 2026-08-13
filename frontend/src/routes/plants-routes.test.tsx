@@ -195,6 +195,103 @@ describe('UC-007: View Plant', () => {
   });
 });
 
+describe('UC-018: Record Observation', () => {
+  it('records an observation with optional notes and shows unobtrusive confirmation', async () => {
+    const state = apiState({ plants: [plantFixture()] });
+    serveApi(state);
+    renderPlantsApp('/plants/1');
+    await screen.findByRole('heading', { name: 'Record observation' });
+    fireEvent.change(screen.getByLabelText('Observed at'), { target: { value: '2026-08-12T09:30' } });
+    fireEvent.change(screen.getByLabelText(/Notes.*optional/), { target: { value: 'A new leaf is unfurling.' } });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Record observation' }));
+
+    expect(await screen.findByRole('status')).toHaveTextContent('Observation recorded.');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(state.observations).toEqual([
+      expect.objectContaining({
+        plantId: 1,
+        type: 'observation',
+        timestamp: '2026-08-12T07:30:00.000Z',
+        notes: 'A new leaf is unfurling.',
+      }),
+    ]);
+  });
+
+  it('allows an observation without notes', async () => {
+    const state = apiState({ plants: [plantFixture()] });
+    serveApi(state);
+    renderPlantsApp('/plants/1');
+    await screen.findByLabelText('Observed at');
+    fireEvent.change(screen.getByLabelText('Observed at'), { target: { value: '2026-08-12T09:30' } });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Record observation' }));
+
+    expect(await screen.findByRole('status')).toBeInTheDocument();
+    expect(state.observations).toHaveLength(1);
+    expect(state.observations[0].notes).toBeNull();
+  });
+
+  it.each(['dead', 'archived'] as PlantItem['status'][])(
+    'does not offer observation recording for a %s plant',
+    async (status) => {
+      serveApi(apiState({ plants: [plantFixture({ status })] }));
+      renderPlantsApp('/plants/1');
+
+      await screen.findByRole('heading', { name: 'Restore plant' });
+      expect(screen.queryByRole('heading', { name: 'Record observation' })).not.toBeInTheDocument();
+    },
+  );
+
+  it.each([
+    [400, 'Choose the current time or an earlier valid time'],
+    [404, 'This plant could not be found'],
+    [409, 'Observations can only be recorded for active plants'],
+  ])('identifies API error %s and preserves entered observation data', async (status, message) => {
+    const state = apiState({ plants: [plantFixture()] });
+    serveApi(state, { observation: () => new HttpResponse(null, { status }) });
+    renderPlantsApp('/plants/1');
+    await screen.findByLabelText('Observed at');
+    fireEvent.change(screen.getByLabelText('Observed at'), { target: { value: '2026-08-12T09:30' } });
+    fireEvent.change(screen.getByLabelText(/Notes.*optional/), { target: { value: 'Keep this note' } });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Record observation' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(message);
+    expect(screen.getByLabelText('Observed at')).toHaveValue('2026-08-12T09:30');
+    expect(screen.getByLabelText(/Notes.*optional/)).toHaveValue('Keep this note');
+    expect(state.observations).toEqual([]);
+  });
+
+  it('reports a recording failure, preserves input, and creates only one event after retry', async () => {
+    const state = apiState({ plants: [plantFixture()] });
+    let attempts = 0;
+    serveApi(state, {
+      observation: async ({ params, request }) => {
+        attempts += 1;
+        if (attempts === 1) return new HttpResponse(null, { status: 500 });
+        const body = (await request.json()) as { timestamp: string; notes: string };
+        const event = { id: 1, plantId: Number(params.id), type: 'observation' as const, timestamp: body.timestamp, notes: body.notes || null };
+        state.observations.push(event);
+        return HttpResponse.json(event, { status: 201 });
+      },
+    });
+    renderPlantsApp('/plants/1');
+    await screen.findByLabelText('Observed at');
+    fireEvent.change(screen.getByLabelText('Observed at'), { target: { value: '2026-08-12T09:30' } });
+    fireEvent.change(screen.getByLabelText(/Notes.*optional/), { target: { value: 'Retry this' } });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Record observation' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Nothing was partially saved');
+    expect(screen.getByLabelText(/Notes.*optional/)).toHaveValue('Retry this');
+    fireEvent.click(screen.getByRole('button', { name: 'Record observation' }));
+
+    expect(await screen.findByRole('status')).toHaveTextContent('Observation recorded.');
+    expect(attempts).toBe(2);
+    expect(state.observations).toHaveLength(1);
+  });
+});
+
 describe('UC-006: Remove Plant from Collection', () => {
   it('confirms dead and archive actions by plant name and cancels without mutation', async () => {
     const state = apiState({ plants: [plantFixture()] });
@@ -268,7 +365,7 @@ describe('UC-012: Assign Plant to Location', () => {
     expect(await screen.findByText('Kitchen')).toBeInTheDocument();
     fireEvent.click(screen.getByText('Change location'));
     fireEvent.change(screen.getByLabelText('Location'), { target: { value: '' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Apply location' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Apply location' }));
     expect(await screen.findByText('No location assigned')).toBeInTheDocument();
   });
 
@@ -426,10 +523,12 @@ describe('UC-013: View Plants by Location', () => {
   });
 });
 
-interface ApiState { plants: PlantItem[]; species: SpeciesOption[]; locations: LocationOption[] }
+interface ObservationFixture { id: number; plantId: number; type: 'observation'; timestamp: string; notes: string | null }
+interface ApiState { plants: PlantItem[]; species: SpeciesOption[]; locations: LocationOption[]; observations: ObservationFixture[] }
 interface ApiHandlers {
   create?: Parameters<typeof http.post>[1]; update?: Parameters<typeof http.patch>[1]; status?: Parameters<typeof http.patch>[1];
   location?: Parameters<typeof http.patch>[1]; plantGet?: Parameters<typeof http.get>[1]; plantList?: Parameters<typeof http.get>[1];
+  observation?: Parameters<typeof http.post>[1];
 }
 
 function renderPlantsApp(entry: string) {
@@ -457,11 +556,12 @@ function serveApi(state: ApiState, handlers: ApiHandlers = {}) {
     http.patch(`${apiOrigin}/api/plants/:id`, handlers.update ?? (async ({ params, request }) => { const plant = state.plants.find((item) => item.id === Number(params.id))!; const body = (await request.json()) as { nickname: string; speciesId: number; acquisitionDate: string; notes: string }; Object.assign(plant, { nickname: body.nickname, acquisitionDate: body.acquisitionDate, notes: body.notes || null, species: state.species.find((item) => item.id === body.speciesId)! }); return HttpResponse.json(plant); })),
     http.patch(`${apiOrigin}/api/plants/:id/status`, handlers.status ?? (async ({ params, request }) => { const plant = state.plants.find((item) => item.id === Number(params.id))!; const body = (await request.json()) as { status: PlantItem['status'] }; plant.status = body.status; return HttpResponse.json(plant); })),
     http.patch(`${apiOrigin}/api/plants/:id/location`, handlers.location ?? (async ({ params, request }) => { const plant = state.plants.find((item) => item.id === Number(params.id))!; const body = (await request.json()) as { locationId: number | null }; plant.location = state.locations.find((item) => item.id === body.locationId) ?? null; return HttpResponse.json(plant); })),
+    http.post(`${apiOrigin}/api/plants/:id/care-events`, handlers.observation ?? (async ({ params, request }) => { const body = (await request.json()) as { timestamp: string; notes: string }; const event: ObservationFixture = { id: state.observations.length + 1, plantId: Number(params.id), type: 'observation', timestamp: body.timestamp, notes: body.notes || null }; state.observations.push(event); return HttpResponse.json(event, { status: 201 }); })),
     http.delete(`${apiOrigin}/api/plants/:id`, ({ params }) => { const index = state.plants.findIndex((item) => item.id === Number(params.id)); if (index < 0) return new HttpResponse(null, { status: 404 }); state.plants.splice(index, 1); return new HttpResponse(null, { status: 204 }); }),
   );
 }
 
-function apiState(overrides: Partial<ApiState> = {}): ApiState { return { plants: [], species: [speciesFixture()], locations: [], ...overrides }; }
+function apiState(overrides: Partial<ApiState> = {}): ApiState { return { plants: [], species: [speciesFixture()], locations: [], observations: [], ...overrides }; }
 function speciesFixture(overrides: Partial<SpeciesOption> = {}): SpeciesOption { return { id: 1, name: 'Test Species', archived: false, ...overrides }; }
 function locationFixture(overrides: Partial<LocationOption> = {}): LocationOption { return { id: 1, name: 'Test location', ...overrides }; }
 function plantFixture(overrides: Partial<PlantItem> = {}): PlantItem { return { id: 1, nickname: 'Test Hoya', acquisitionDate: '2024-04-05', notes: null, status: 'active', species: speciesFixture(), location: null, ...overrides }; }
