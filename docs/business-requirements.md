@@ -39,17 +39,17 @@ Detailed behavioural requirements and acceptance criteria remain in the individu
 | [UC-019](usecases/UC-019-view-plant-care-history.md) | **View Plant Care History** — Review the recorded care-event history for a plant. | Implemented |
 | [UC-020](usecases/UC-020-correct-care-event.md) | **Correct Care Event** — Correct an inaccurate recorded care event. | Implemented |
 | [UC-021](usecases/UC-021-remove-incorrect-care-event.md) | **Remove Incorrect Care Event** — Remove a care event that was recorded incorrectly. | Ready |
-| UC-022 | **Add Plant Image** — Attach an image to a plant. | Planned |
-| UC-023 | **Add Image to Care Event** — Attach an image to a recorded care event. | Planned |
-| UC-024 | **View Plant Images** — View images associated with a plant. | Planned |
-| UC-025 | **Remove Image** — Remove an image from Plantly. | Planned |
-| UC-026 | **Define Species Seasonal Phases** — Represent recurring seasonal phases for a species. | Planned |
-| UC-027 | **Determine Current Seasonal Phase** — Determine which seasonal phase currently applies to a species. | Planned |
-| UC-028 | **View Current Seasonal Guidance** — Display the seasonal care guidance currently relevant to a plant. | Planned |
-| UC-029 | **Define Seasonal Fertilizer Guidance** — Represent fertilizer guidance associated with seasonal phases. | Planned |
-| UC-030 | **Start Plant Care Round** — Begin a location-oriented plant-care round. | Planned |
-| UC-031 | **Record Care During Plant Round** — Record care efficiently while progressing through a care round. | Planned |
-| UC-032 | **Complete Plant Care Round** — Finish an active care round. | Planned |
+| [UC-022](usecases/UC-022-add-plant-image.md) | **Add Plant Image** — Attach an image to a plant. | Draft |
+| [UC-023](usecases/UC-023-add-image-to-care-event.md) | **Add Image to Care Event** — Attach an image to a recorded care event. | Draft |
+| [UC-024](usecases/UC-024-view-plant-images.md) | **View Plant Images** — View images associated with a plant. | Draft |
+| [UC-025](usecases/UC-025-remove-image.md) | **Remove Image** — Remove an image from Plantly. | Draft |
+| [UC-026](usecases/UC-026-define-species-seasonal-phases.md) | **Define Species Seasonal Phases** — Represent recurring seasonal phases for a species. | Draft |
+| [UC-027](usecases/UC-027-determine-current-seasonal-phase.md) | **Determine Current Seasonal Phase** — Determine which seasonal phase currently applies to a species. | Draft |
+| [UC-028](usecases/UC-028-view-current-seasonal-guidance.md) | **View Current Seasonal Guidance** — Display the seasonal care guidance currently relevant to a plant. | Draft |
+| [UC-029](usecases/UC-029-define-seasonal-fertilizer-guidance.md) | **Define Seasonal Fertilizer Guidance** — Represent fertilizer guidance associated with seasonal phases. | Draft |
+| [UC-030](usecases/UC-030-start-plant-care-round.md) | **Start Plant Care Round** — Begin a location-oriented plant-care round. | Draft |
+| [UC-031](usecases/UC-031-record-care-during-plant-round.md) | **Record Care During Plant Round** — Record care efficiently while progressing through a care round. | Draft |
+| [UC-032](usecases/UC-032-complete-plant-care-round.md) | **Complete Plant Care Round** — Finish an active care round. | Draft |
 | [UC-033](usecases/UC-033-navigate-application.md) | **Navigate Application** — Provide consistent desktop sidebar and collapsible mobile navigation between implemented application areas. | Implemented |
 | [UC-034](usecases/UC-034-view-home-plant-overview.md) | **View Home Plant Overview** — Show active plants by location on Home with nickname and species. | Implemented |
 | [UC-035](usecases/UC-035-view-latest-care-on-home.md) | **View Latest Care on Home** — Add the latest recorded care date, or the absence of recorded care, to each Home plant card. | Draft |
