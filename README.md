@@ -38,7 +38,7 @@ docker compose stop frontend backend
 ```
 
 The second command is safe when those services are not running. It prevents a
-previously started Compose backend from occupying port `3000` and masking the
+previously started Compose backend from occupying port `8080` and masking the
 status of the local development process.
 
 Then start the applications in separate terminals:
@@ -48,8 +48,8 @@ npm run dev:backend
 npm run dev:frontend
 ```
 
-The frontend is available at `http://localhost:5173` and proxies `/api`
-requests to the backend at `http://localhost:3000`.
+The frontend is available at `http://localhost:3100` and proxies `/api`
+requests to the backend at `http://localhost:8080`.
 
 ## Deployment
 
@@ -60,8 +60,8 @@ npm run docker:up
 npm run docker:down
 ```
 
-The complete application is available at `http://localhost:8080`. The backend
-health endpoint is available directly at `http://localhost:3000/api/health`.
+The complete application is available at `http://localhost:3100`. The backend
+health endpoint is available directly at `http://localhost:8080/api/health`.
 PostgreSQL data is persisted in the `plantly_plantlyv2-data` Docker volume.
 
 ## Synchronizing Species Definitions
@@ -71,7 +71,7 @@ backend API. With the backend running, trigger a synchronization from the
 repository root:
 
 ```bash
-curl -i -X POST http://localhost:3000/api/admin/species/sync
+curl -i -X POST http://localhost:8080/api/admin/species/sync
 ```
 
 When running the application with Docker Compose, rebuild and restart the
@@ -79,7 +79,7 @@ backend first so that changes under `docs/species/` are copied into its image:
 
 ```bash
 docker compose up --build -d backend
-curl -i -X POST http://localhost:3000/api/admin/species/sync
+curl -i -X POST http://localhost:8080/api/admin/species/sync
 ```
 
 A successful synchronization returns `204 No Content`. Invalid definitions

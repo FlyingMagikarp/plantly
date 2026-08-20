@@ -12,5 +12,5 @@ COPY backend/package*.json ./
 RUN npm ci --omit=dev
 COPY --from=build /app/backend/dist ./dist
 COPY docs/species /app/docs/species
-EXPOSE 3000
+EXPOSE 8080
 CMD ["node", "dist/main.js"]
