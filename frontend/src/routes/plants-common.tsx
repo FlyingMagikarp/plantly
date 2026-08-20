@@ -6,7 +6,7 @@ import {
 } from 'react-router-dom';
 import { ErrorState, Page } from '../components/ui';
 
-export function PlantsError({ area = 'collection' }: { area?: 'collection' | 'detail' | 'form' | 'locations' | 'home' }) {
+export function PlantsError({ area = 'collection' }: { area?: 'collection' | 'detail' | 'form' | 'locations' | 'home' | 'care round' }) {
   const error = useRouteError();
   const revalidator = useRevalidator();
   const notFound = isRouteErrorResponse(error) && error.status === 404;

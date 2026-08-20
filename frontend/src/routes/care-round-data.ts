@@ -8,7 +8,7 @@ export interface CareRoundData { options: CareRoundOption[]; active: CareRound |
 export interface CareRoundActionData { ok: boolean; message: string; completed?: CareRound }
 
 export async function careRoundLoader(): Promise<CareRoundData> {
-  const [options, active] = await Promise.all([json<CareRoundOption[]>('/api/care-rounds/options'), json<CareRound | null>('/api/care-rounds/active')]);
+  const [options, active] = await Promise.all([json<CareRoundOption[]>('/api/care-rounds/options'), activeRound()]);
   return { options, active };
 }
 
@@ -30,4 +30,10 @@ export async function careRoundAction({ request }: ActionFunctionArgs): Promise<
 }
 
 async function json<T>(url: string): Promise<T> { const response = await fetch(url); if (!response.ok) throw new Response('Care round could not be loaded', { status: response.status }); return response.json() as Promise<T>; }
+async function activeRound(): Promise<CareRound | null> {
+  const response = await fetch('/api/care-rounds/active');
+  if (!response.ok) throw new Response('Care round could not be loaded', { status: response.status });
+  const body = await response.text();
+  return body.length === 0 ? null : JSON.parse(body) as CareRound;
+}
 function value(data: FormData, name: string): string { const result = data.get(name); return typeof result === 'string' ? result : ''; }

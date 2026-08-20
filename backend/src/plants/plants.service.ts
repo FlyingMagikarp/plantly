@@ -8,6 +8,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { CareEvent } from '../care-events/care-event.entity';
 import { ImagesService } from '../images/images.service';
+import { PlantImage } from '../images/plant-image.entity';
 import { Location } from '../locations/location.entity';
 import { Species } from '../species/species.entity';
 import { Plant, plantStatuses, type PlantStatus } from './plant.entity';
@@ -21,6 +22,7 @@ export interface PlantView {
   species: { id: number; name: string; archived: boolean };
   location: { id: number; name: string } | null;
   latestCareTimestamp?: string | null;
+  latestImageUrl?: string | null;
 }
 
 interface MaintainedPlantInput {
@@ -58,12 +60,24 @@ export class PlantsService {
             .where('careEvent.plantId = plant.id'),
         'latest_care_timestamp',
       )
+      .addSelect(
+        (query) =>
+          query
+            .select('image.id')
+            .from(PlantImage, 'image')
+            .where('image.plantId = plant.id')
+            .orderBy('image.addedAt', 'DESC')
+            .addOrderBy('image.id', 'DESC')
+            .limit(1),
+        'latest_image_id',
+      )
       .orderBy('plant.id', 'ASC')
       .getRawAndEntities();
     const rawRows = raw as unknown as Array<Record<string, unknown>>;
     return entities.map((plant, index) => ({
       ...toPlantView(plant),
       latestCareTimestamp: timestampString(rawRows[index]?.latest_care_timestamp),
+      latestImageUrl: imageUrl(plant.id, rawRows[index]?.latest_image_id),
     }));
   }
 
@@ -282,4 +296,11 @@ function timestampString(value: unknown): string | null {
     return Number.isNaN(timestamp.valueOf()) ? null : timestamp.toISOString();
   }
   return null;
+}
+
+function imageUrl(plantId: number, value: unknown): string | null {
+  const imageId = typeof value === 'number' ? value : typeof value === 'string' ? Number(value) : Number.NaN;
+  return Number.isSafeInteger(imageId) && imageId > 0
+    ? `/api/plants/${plantId}/images/${imageId}/content`
+    : null;
 }

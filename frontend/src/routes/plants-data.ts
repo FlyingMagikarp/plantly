@@ -26,6 +26,7 @@ export interface PlantItem {
   species: SpeciesOption;
   location: LocationOption | null;
   latestCareTimestamp?: string | null;
+  latestImageUrl?: string | null;
 }
 
 export interface PlantCollectionData {
