@@ -14,6 +14,13 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { CreateSpecies1786449600000 } from '../database/migrations/1786449600000-CreateSpecies';
 import { CreateLocations1786453200000 } from '../database/migrations/1786453200000-CreateLocations';
 import { CreatePlants1786454626591 } from '../database/migrations/1786454626591-CreatePlants';
+import { CreateCareEvents1786500000000 } from '../database/migrations/1786500000000-CreateCareEvents';
+import { CreatePlantImages1786510000000 } from '../database/migrations/1786510000000-CreatePlantImages';
+import { CreateCareRounds1786520000000 } from '../database/migrations/1786520000000-CreateCareRounds';
+import { CareEvent } from '../care-events/care-event.entity';
+import { CareRound } from '../care-rounds/care-round.entity';
+import { CareRoundMember } from '../care-rounds/care-round-member.entity';
+import { PlantImage } from '../images/plant-image.entity';
 import { Location } from '../locations/location.entity';
 import { LocationsModule } from '../locations/locations.module';
 import { Species } from '../species/species.entity';
@@ -34,6 +41,7 @@ describe('Plant API', () => {
   let plants: Repository<Plant>;
   let species: Repository<Species>;
   let locations: Repository<Location>;
+  let careEvents: Repository<CareEvent>;
 
   beforeAll(async () => {
     container = await new GenericContainer('postgres:18-alpine')
@@ -59,11 +67,14 @@ describe('Plant API', () => {
     };
     const migrationDataSource = new DataSource({
       ...connection,
-      entities: [Species, Location, Plant],
+      entities: [Species, Location, Plant, CareEvent, PlantImage, CareRound, CareRoundMember],
       migrations: [
         CreateSpecies1786449600000,
         CreateLocations1786453200000,
         CreatePlants1786454626591,
+        CreateCareEvents1786500000000,
+        CreatePlantImages1786510000000,
+        CreateCareRounds1786520000000,
       ],
       synchronize: false,
     });
@@ -76,7 +87,7 @@ describe('Plant API', () => {
         ConfigModule.forRoot({ isGlobal: true }),
         TypeOrmModule.forRoot({
           ...connection,
-          entities: [Species, Location, Plant],
+          entities: [Species, Location, Plant, CareEvent, PlantImage, CareRound, CareRoundMember],
           synchronize: false,
         }),
         PlantsModule,
@@ -95,9 +106,11 @@ describe('Plant API', () => {
     plants = dataSource.getRepository(Plant);
     species = dataSource.getRepository(Species);
     locations = dataSource.getRepository(Location);
+    careEvents = dataSource.getRepository(CareEvent);
   }, 120_000);
 
   beforeEach(async () => {
+    await careEvents.createQueryBuilder().delete().execute();
     await plants.createQueryBuilder().delete().execute();
     await locations.createQueryBuilder().delete().execute();
     await species.createQueryBuilder().delete().execute();
@@ -278,6 +291,27 @@ describe('Plant API', () => {
         ]),
       );
       await expect(plants.find({ order: { id: 'ASC' } })).resolves.toEqual(before);
+    });
+  });
+
+  describe('UC-035: View Latest Care on Home', () => {
+    it('returns the latest timestamp across event types and null without allowing inactive history to surface plants', async () => {
+      const hoya = await saveSpecies({ id: 1, name: 'Hoya' });
+      const active = await savePlant({ nickname: 'Active', speciesId: hoya.id });
+      const uncared = await savePlant({ nickname: 'Uncared', speciesId: hoya.id });
+      const dead = await savePlant({ nickname: 'Dead', speciesId: hoya.id, status: 'dead' });
+      await careEvents.save([
+        careEvents.create({ plantId: active.id, type: 'watering', timestamp: new Date('2026-08-10T08:00:00Z'), notes: null, fertilizerIncluded: false, roundId: null }),
+        careEvents.create({ plantId: active.id, type: 'pruning', timestamp: new Date('2026-08-12T08:00:00Z'), notes: null, fertilizerIncluded: null, roundId: null }),
+        careEvents.create({ plantId: dead.id, type: 'observation', timestamp: new Date('2026-08-20T08:00:00Z'), notes: null, fertilizerIncluded: null, roundId: null }),
+      ]);
+
+      const response = await request(server()).get('/api/plants').expect(200);
+      const responseBody = response.body as unknown as PlantView[];
+
+      expect(responseBody.find((plant) => plant.id === active.id)).toMatchObject({ latestCareTimestamp: '2026-08-12T08:00:00.000Z' });
+      expect(responseBody.find((plant) => plant.id === uncared.id)).toMatchObject({ latestCareTimestamp: null });
+      expect(responseBody.find((plant) => plant.id === dead.id)).toMatchObject({ status: 'dead', latestCareTimestamp: '2026-08-20T08:00:00.000Z' });
     });
   });
 

@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Plant } from '../plants/plant.entity';
+import { CareRound } from '../care-rounds/care-round.entity';
 
 export const careEventTypes = [
   'watering',
@@ -46,4 +47,12 @@ export class CareEvent {
 
   @Column({ name: 'fertilizer_included', type: 'boolean', nullable: true })
   fertilizerIncluded: boolean | null;
+
+  @Index('IDX_care_events_round_id')
+  @Column({ name: 'round_id', type: 'integer', nullable: true })
+  roundId: number | null;
+
+  @ManyToOne(() => CareRound, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'round_id', foreignKeyConstraintName: 'FK_care_events_round' })
+  round: CareRound | null;
 }

@@ -11,6 +11,11 @@ import { CreateSpecies1786449600000 } from '../database/migrations/1786449600000
 import { CreateLocations1786453200000 } from '../database/migrations/1786453200000-CreateLocations';
 import { CreatePlants1786454626591 } from '../database/migrations/1786454626591-CreatePlants';
 import { CreateCareEvents1786500000000 } from '../database/migrations/1786500000000-CreateCareEvents';
+import { CreatePlantImages1786510000000 } from '../database/migrations/1786510000000-CreatePlantImages';
+import { CreateCareRounds1786520000000 } from '../database/migrations/1786520000000-CreateCareRounds';
+import { CareRound } from '../care-rounds/care-round.entity';
+import { CareRoundMember } from '../care-rounds/care-round-member.entity';
+import { PlantImage } from '../images/plant-image.entity';
 import { Location } from '../locations/location.entity';
 import { Plant, type PlantStatus } from '../plants/plant.entity';
 import { Species } from '../species/species.entity';
@@ -48,7 +53,7 @@ describe('UC-014 through UC-021: Care Events', () => {
       username: 'plantly_test',
       password: 'plantly_test',
     };
-    const entities = [Species, Location, Plant, CareEvent];
+    const entities = [Species, Location, Plant, CareEvent, PlantImage, CareRound, CareRoundMember];
     const migrationSource = new DataSource({
       ...connection,
       entities,
@@ -57,6 +62,8 @@ describe('UC-014 through UC-021: Care Events', () => {
         CreateLocations1786453200000,
         CreatePlants1786454626591,
         CreateCareEvents1786500000000,
+        CreatePlantImages1786510000000,
+        CreateCareRounds1786520000000,
       ],
       synchronize: false,
     });

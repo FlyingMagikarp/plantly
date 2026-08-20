@@ -8,5 +8,6 @@ import { CareEventClock, CareEventsService } from './care-events.service';
   imports: [TypeOrmModule.forFeature([CareEvent])],
   controllers: [CareEventsController],
   providers: [CareEventsService, CareEventClock],
+  exports: [CareEventsService],
 })
 export class CareEventsModule {}

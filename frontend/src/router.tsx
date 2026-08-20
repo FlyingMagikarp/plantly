@@ -22,6 +22,10 @@ import {
   plantFormAction,
   plantFormLoader,
 } from './routes/plants-data';
+import { PlantImagesRoute } from './routes/plant-images';
+import { plantImagesAction, plantImagesLoader } from './routes/plant-images-data';
+import { CareRoundRoute } from './routes/care-round';
+import { careRoundAction, careRoundLoader } from './routes/care-round-data';
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +36,8 @@ export const router = createBrowserRouter([
       { path: '/plants/new', element: <PlantFormRoute />, loader: plantFormLoader, action: plantFormAction, errorElement: <PlantsError area="form" /> },
       { path: '/plants/:plantId', element: <PlantDetailRoute />, loader: plantDetailLoader, action: plantDetailAction, errorElement: <PlantsError area="detail" /> },
       { path: '/plants/:plantId/edit', element: <PlantFormRoute />, loader: plantFormLoader, action: plantFormAction, errorElement: <PlantsError area="form" /> },
+      { path: '/plants/:plantId/images', element: <PlantImagesRoute />, loader: plantImagesLoader, action: plantImagesAction, errorElement: <PlantsError area="detail" /> },
+      { path: '/care-round', element: <CareRoundRoute />, loader: careRoundLoader, action: careRoundAction, errorElement: <PlantsError /> },
       { path: '/locations', element: <LocationsRoute />, loader: locationsLoader, action: locationsAction, errorElement: <LocationsError /> },
       { path: '/species', element: <SpeciesListRoute />, loader: speciesListLoader, errorElement: <SpeciesListError /> },
       { path: '/species/:speciesId', element: <SpeciesDetailRoute />, loader: speciesDetailLoader, errorElement: <SpeciesDetailError /> },

@@ -8,6 +8,8 @@ import { LocationsModule } from './locations/locations.module';
 import { PlantsModule } from './plants/plants.module';
 import { SpeciesModule } from './species/species.module';
 import { CareEventsModule } from './care-events/care-events.module';
+import { ImagesModule } from './images/images.module';
+import { CareRoundsModule } from './care-rounds/care-rounds.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { CareEventsModule } from './care-events/care-events.module';
     LocationsModule,
     PlantsModule,
     CareEventsModule,
+    ImagesModule,
+    CareRoundsModule,
   ],
   controllers: [HealthController],
   providers: [HealthService],

@@ -23,7 +23,7 @@ Detailed behavioural requirements and acceptance criteria remain in the individu
 | [UC-003](usecases/UC-003-list-species.md) | **List Species** — Provide a sortable and filterable species overview with associated plant counts. | Implemented |
 | [UC-004](usecases/UC-004-add-plant-to-collection.md) | **Add Plant to Collection** — Register an individual plant with its nickname, species, acquisition date, and optional notes. | Implemented |
 | [UC-005](usecases/UC-005-update-plant.md) | **Update Plant** — Change the maintained details of an active plant without changing its technical identity. | Implemented |
-| [UC-006](usecases/UC-006-remove-plant-from-collection.md) | **Remove Plant from Collection** — Mark a plant dead or archived, restore it, or permanently delete a faulty record with its dependent history. | Ready |
+| [UC-006](usecases/UC-006-remove-plant-from-collection.md) | **Remove Plant from Collection** — Mark a plant dead or archived, restore it, or permanently delete a faulty record with its dependent history. | Implemented |
 | [UC-007](usecases/UC-007-view-plant.md) | **View Plant** — Display the maintained details of one plant and the actions available for its lifecycle state. | Implemented |
 | [UC-008](usecases/UC-008-view-plant-collection.md) | **View Plant Collection** — Search, sort, and filter the complete plant collection. | Implemented |
 | [UC-009](usecases/UC-009-create-location.md) | **Create Location** — Add a uniquely named physical location for organising plants. | Implemented |
@@ -38,16 +38,16 @@ Detailed behavioural requirements and acceptance criteria remain in the individu
 | [UC-018](usecases/UC-018-record-observation.md) | **Record Observation** — Record a general plant observation. | Implemented |
 | [UC-019](usecases/UC-019-view-plant-care-history.md) | **View Plant Care History** — Review the recorded care-event history for a plant. | Implemented |
 | [UC-020](usecases/UC-020-correct-care-event.md) | **Correct Care Event** — Correct an inaccurate recorded care event. | Implemented |
-| [UC-021](usecases/UC-021-remove-incorrect-care-event.md) | **Remove Incorrect Care Event** — Remove a care event that was recorded incorrectly. | Ready |
-| [UC-022](usecases/UC-022-add-plant-image.md) | **Add Plant Image** — Attach an image to a plant. | Ready |
-| [UC-024](usecases/UC-024-view-plant-images.md) | **View Plant Images** — View images associated with a plant. | Ready |
-| [UC-025](usecases/UC-025-remove-image.md) | **Remove Image** — Remove an image from Plantly. | Ready |
-| [UC-030](usecases/UC-030-start-plant-care-round.md) | **Start Plant Care Round** — Begin a location-oriented plant-care round. | Ready |
-| [UC-031](usecases/UC-031-record-care-during-plant-round.md) | **Record Care During Plant Round** — Record care efficiently while progressing through a care round. | Ready |
-| [UC-032](usecases/UC-032-complete-plant-care-round.md) | **Complete Plant Care Round** — Finish an active care round. | Ready |
+| [UC-021](usecases/UC-021-remove-incorrect-care-event.md) | **Remove Incorrect Care Event** — Remove a care event that was recorded incorrectly. | Implemented |
+| [UC-022](usecases/UC-022-add-plant-image.md) | **Add Plant Image** — Attach an image to a plant. | Implemented |
+| [UC-024](usecases/UC-024-view-plant-images.md) | **View Plant Images** — View images associated with a plant. | Implemented |
+| [UC-025](usecases/UC-025-remove-image.md) | **Remove Image** — Remove an image from Plantly. | Implemented |
+| [UC-030](usecases/UC-030-start-plant-care-round.md) | **Start Plant Care Round** — Begin a location-oriented plant-care round. | Implemented |
+| [UC-031](usecases/UC-031-record-care-during-plant-round.md) | **Record Care During Plant Round** — Record care efficiently while progressing through a care round. | Implemented |
+| [UC-032](usecases/UC-032-complete-plant-care-round.md) | **Complete Plant Care Round** — Finish an active care round. | Implemented |
 | [UC-033](usecases/UC-033-navigate-application.md) | **Navigate Application** — Provide consistent desktop sidebar and collapsible mobile navigation between implemented application areas. | Implemented |
 | [UC-034](usecases/UC-034-view-home-plant-overview.md) | **View Home Plant Overview** — Show active plants by location on Home with nickname and species. | Implemented |
-| [UC-035](usecases/UC-035-view-latest-care-on-home.md) | **View Latest Care on Home** — Add the latest recorded care date, or the absence of recorded care, to each Home plant card. | Ready |
+| [UC-035](usecases/UC-035-view-latest-care-on-home.md) | **View Latest Care on Home** — Add the latest recorded care date, or the absence of recorded care, to each Home plant card. | Implemented |
 
 ## Known Dependencies
 

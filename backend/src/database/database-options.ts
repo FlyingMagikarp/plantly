@@ -4,6 +4,8 @@ import { CreateSpecies1786449600000 } from './migrations/1786449600000-CreateSpe
 import { CreateLocations1786453200000 } from './migrations/1786453200000-CreateLocations';
 import { CreatePlants1786454626591 } from './migrations/1786454626591-CreatePlants';
 import { CreateCareEvents1786500000000 } from './migrations/1786500000000-CreateCareEvents';
+import { CreatePlantImages1786510000000 } from './migrations/1786510000000-CreatePlantImages';
+import { CreateCareRounds1786520000000 } from './migrations/1786520000000-CreateCareRounds';
 
 export function databaseOptions(config: ConfigService): TypeOrmModuleOptions {
   return {
@@ -20,6 +22,8 @@ export function databaseOptions(config: ConfigService): TypeOrmModuleOptions {
       CreateLocations1786453200000,
       CreatePlants1786454626591,
       CreateCareEvents1786500000000,
+      CreatePlantImages1786510000000,
+      CreateCareRounds1786520000000,
     ],
     migrationsRun: true,
     retryAttempts: 10,

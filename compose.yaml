@@ -26,6 +26,9 @@ services:
       DATABASE_NAME: ${POSTGRES_DB:-plantlyv2}
       DATABASE_USER: ${POSTGRES_USER:-plantly}
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-plantly}
+      IMAGE_STORAGE_PATH: /var/lib/plantly/images
+    volumes:
+      - plantlyv2-images:/var/lib/plantly/images
     ports:
       - "${BACKEND_PORT:-3000}:3000"
     depends_on:
@@ -42,3 +45,4 @@ services:
 
 volumes:
   plantlyv2-data:
+  plantlyv2-images:

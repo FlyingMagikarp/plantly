@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
+import { CareEvent } from '../care-events/care-event.entity';
+import { ImagesService } from '../images/images.service';
 import { Location } from '../locations/location.entity';
 import { Species } from '../species/species.entity';
 import { Plant, plantStatuses, type PlantStatus } from './plant.entity';
@@ -18,6 +20,7 @@ export interface PlantView {
   status: PlantStatus;
   species: { id: number; name: string; archived: boolean };
   location: { id: number; name: string } | null;
+  latestCareTimestamp?: string | null;
 }
 
 interface MaintainedPlantInput {
@@ -38,14 +41,30 @@ export class PlantsService {
   constructor(
     @InjectDataSource() private readonly dataSource: DataSource,
     private readonly clock: PlantClock,
+    private readonly images: ImagesService,
   ) {}
 
   async list(): Promise<PlantView[]> {
-    const plants = await this.dataSource.getRepository(Plant).find({
-      relations: { species: true, location: true },
-      order: { id: 'ASC' },
-    });
-    return plants.map(toPlantView);
+    const { entities, raw } = await this.dataSource
+      .getRepository(Plant)
+      .createQueryBuilder('plant')
+      .leftJoinAndSelect('plant.species', 'species')
+      .leftJoinAndSelect('plant.location', 'location')
+      .addSelect(
+        (query) =>
+          query
+            .select('MAX(careEvent.timestamp)')
+            .from(CareEvent, 'careEvent')
+            .where('careEvent.plantId = plant.id'),
+        'latest_care_timestamp',
+      )
+      .orderBy('plant.id', 'ASC')
+      .getRawAndEntities();
+    const rawRows = raw as unknown as Array<Record<string, unknown>>;
+    return entities.map((plant, index) => ({
+      ...toPlantView(plant),
+      latestCareTimestamp: timestampString(rawRows[index]?.latest_care_timestamp),
+    }));
   }
 
   async find(id: number): Promise<PlantView> {
@@ -126,12 +145,14 @@ export class PlantsService {
   }
 
   async remove(id: number): Promise<void> {
+    const storageKeys = await this.images.storageKeys(id);
     await this.dataSource.transaction(async (manager) => {
       const result = await manager.getRepository(Plant).delete(id);
       if (result.affected !== 1) {
         throw new NotFoundException('Plant not found');
       }
     });
+    await this.images.removeStoredFiles(storageKeys);
   }
 
   private findPlant(manager: EntityManager, id: number): Promise<Plant | null> {
@@ -250,4 +271,15 @@ function toPlantView(plant: Plant): PlantView {
       ? { id: plant.location.id, name: plant.location.name }
       : null,
   };
+}
+
+function timestampString(value: unknown): string | null {
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+  if (typeof value === 'string') {
+    const timestamp = new Date(value);
+    return Number.isNaN(timestamp.valueOf()) ? null : timestamp.toISOString();
+  }
+  return null;
 }

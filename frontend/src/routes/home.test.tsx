@@ -99,6 +99,39 @@ describe('UC-034: View Home Plant Overview', () => {
   });
 });
 
+describe('UC-035: View Latest Care on Home', () => {
+  it('shows the latest care date and the exact empty label while excluding inactive plants with newer care', async () => {
+    const latest = '2026-08-19T21:30:00.000Z';
+    serveApi(apiState({ plants: [
+      plantFixture({ nickname: 'Cared plant', latestCareTimestamp: latest }),
+      plantFixture({ id: 2, nickname: 'Never cared', latestCareTimestamp: null }),
+      plantFixture({ id: 3, nickname: 'Dead cared', status: 'dead', latestCareTimestamp: '2026-08-20T08:00:00.000Z' }),
+    ] }));
+    renderHome();
+
+    const cared = await screen.findByRole('link', { name: /Cared plant/ });
+    expect(cared).toHaveTextContent(new Date(latest).toLocaleDateString());
+    expect(cared.querySelector('time')).toHaveAttribute('datetime', latest);
+    expect(screen.getByRole('link', { name: /Never cared/ })).toHaveTextContent('No CareLog yet');
+    expect(screen.queryByText('Dead cared')).not.toBeInTheDocument();
+  });
+
+  it('treats latest-care retrieval failure as an unavailable overview and retries without stale values', async () => {
+    const state = apiState({ plants: [plantFixture({ latestCareTimestamp: '2026-08-19T08:00:00.000Z' })] });
+    let attempts = 0;
+    server.use(
+      http.get(`${apiOrigin}/api/plants`, () => attempts++ === 0 ? new HttpResponse(null, { status: 500 }) : HttpResponse.json(state.plants)),
+      http.get(`${apiOrigin}/api/species`, () => HttpResponse.json(state.species)),
+      http.get(`${apiOrigin}/api/locations`, () => HttpResponse.json(state.locations)),
+    );
+    renderHome();
+    expect(await screen.findByRole('heading', { name: 'Plants could not be loaded' })).toBeInTheDocument();
+    expect(screen.queryByText(/Last care/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(await screen.findByText(/Last care/)).toBeInTheDocument();
+  });
+});
+
 function renderHome(entry = '/') {
   const router = createMemoryRouter([{
     element: <AppShell />,

@@ -8,6 +8,8 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { Plant } from '../plants/plant.entity';
 import { CareEvent, careEventTypes, type CareEventType } from './care-event.entity';
+import { CareRound } from '../care-rounds/care-round.entity';
+import { CareRoundMember } from '../care-rounds/care-round-member.entity';
 
 export interface CareEventView {
   id: number;
@@ -51,13 +53,20 @@ export class CareEventsService {
     private readonly clock: CareEventClock,
   ) {}
 
-  async create(plantId: number, input: unknown): Promise<CareEventView> {
+  async create(plantId: number, input: unknown, roundId: number | null = null): Promise<CareEventView> {
     const values = careEventInputFrom(input, this.clock.now());
     return this.dataSource.transaction(async (manager) => {
       const plant = await lockPlant(manager, plantId, 'pessimistic_read');
       requireActivePlant(plant);
+      if (roundId !== null) {
+        const round = await manager.getRepository(CareRound).createQueryBuilder('round').setLock('pessimistic_write').where('round.id = :roundId', { roundId }).getOne();
+        if (!round) throw new NotFoundException('Care round not found');
+        if (round.status !== 'active') throw new ConflictException('Care round is already completed');
+        const member = await manager.getRepository(CareRoundMember).findOneBy({ roundId, position: round.currentIndex });
+        if (!member || member.plantId !== plantId) throw new ConflictException('The plant is not the current care-round plant');
+      }
       const repository = manager.getRepository(CareEvent);
-      const event = await repository.save(repository.create({ plantId, ...values }));
+      const event = await repository.save(repository.create({ plantId, roundId, ...values }));
       return toCareEventView(event);
     });
   }

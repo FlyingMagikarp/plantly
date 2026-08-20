@@ -36,6 +36,8 @@ export function PlantDetailRoute() {
 
       <section className="mt-8"><h2 className="text-xl font-semibold">Notes</h2><p className="mt-3 whitespace-pre-wrap text-stone-700">{plant.notes ?? 'No notes recorded.'}</p></section>
 
+      <section className="mt-8"><h2 className="text-xl font-semibold">Images</h2><p className="mt-2 text-stone-600">Review this plant’s retained images{plant.status === 'active' ? ' or add a new one' : ''}.</p><Link className="btn-secondary mt-4 inline-flex" to={`/plants/${plant.id}/images`}>View plant images</Link></section>
+
       {plant.status === 'active' ? (
         <>
         <CareEventForm plantId={plant.id} />

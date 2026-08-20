@@ -176,9 +176,9 @@ Plantly supports storing images associated with plants.
 
 Image binary data must be stored separately from the PostgreSQL database. PostgreSQL stores only the metadata and references required to associate images with domain objects.
 
-The exact storage implementation is deferred until the first image-related use case is defined.
+Image binaries are stored in a Docker-managed local filesystem volume. PostgreSQL stores image metadata and an opaque storage key. The backend is the only application boundary that reads or writes image content; browser clients never receive filesystem paths.
 
-Image storage should work with the Docker Compose deployment without requiring unnecessary external infrastructure.
+Uploads are validated before persistence and use atomic filesystem operations so failed attachment does not leave a database association or partial file. This keeps image storage within the existing Docker Compose deployment without introducing external infrastructure.
 
 ## Deferred Decisions
 
