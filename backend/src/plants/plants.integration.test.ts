@@ -42,6 +42,7 @@ describe('Plant API', () => {
   let species: Repository<Species>;
   let locations: Repository<Location>;
   let careEvents: Repository<CareEvent>;
+  let plantImages: Repository<PlantImage>;
 
   beforeAll(async () => {
     container = await new GenericContainer('postgres:18-alpine')
@@ -107,10 +108,12 @@ describe('Plant API', () => {
     species = dataSource.getRepository(Species);
     locations = dataSource.getRepository(Location);
     careEvents = dataSource.getRepository(CareEvent);
+    plantImages = dataSource.getRepository(PlantImage);
   }, 120_000);
 
   beforeEach(async () => {
     await careEvents.createQueryBuilder().delete().execute();
+    await plantImages.createQueryBuilder().delete().execute();
     await plants.createQueryBuilder().delete().execute();
     await locations.createQueryBuilder().delete().execute();
     await species.createQueryBuilder().delete().execute();
@@ -312,6 +315,35 @@ describe('Plant API', () => {
       expect(responseBody.find((plant) => plant.id === active.id)).toMatchObject({ latestCareTimestamp: '2026-08-12T08:00:00.000Z' });
       expect(responseBody.find((plant) => plant.id === uncared.id)).toMatchObject({ latestCareTimestamp: null });
       expect(responseBody.find((plant) => plant.id === dead.id)).toMatchObject({ status: 'dead', latestCareTimestamp: '2026-08-20T08:00:00.000Z' });
+    });
+  });
+
+  describe('UC-036: View Latest Plant Image on Home', () => {
+    it('returns one stable newest image URL or null without modifying plants or images', async () => {
+      const hoya = await saveSpecies({ id: 1, name: 'Hoya' });
+      const pictured = await savePlant({ nickname: 'Pictured', speciesId: hoya.id });
+      const withoutImage = await savePlant({ nickname: 'Without image', speciesId: hoya.id });
+      const dead = await savePlant({ nickname: 'Dead', speciesId: hoya.id, status: 'dead' });
+      const old = await saveImage(pictured.id, 'old', new Date('2026-08-18T08:00:00Z'));
+      const firstAtNewestTime = await saveImage(pictured.id, 'newer-first', new Date('2026-08-20T08:00:00Z'));
+      const stableNewest = await saveImage(pictured.id, 'newer-second', new Date('2026-08-20T08:00:00Z'));
+      const deadImage = await saveImage(dead.id, 'dead', new Date('2026-08-21T08:00:00Z'));
+      const plantsBefore = await plants.find({ order: { id: 'ASC' } });
+      const imagesBefore = await plantImages.find({ order: { id: 'ASC' } });
+
+      const firstResponse = await request(server()).get('/api/plants').expect(200);
+      const secondResponse = await request(server()).get('/api/plants').expect(200);
+      const first = firstResponse.body as unknown as PlantView[];
+      const second = secondResponse.body as unknown as PlantView[];
+
+      expect(old.id).toBeLessThan(firstAtNewestTime.id);
+      expect(firstAtNewestTime.id).toBeLessThan(stableNewest.id);
+      expect(first.find((plant) => plant.id === pictured.id)?.latestImageUrl).toBe(`/api/plants/${pictured.id}/images/${stableNewest.id}/content`);
+      expect(second.find((plant) => plant.id === pictured.id)?.latestImageUrl).toBe(`/api/plants/${pictured.id}/images/${stableNewest.id}/content`);
+      expect(first.find((plant) => plant.id === withoutImage.id)?.latestImageUrl).toBeNull();
+      expect(first.find((plant) => plant.id === dead.id)?.latestImageUrl).toBe(`/api/plants/${dead.id}/images/${deadImage.id}/content`);
+      await expect(plants.find({ order: { id: 'ASC' } })).resolves.toEqual(plantsBefore);
+      await expect(plantImages.find({ order: { id: 'ASC' } })).resolves.toEqual(imagesBefore);
     });
   });
 
@@ -780,5 +812,9 @@ describe('Plant API', () => {
         ...overrides,
       }),
     );
+  }
+
+  function saveImage(plantId: number, storageKey: string, addedAt: Date): Promise<PlantImage> {
+    return plantImages.save(plantImages.create({ plantId, storageKey, mediaType: 'image/png', byteSize: 10, addedAt }));
   }
 });

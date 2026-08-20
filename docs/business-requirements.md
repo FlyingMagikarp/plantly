@@ -48,7 +48,7 @@ Detailed behavioural requirements and acceptance criteria remain in the individu
 | [UC-033](usecases/UC-033-navigate-application.md) | **Navigate Application** — Provide consistent desktop sidebar and collapsible mobile navigation between implemented application areas. | Implemented |
 | [UC-034](usecases/UC-034-view-home-plant-overview.md) | **View Home Plant Overview** — Show active plants by location on Home with nickname and species. | Implemented |
 | [UC-035](usecases/UC-035-view-latest-care-on-home.md) | **View Latest Care on Home** — Add the latest recorded care date, or the absence of recorded care, to each Home plant card. | Implemented |
-| [UC-036](usecases/UC-036-view-latest-image-on-home.md) | **View Latest Plant Image on Home** — Show the newest associated image on each Home plant card when one exists. | Ready |
+| [UC-036](usecases/UC-036-view-latest-image-on-home.md) | **View Latest Plant Image on Home** — Show the newest associated image on each Home plant card when one exists. | Implemented |
 
 ## Known Dependencies
 

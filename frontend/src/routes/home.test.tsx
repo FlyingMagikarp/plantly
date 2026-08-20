@@ -132,6 +132,39 @@ describe('UC-035: View Latest Care on Home', () => {
   });
 });
 
+describe('UC-036: View Latest Plant Image on Home', () => {
+  it('shows only the supplied newest image, omits empty image UI, and excludes inactive plants and their images', async () => {
+    const methods: string[] = [];
+    serveApi(apiState({ plants: [
+      plantFixture({ nickname: 'Pictured', latestImageUrl: '/api/plants/1/images/9/content' }),
+      plantFixture({ id: 2, nickname: 'No image', latestImageUrl: null }),
+      plantFixture({ id: 3, nickname: 'Dead pictured', status: 'dead', latestImageUrl: '/api/plants/3/images/10/content' }),
+      plantFixture({ id: 4, nickname: 'Archived pictured', status: 'archived', latestImageUrl: '/api/plants/4/images/11/content' }),
+    ] }), methods);
+    renderHome();
+
+    const image = await screen.findByRole('img', { name: 'Latest image of Pictured' });
+    expect(image).toHaveAttribute('src', '/api/plants/1/images/9/content');
+    expect(screen.getByRole('link', { name: /Pictured/ }).querySelectorAll('img')).toHaveLength(1);
+    expect(screen.getByRole('link', { name: /No image/ }).querySelector('img')).toBeNull();
+    expect(screen.queryByText(/no images/i)).not.toBeInTheDocument();
+    expect(screen.queryByText('Dead pictured')).not.toBeInTheDocument();
+    expect(screen.queryByText('Archived pictured')).not.toBeInTheDocument();
+    expect(methods).toEqual(['GET', 'GET', 'GET']);
+  });
+
+  it('removes unavailable image content while keeping the plant card usable', async () => {
+    serveApi(apiState({ plants: [plantFixture({ latestImageUrl: '/api/plants/1/images/9/content' })] }));
+    renderHome();
+
+    const image = await screen.findByRole('img', { name: 'Latest image of Test Hoya' });
+    fireEvent.error(image);
+
+    expect(screen.queryByRole('img', { name: 'Latest image of Test Hoya' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Test Hoya/ })).toHaveAttribute('href', '/plants/1');
+  });
+});
+
 function renderHome(entry = '/') {
   const router = createMemoryRouter([{
     element: <AppShell />,
