@@ -74,6 +74,5 @@ If Plantly cannot record the pest treatment, it communicates the failure, allows
 
 * Diagnosing pests or recommending a treatment.
 * Creating reminders for repeated treatment.
-* Attaching an image; this belongs to UC-023.
 * Correcting or removing an existing event; these belong to UC-020 and UC-021.
 * Recording care as part of a care round; this belongs to UC-031.

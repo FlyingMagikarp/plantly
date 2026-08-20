@@ -76,4 +76,3 @@ If Plantly cannot retrieve the care history, it communicates the failure and all
 * Defining correction or removal behaviour; these belong to UC-020 and UC-021.
 * Aggregating, analysing, or charting care history.
 * Predicting future care needs.
-* Displaying images attached to events; this belongs to UC-023.

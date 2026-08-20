@@ -73,6 +73,5 @@ If Plantly cannot record the pruning, it communicates the failure, allows the us
 ## Out of Scope
 
 * Recommending when or how a plant should be pruned.
-* Attaching an image; this belongs to UC-023.
 * Correcting or removing an existing event; these belong to UC-020 and UC-021.
 * Recording care as part of a care round; this belongs to UC-031.

@@ -86,4 +86,3 @@ If Plantly cannot apply the correction, it communicates the failure, leaves the 
 * Moving an event to a different plant.
 * Changing an event's type.
 * Correcting event-specific fields other than notes.
-* Attaching or removing images; these belong to UC-023 and UC-025.

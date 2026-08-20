@@ -328,7 +328,7 @@ Mobile keeps filters compact and collapsible. Desktop may keep more filters visi
 
 Plant detail represents one individual plant. Current useful information and frequent care actions appear before historical or administrative detail.
 
-On mobile, care actions and quick notes have priority. On desktop, notes, current guidance, history, images, and management controls may be arranged side by side when their use cases exist.
+On mobile, care actions and quick notes have priority. On desktop, species or plant notes, history, images, and management controls may be arranged side by side when their use cases exist.
 
 The exact actions and information displayed depend on implemented use cases.
 

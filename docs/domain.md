@@ -42,15 +42,6 @@ Examples include watering, pruning, repotting, pest treatment, movement, or gene
 
 Care events form the historical dataset of Plantly.
 
-### SeasonalPhase
-Represents a recurring period in the lifecycle of a species.
-
-Examples include active growth, flowering, dormancy, or reduced growth.
-
-### FertilizerRegime
-Describes the recommended fertilisation approach during a seasonal phase.
-
-
 ## Relationships
 
 ```mermaid
@@ -58,6 +49,4 @@ classDiagram
     Species "1" --> "*" Plant : describes
     Location "0..1" <-- "*" Plant : located at
     Plant "1" --> "*" CareEvent : has
-    Species "1" --> "*" SeasonalPhase : follows
-    SeasonalPhase "0..1" --> "0..1" FertilizerRegime : recommends
 ```

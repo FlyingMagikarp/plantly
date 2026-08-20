@@ -18,7 +18,7 @@ Allow the user to remove a care event that was recorded incorrectly so the plant
 
 1. The user initiates removal for a specific care event.
 2. Plantly identifies the plant and event and asks the user to confirm the permanent removal, clearly identifying the event and the consequence.
-3. If the user confirms, Plantly permanently removes the identified care event and any images attached to it.
+3. If the user confirms, Plantly permanently removes the identified care event.
 4. Plantly displays the plant's updated care history and provides unobtrusive confirmation.
 5. If the user cancels, Plantly leaves the care event and all other data unchanged.
 
@@ -50,7 +50,7 @@ If removal leaves the current history page empty while earlier events remain, Pl
 
 ## Postconditions
 
-* After successful removal, the identified care event and any images attached to it no longer exist, and the event no longer appears in the plant's care history.
+* After successful removal, the identified care event no longer exists and no longer appears in the plant's care history.
 * Cancelling or failing removal leaves the identified event and all unrelated data unchanged.
 * No other care event is removed or modified.
 
@@ -64,9 +64,8 @@ If removal leaves the current history page empty while earlier events remain, Pl
 
 * [ ] Given a care event is displayed in UC-019, when the user initiates removal, then Plantly asks for confirmation and identifies the event as being permanently removed.
 * [ ] Given the removal confirmation is displayed, when the user cancels, then the event and all other data remain unchanged.
-* [ ] Given a care event belongs to a dead or archived plant, when the user attempts to remove it, then the event and any attached images remain unchanged.
+* [ ] Given a care event belongs to a dead or archived plant, when the user attempts to remove it, then the event remains unchanged.
 * [ ] Given the user confirms removal of an existing event belonging to the identified active plant, when removal succeeds, then that event no longer exists or appears in the plant's care history and no other event is modified or removed.
-* [ ] Given the removed care event has attached images, when removal succeeds, then those images are also permanently removed.
 * [ ] Given the event no longer exists or does not belong to the identified plant, when removal is confirmed, then Plantly removes no event and communicates that the selected event was not found.
 * [ ] Given the plant no longer exists, when removal is confirmed, then Plantly removes no event and communicates that the plant was not found.
 * [ ] Given removal fails, when Plantly reports the failure, then the event remains unchanged and the user can try again.
@@ -79,4 +78,3 @@ If removal leaves the current history page empty while earlier events remain, Pl
 * Removing more than one care event in a single action.
 * Removing a plant or any other care events belonging to it.
 * Preserving or displaying an audit trail of removed events unless established as a separate requirement.
-* Removing images independently while retaining their care event; this belongs to UC-025.

@@ -74,6 +74,5 @@ If Plantly cannot record the repotting, it communicates the failure, allows the 
 
 * Recommending when or how a plant should be repotted.
 * Changing the plant's location assignment as a consequence of repotting.
-* Attaching an image; this belongs to UC-023.
 * Correcting or removing an existing event; these belong to UC-020 and UC-021.
 * Recording care as part of a care round; this belongs to UC-031.

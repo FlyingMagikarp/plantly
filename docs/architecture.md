@@ -29,7 +29,7 @@ The frontend is responsible for:
 * displaying species information
 * supporting fast care-event logging
 * displaying plant history
-* displaying seasonal care guidance
+* displaying concise species knowledge and notes
 * communicating with the backend API
 
 Business rules and persistence logic must not depend on frontend behaviour.
@@ -58,7 +58,6 @@ The backend is responsible for:
 * enforcing business rules
 * validating incoming data
 * managing plants, species, locations, and care events
-* determining applicable seasonal information
 * persisting application data
 * exposing the application API
 * supporting species import workflows
@@ -173,7 +172,7 @@ Deployment-level access control, networking, and infrastructure security are out
 
 ## Image Storage
 
-Plantly supports storing images associated with plants and care events.
+Plantly supports storing images associated with plants.
 
 Image binary data must be stored separately from the PostgreSQL database. PostgreSQL stores only the metadata and references required to associate images with domain objects.
 

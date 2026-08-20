@@ -74,6 +74,5 @@ If Plantly cannot record the observation, it communicates the failure, allows th
 
 * Diagnosing plant health from an observation.
 * Generating care tasks or urgency from an observation.
-* Attaching an image; this belongs to UC-023.
 * Correcting or removing an existing event; these belong to UC-020 and UC-021.
 * Recording care as part of a care round; this belongs to UC-031.

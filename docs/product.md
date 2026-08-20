@@ -27,7 +27,7 @@ It does not attempt to predict watering schedules. Watering decisions are made t
   Common actions such as watering or watering with fertiliser should require as little interaction as possible.
 
 * **Optional detail must stay optional.**
-  Additional measurements, notes, fertiliser amounts, moisture readings, photos, or observations may enrich the dataset, but they must never be required for routine logging.
+  Additional measurements, notes, fertiliser amounts, moisture readings, or observations may enrich the care dataset, but they must never be required for routine logging. Plant photos may enrich the collection separately from care events.
 
 * **Preserve history.**
   Historical care data has value even when there is no current user interface for analysing it. Data should be retained so it can later support reports, experiments, and data-analysis projects. Permanently deleting an explicitly identified faulty plant record is the exception and removes the history belonging to that faulty record.

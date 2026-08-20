@@ -80,6 +80,5 @@ If Plantly cannot record the watering, it communicates the failure, allows the u
 
 * Determining whether or when a plant needs water.
 * Creating a separate fertilisation event.
-* Attaching an image; this belongs to UC-023.
 * Correcting or removing an existing event; these belong to UC-020 and UC-021.
 * Recording care as part of a care round; this belongs to UC-031.

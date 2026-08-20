@@ -76,6 +76,8 @@ Only the plant, event type, and timestamp are required for a care event.
 
 Additional information such as notes, fertiliser details, measurements, or other event-specific metadata is optional unless explicitly required by the event type.
 
+Images belong to plants and are not attached to care events. Care events remain small historical facts that are quick to record.
+
 ---
 
 ## Species Knowledge
@@ -109,25 +111,23 @@ Temperature information is guidance rather than a guarantee of plant health or s
 
 ## Seasonal Behaviour
 
-### BR-009 — Seasonal Phases
+### BR-009 — Seasonal Reference
 
-A species may define recurring seasonal phases such as active growth, flowering, reduced growth, or dormancy.
+A species definition records concise typical growth, flowering, and dormancy periods using the fields and values defined by the species template.
 
-Not every species is required to define every type of phase.
+These periods are reference information. Plantly does not determine or automate a plant's current seasonal phase.
 
-### BR-010 — Seasonal Guidance
+### BR-010 — Special Seasonal Care
 
-A seasonal phase may modify the care guidance for a species.
+Special seasonal care information belongs in concise species or plant notes rather than a separate seasonal-care process or model.
 
-This may include fertiliser recommendations or other seasonal notes.
-
-Entering a seasonal phase does not automatically create a care task or care event.
+Seasonal information does not automatically create a care task or care event.
 
 ### BR-011 — Fertiliser Guidance
 
-A seasonal phase may recommend a fertiliser type, strength, or general feeding strategy.
+A species definition records concise fertiliser guidance for its growth, flowering, and dormancy periods using the fields and values defined by the species template. Exceptional detail belongs in notes.
 
-Fertiliser guidance describes how fertiliser should be used when watering. It does not determine that a plant currently requires watering.
+Fertiliser guidance describes how fertiliser should be used when watering. Plantly does not use it to determine that a plant currently requires watering.
 
 ---
 

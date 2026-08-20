@@ -79,4 +79,3 @@ If Plantly cannot retrieve the selected plant, it communicates that the detail c
 * Displaying recent care events or full care history; care-history display belongs to UC-019.
 * Managing locations; those behaviours belong to UC-009 through UC-011.
 * Displaying plants grouped by location; this belongs to UC-013.
-* Displaying seasonal guidance; this belongs to UC-028.
